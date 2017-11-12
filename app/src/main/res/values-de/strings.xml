@@ -1,0 +1,5 @@
+<resources>
+    <string name="schedule">Stundenplan</string>
+    <string name="map">Lageplan</string>
+    <string name="news">Neuigkeiten</string>
+</resources>
