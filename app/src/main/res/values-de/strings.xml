@@ -24,4 +24,5 @@
         <item>Maschinenbau</item>
         <item>Soziale Arbeit</item>
     </string-array>
+    <string name="login_failed">Die Verbindung zur HAW ist fehlgeschlagen</string>
 </resources>

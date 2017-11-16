@@ -1,5 +1,7 @@
 package de.haw_landshut.hawmobile;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -20,11 +22,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
+import de.haw_landshut.hawmobile.mail.Protocol;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +72,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -319,25 +324,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
+            if(Protocol.testAccount(mEmail, mPassword)){
+                AccountManager accountManager = AccountManager.get(getApplicationContext());
+                Account account = new Account(mEmail, "de.haw_landshut.hawmobile.ACCOUNT");
+                final Bundle fak = new Bundle();
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+                boolean worked = accountManager.addAccountExplicitly(account, mPassword, fak);
+
+                accountManager.setUserData(account, "FACULTY", facultyIndex+"");
+
+                if (worked){
+                    Credentials.setCredentials(mEmail, mPassword, Fakultaet.get(facultyIndex + ""));
                 }
+
+                return worked;
             }
 
-            // TODO: register the new account here.
-            return true;
+
+
+            return false;
         }
 
         @Override

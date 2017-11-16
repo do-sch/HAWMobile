@@ -27,5 +27,6 @@
         <item>mechanical engineering</item>
         <item>social work</item>
     </string-array>
+    <string name="login_failed">The Login to HAW failed</string>
 
 </resources>
