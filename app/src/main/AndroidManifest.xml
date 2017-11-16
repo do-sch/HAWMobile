@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.READ_PROFILE"/>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <user-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <user-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
 
     <application
             android:allowBackup="true"
@@ -31,6 +33,15 @@
                 android:name=".LoginActivity"
                 android:label="@string/title_activity_login">
         </activity>
+        <service android:name="de.haw_landshut.hawmobile.AuthenticatorService" android:exported="false">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator"/>
+        </service>
     </application>
+
 
 </manifest>
