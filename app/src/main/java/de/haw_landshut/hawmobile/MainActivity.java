@@ -2,37 +2,30 @@ package de.haw_landshut.hawmobile;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
-import android.widget.Toast;
-import de.haw_landshut.hawmobile.mail.MailOverviewActivity;
-import de.haw_landshut.hawmobile.mail.Protocol;
-import de.haw_landshut.hawmobile.schedule.ScheduleActivity;
+import de.haw_landshut.hawmobile.mail.MailOverview;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MailOverview.OnFragmentInteractionListener {
 
-    private TextView mTextMessage;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
-        Intent in;
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_mail:
-                    in = new Intent(getBaseContext(), MailOverviewActivity.class);
-                    startActivity(in);
+                    changeFragment(MailOverview.newInstance());
                     return true;
                 case R.id.action_schedule:
-                    in = new Intent(getBaseContext(), ScheduleActivity.class);
-                    startActivity(in);
+
                     return true;
                 case R.id.action_map:
 
@@ -51,10 +44,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        changeFragment(new MailOverview());
         handleLogin();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    private void changeFragment(Fragment fragment){
+        getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
     }
 
     private void handleLogin(){
