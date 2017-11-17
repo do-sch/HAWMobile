@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dip"
+                android:paddingEnd="16dip"
+                android:paddingTop="6dip"
+                android:paddingBottom="6dip">
+
+    <TextView android:id="@+id/subject" android:layout_width="match_parent" android:layout_height="26dp"
+              android:layout_alignParentTop="true"
+              android:layout_alignParentStart="true"
+              android:layout_alignParentEnd="true"
+              android:layout_alignWithParentIfMissing="true"
+              android:gravity="center_vertical"
+              android:textSize="20sp"
+              android:text="Subject"/>
+
+    <TextView android:id="@+id/sender"
+              android:layout_width="match_parent"
+              android:layout_height="26dip"
+              android:layout_alignParentStart="true"
+              android:layout_alignParentEnd="true"
+              android:layout_below="@id/subject"
+              android:gravity="center_vertical"
+              android:text="sender@mail.com"
+              android:textSize="16sp"/>
+
+    <TextView android:id="@+id/mailcontent"
+              android:layout_width="match_parent"
+              android:layout_height="26sp"
+              android:layout_alignParentStart="true"
+              android:layout_alignParentEnd="true"
+              android:layout_below="@id/sender"
+              android:gravity="center_vertical"
+              android:textSize="16sp"
+              android:text="Dies ist Text"/>
+
+    <TextView android:id="@+id/maildate"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_alignParentEnd="true"
+              android:layout_alignParentTop="true"
+              android:text="01.01.2017"
+              android:textSize="12sp"/>
+
+
+</RelativeLayout>
