@@ -6,8 +6,10 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.READ_PROFILE"/>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <user-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
-    <user-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
             android:allowBackup="true"
@@ -31,7 +33,8 @@
         </activity>
         <activity
                 android:name=".LoginActivity"
-                android:label="@string/title_activity_login">
+                android:label="@string/action_sign_in"
+                android:theme="@style/LoginTheme">
         </activity>
 
         <service android:name="de.haw_landshut.hawmobile.AuthenticatorService" android:exported="false">

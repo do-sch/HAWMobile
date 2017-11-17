@@ -30,6 +30,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import de.haw_landshut.hawmobile.mail.Protocol;
 
+import javax.mail.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,6 +113,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        //Sorgt dafür, dass man sich anmelden muss und die Activity nicht beenden kann
     }
 
     private void populateAutoComplete() {
@@ -325,7 +331,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
 
-            if(Protocol.testAccount(mEmail, mPassword)){
+            boolean connectionEstablished = false;
+
+            try{
+                try {
+                    final Store store = Session.getDefaultInstance(Protocol.props).getStore("imap");
+
+                    store.connect(mEmail, mPassword);
+                    connectionEstablished = store.isConnected();
+
+                } catch (NoSuchProviderException e) {
+                    e.printStackTrace();
+                }
+            } catch (MessagingException e) {
+                Log.e("LoginActivity.auth", "Authentification Failed");
+
+            }
+
+            if(connectionEstablished){
                 AccountManager accountManager = AccountManager.get(getApplicationContext());
                 Account account = new Account(mEmail, "de.haw_landshut.hawmobile.ACCOUNT");
                 final Bundle fak = new Bundle();
