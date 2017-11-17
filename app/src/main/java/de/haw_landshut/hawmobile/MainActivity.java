@@ -72,11 +72,7 @@ public class MainActivity extends AppCompatActivity {
             final String password = accountManager.getPassword(a);
             final Fakultaet fa = Fakultaet.get(accountManager.getUserData(a, "FACULTY"));
 
-            if (Protocol.receiveEmails(username, password))
-                Credentials.setCredentials(username, password, fa);
-            else {
-                Toast.makeText(getApplicationContext(), getString(R.string.login_failed), 3000);
-            }
+            Credentials.setCredentials(username, password, fa);
 
         }
 
