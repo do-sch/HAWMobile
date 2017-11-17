@@ -5,18 +5,18 @@
     app:menu="@menu/navigation">
     <item android:id="@+id/action_mail"
           android:title="@string/mail"
-          android:icon="@android:drawable/ic_dialog_email"/>
+          android:icon="@drawable/mail_icon"/>
 
     <item android:id="@+id/action_schedule"
           android:title="@string/schedule"
-          android:icon="@android:drawable/ic_dialog_dialer"/>
+          android:icon="@drawable/schedule_icon"/>
 
     <item android:id="@+id/action_map"
           android:title="@string/map"
-          android:icon="@android:drawable/ic_dialog_map"/>
+          android:icon="@drawable/map_icon"/>
 
     <item android:id="@+id/action_news"
           android:title="@string/news"
-          android:icon="@android:drawable/ic_dialog_info"/>
+          android:icon="@drawable/announcement_icon"/>
 
 </menu>

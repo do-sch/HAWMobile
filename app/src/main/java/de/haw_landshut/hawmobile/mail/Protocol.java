@@ -38,17 +38,17 @@ public class Protocol {
 
     public static final Properties props = new Properties();
     static{
-        props.setProperty("mail.store.protocol", "imaps");
-        props.setProperty("mail.imap.host", "mail.haw-landshut.de");//STARTTLS
-        props.setProperty("mail.imap.port", "143");
-        props.setProperty("mail.imap.starttls.enable", "true");
-        props.setProperty("mail.imap.starttls.required", "true");
+        props.setProperty("mail_icon.store.protocol", "imaps");
+        props.setProperty("mail_icon.imap.host", "mail_icon.haw-landshut.de");//STARTTLS
+        props.setProperty("mail_icon.imap.port", "143");
+        props.setProperty("mail_icon.imap.starttls.enable", "true");
+        props.setProperty("mail_icon.imap.starttls.required", "true");
 
-//        props.setProperty("mail.smtp.host", "asmtp.haw-landshut.de");
-//        props.setProperty("mail.smtp.port", "587"); //STARTTLS
-//        props.setProperty("mail.smtp.starttls.enable", "true");
-//        props.setProperty("mail.smtp.starttls.required", "true");
-//        props.setProperty("mail.smtp.auth", "true");
+//        props.setProperty("mail_icon.smtp.host", "asmtp.haw-landshut.de");
+//        props.setProperty("mail_icon.smtp.port", "587"); //STARTTLS
+//        props.setProperty("mail_icon.smtp.starttls.enable", "true");
+//        props.setProperty("mail_icon.smtp.starttls.required", "true");
+//        props.setProperty("mail_icon.smtp.auth", "true");
 
     }
 
