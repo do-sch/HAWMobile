@@ -7,12 +7,29 @@ import javax.mail.Folder;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.event.FolderEvent;
+import javax.mail.event.FolderListener;
 import java.util.Properties;
 import java.util.Scanner;
 
 public class Protocol {
 
     //Folder-Names: INBOX, Drafts, Sent, Junk, Trash
+    public static final Properties props = new Properties();
+    static{
+        props.setProperty("mail.store.protocol", "imaps");
+        props.setProperty("mail.imap.host", "mail.haw-landshut.de");//STARTTLS
+        props.setProperty("mail.imap.port", "143");
+        props.setProperty("mail.imap.starttls.enable", "true");
+        props.setProperty("mail.imap.starttls.required", "true");
+
+//        props.setProperty("mail.smtp.host", "asmtp.haw-landshut.de");
+//        props.setProperty("mail.smtp.port", "587"); //STARTTLS
+//        props.setProperty("mail.smtp.starttls.enable", "true");
+//        props.setProperty("mail.smtp.starttls.required", "true");
+//        props.setProperty("mail.smtp.auth", "true");
+
+    }
 
     public static void main(String... args){
         try {
@@ -28,29 +45,18 @@ public class Protocol {
 
             store.connect(username, password);
 
-            System.out.println(store.getFolder("INBOX").getMessageCount());
 
+            Folder f = store.getFolder("INBOX");
+            System.out.println(f.getName());
+
+            store.close();
 
         } catch (MessagingException e) {
             e.printStackTrace();
         }
     }
 
-    public static final Properties props = new Properties();
-    static{
-        props.setProperty("mail_icon.store.protocol", "imaps");
-        props.setProperty("mail_icon.imap.host", "mail_icon.haw-landshut.de");//STARTTLS
-        props.setProperty("mail_icon.imap.port", "143");
-        props.setProperty("mail_icon.imap.starttls.enable", "true");
-        props.setProperty("mail_icon.imap.starttls.required", "true");
 
-//        props.setProperty("mail_icon.smtp.host", "asmtp.haw-landshut.de");
-//        props.setProperty("mail_icon.smtp.port", "587"); //STARTTLS
-//        props.setProperty("mail_icon.smtp.starttls.enable", "true");
-//        props.setProperty("mail_icon.smtp.starttls.required", "true");
-//        props.setProperty("mail_icon.smtp.auth", "true");
-
-    }
 
     public static boolean tryConnect(){
         class TestAccount extends AsyncTask<String, Void, Boolean>{
@@ -63,6 +69,7 @@ public class Protocol {
                     Log.d("strings[1]", strings[1]);
 
                     store.connect(strings[0], strings[1]);
+
 
 
                     Log.d("count personal namesp", store.getPersonalNamespaces().length+"");
