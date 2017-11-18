@@ -9,6 +9,8 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.event.FolderEvent;
 import javax.mail.event.FolderListener;
+import javax.mail.event.MessageCountEvent;
+import javax.mail.event.MessageCountListener;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -45,11 +47,16 @@ public class Protocol {
 
             store.connect(username, password);
 
+            //Alle Ordner
+            Folder[] folders = store.getDefaultFolder().list();
+            for (Folder f : folders)
+                System.out.println(f.getName());
+
 
             Folder f = store.getFolder("INBOX");
-            System.out.println(f.getName());
 
-            store.close();
+            int newMessages = f.getNewMessageCount();
+
 
         } catch (MessagingException e) {
             e.printStackTrace();

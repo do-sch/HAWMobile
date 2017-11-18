@@ -25,4 +25,12 @@
         <item>Soziale Arbeit</item>
     </string-array>
     <string name="login_failed">Die Verbindung zur HAW ist fehlgeschlagen</string>
+    <string name="settings">Einstellungen</string>
+    <string name="search">Suchen</string>
+    <string name="folder">Ordner</string>
+    <string name="INBOX">Posteingang</string>
+    <string name="Junk">Spam</string>
+    <string name="Trash">Gelöscht</string>
+    <string name="Sent">Gesendet</string>
+    <string name="Drafts">Entwürfe</string>
 </resources>

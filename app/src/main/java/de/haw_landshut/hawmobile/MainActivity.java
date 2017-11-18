@@ -3,17 +3,23 @@ package de.haw_landshut.hawmobile;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toolbar;
 import de.haw_landshut.hawmobile.mail.MailOverview;
 
 public class MainActivity extends AppCompatActivity implements MailOverview.OnFragmentInteractionListener {
 
+    private Fragment mailfragment;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -22,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_mail:
-                    changeFragment(MailOverview.newInstance());
+                    changeFragment(mailfragment);
                     return true;
                 case R.id.action_schedule:
 
@@ -46,9 +52,11 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        changeFragment(new MailOverview());
+        mailfragment = MailOverview.newInstance();
+        changeFragment(mailfragment);
         handleLogin();
     }
+
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -79,5 +87,6 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
         }
 
     }
+
 
 }
