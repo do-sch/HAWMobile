@@ -16,10 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toolbar;
 import de.haw_landshut.hawmobile.mail.MailOverview;
+import de.haw_landshut.hawmobile.schedule.ScheduleFragment;
 
 public class MainActivity extends AppCompatActivity implements MailOverview.OnFragmentInteractionListener {
 
     private Fragment mailfragment;
+    private Fragment schedulefragment;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {

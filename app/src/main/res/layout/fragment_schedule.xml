@@ -1,0 +1,512 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="de.haw_landshut.hawmobile.schedule.ScheduleFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="45dp">
+            <TextView
+                    android:text="Datum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/schedule_textView_date"
+                    android:layout_weight="1"/>
+            <TextView
+                    android:text="01.01.2010"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/schedule_textView_currentDate"
+                    android:layout_weight="1"/>
+            <TextView
+                    android:text="KW: "
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/schedule_textView_KW"
+                    android:layout_weight="1"/>
+            <TextView
+                    android:text="43"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/schedule_textView_currentWeek"
+                    android:layout_weight="0.21"/>
+        </LinearLayout>
+        <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+        >
+
+            <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_blanc"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="Montag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="Dienstag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="Mittwoch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="Donnerstag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="Freitag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <TextView
+                        android:text="08.45-09.30"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_1"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_1_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_1_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_1_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_1_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_1_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <TextView
+                        android:text="09.30-10.15"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_2"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_2_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_2_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_2_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_2_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_2_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <TextView
+                        android:text="10.30-11.15"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_3"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_3_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_3_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_3_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_3_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_3_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <TextView
+                        android:text="11.15-12.00"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_4"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_4_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_4_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_4_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_4_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_4_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <TextView
+                        android:text="12.00-12.50"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_5"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="--------------"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_5_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="--------------"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_5_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="Mittag----"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_5_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="-----------------"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_5_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="---------------"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_5_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <TextView
+                        android:text="12.50-13.35"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_6"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_6_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_6_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_6_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_6_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_6_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <TextView
+                        android:text="13.35-14.20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_7"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_7_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_7_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_7_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_7_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_7_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <TextView
+                        android:text="14.30-15.15"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_8"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_8_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_8_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_8_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_8_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_8_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+            <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
+                <TextView
+                        android:text="15.15-16.00"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_9_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_9_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_9_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_9_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_9_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/textView66"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+            <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
+                <TextView
+                        android:text="16.10-16.55"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_10"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_10_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_10_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_10_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_10_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_10_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+            <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
+                <TextView
+                        android:text="16.55-17.40"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_11"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_11_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_11_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_11_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_11_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_11_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <TextView
+                        android:text="17.50-18.35"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_12"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_12_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_12_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_12_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_12_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_12_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <TextView
+                        android:text="18.35-19.20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_13"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_13_monday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_13_tuesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_13_wednesday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_13_thursday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+                <TextView
+                        android:text="TextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_hour_13_friday"
+                        android:layout_marginTop="5dp" android:paddingTop="2dp"/>
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+</FrameLayout>
