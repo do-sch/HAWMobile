@@ -3,25 +3,19 @@ package de.haw_landshut.hawmobile;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toolbar;
 import de.haw_landshut.hawmobile.mail.MailOverview;
 import de.haw_landshut.hawmobile.schedule.ScheduleFragment;
 
 public class MainActivity extends AppCompatActivity implements MailOverview.OnFragmentInteractionListener {
 
-    private Fragment mailfragment;
-    private Fragment schedulefragment;
+    private Fragment mailfragment, schedulefragment;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -33,7 +27,9 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
                     changeFragment(mailfragment);
                     return true;
                 case R.id.action_schedule:
-
+                    if (schedulefragment == null)
+                        schedulefragment = ScheduleFragment.newInstance();
+                    changeFragment(schedulefragment);
                     return true;
                 case R.id.action_map:
 
