@@ -2,13 +2,24 @@ package de.haw_landshut.hawmobile.mail;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.*;
+import de.haw_landshut.hawmobile.MainActivity;
 import de.haw_landshut.hawmobile.R;
+import de.haw_landshut.hawmobile.base.EMail;
+import de.haw_landshut.hawmobile.base.EMailDao;
+
+import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,15 +30,11 @@ import de.haw_landshut.hawmobile.R;
  * create an instance of this fragment.
  */
 public class MailOverview extends Fragment {
-//    // TODO: Rename parameter arguments, choose names that match
-//    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//    private static final String ARG_PARAM1 = "param1";
-//    private static final String ARG_PARAM2 = "param2";
-
-//    private String mParam1;
-//    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private SharedPreferences preferences;
+    private RecyclerView mRecyclerView;
+    private EMailDao eMailDao;
 
     public MailOverview() {
         // Required empty public constructor
@@ -40,35 +47,55 @@ public class MailOverview extends Fragment {
      * @return A new instance of fragment MailOverview.
      */
     public static MailOverview newInstance() {
-        MailOverview fragment = new MailOverview();
-        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+        return new MailOverview();
     }
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
-//    }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.setHasOptionsMenu(true);
+
+        eMailDao = MainActivity.getHawDatabase().eMailDao();
+
+//        new MailInsertTask().execute();
+        preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+
+        if(!preferences.getBoolean("mailsFetched", false))
+            new Mail2BaseTask().execute();
+
+        new Base2MailEntryAdapter().execute();
+
+    }
+
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().setTitle(R.string.INBOX);
+        menu.clear();
+        inflater.inflate(R.menu.mailactionbar_default, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d("onOptionsItemSelected", item.getTitle().toString());
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_mail_overview, container, false);
-    }
+        View view = inflater.inflate(R.layout.fragment_mail_overview, container, false);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        mRecyclerView = view.findViewById(R.id.mailsRecycleView);
+
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), RecyclerView.VERTICAL));
+
+        return view;
     }
 
     @Override
@@ -101,5 +128,50 @@ public class MailOverview extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    private class Mail2BaseTask extends AsyncTask<Void, Void, Void>{
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            preferences.edit().putBoolean("mailsFetched", true).apply();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            final EMailDao eMailDao = MainActivity.getHawDatabase().eMailDao();
+            final EMail[] mailList = Protocol.loadAllMessages();
+
+            if(mailList == null)
+                return null;
+
+            eMailDao.insertAllEMails(mailList);
+
+            Log.d("MailOverview.M2BTask", "doInBackground: inserted");
+
+            return null;
+        }
+    }
+
+    private class Base2MailEntryAdapter extends AsyncTask<Void, Void, MailEntryAdapter>{
+        @Override
+        protected void onPostExecute(MailEntryAdapter mea) {
+            mRecyclerView.setAdapter(mea);
+        }
+
+        @Override
+        protected MailEntryAdapter doInBackground(Void... voids) {
+
+            final List<EMail> mailList = eMailDao.getAllEmailsFromFolder("INBOX");
+
+            if (mailList != null) {
+                final MailEntry[] mails = MailEntry.getEntriesFromBase(mailList);
+                Log.d("MailOverview.B2MEA", "doInBackground: mailsCount: " + mails.length);
+
+                return new MailEntryAdapter(mails);
+
+            }
+            return null;
+        }
     }
 }

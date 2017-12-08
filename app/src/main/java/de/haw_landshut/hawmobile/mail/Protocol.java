@@ -1,18 +1,12 @@
 package de.haw_landshut.hawmobile.mail;
 
-import android.os.AsyncTask;
 import android.util.Log;
+import de.haw_landshut.hawmobile.Credentials;
+import de.haw_landshut.hawmobile.base.EMail;
 
-import javax.mail.Folder;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Store;
-import javax.mail.event.FolderEvent;
-import javax.mail.event.FolderListener;
-import javax.mail.event.MessageCountEvent;
-import javax.mail.event.MessageCountListener;
-import java.util.Properties;
-import java.util.Scanner;
+import javax.mail.*;
+import java.io.IOException;
+import java.util.*;
 
 public class Protocol {
 
@@ -47,15 +41,11 @@ public class Protocol {
 
             store.connect(username, password);
 
-            //Alle Ordner
-            Folder[] folders = store.getDefaultFolder().list();
-            for (Folder f : folders)
+            for (Folder f : store.getDefaultFolder().list()){
                 System.out.println(f.getName());
+            }
 
-
-            Folder f = store.getFolder("INBOX");
-
-            int newMessages = f.getNewMessageCount();
+            store.close();
 
 
         } catch (MessagingException e) {
@@ -63,76 +53,79 @@ public class Protocol {
         }
     }
 
-
-
-    public static boolean tryConnect(){
-        class TestAccount extends AsyncTask<String, Void, Boolean>{
-            @Override
-            protected Boolean doInBackground(String... strings) {
-                try {
-                    final Store store = Session.getDefaultInstance(props).getStore("imap");
-
-                    Log.d("strings[0]", strings[0]);
-                    Log.d("strings[1]", strings[1]);
-
-                    store.connect(strings[0], strings[1]);
-
-
-
-                    Log.d("count personal namesp", store.getPersonalNamespaces().length+"");
-                    for (Folder folder : store.getPersonalNamespaces()) {
-                        Log.d("personal namespace", folder.getFullName());
-                    }
-
-                    for (Folder folder : store.getSharedNamespaces()){
-                        Log.d("shared namespace", folder.getFullName());
-                    }
-
-
-                } catch (MessagingException e) {
-                    e.printStackTrace();
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean receiveEmails(String username, String password){
-
-//        class TestAccount extends AsyncTask<String, Void, Boolean>{
-//            @Override
-//            protected Boolean doInBackground(String... strings) {
-//                try {
-//                    final Store store = Session.getDefaultInstance(props).getStore("imap");
+//    public static Map<String, MailEntry[]> fetchAllMessages(){
 //
-//                    Log.d("strings[0]", strings[0]);
-//                    Log.d("strings[1]", strings[1]);
+//        try {
+//            final Store store = login();
+//            final Map<String, MailEntry[]> map = new HashMap<>();
 //
-//                    store.connect(strings[0], strings[1]);
-//
-//
-//                    Log.d("count personal namesp", store.getPersonalNamespaces().length+"");
-//                    for (Folder folder : store.getPersonalNamespaces()) {
-//                        Log.d("personal namespace", folder.getFullName());
-//                    }
-//
-//                    for (Folder folder : store.getSharedNamespaces()){
-//                        Log.d("shared namespace", folder.getFullName());
-//                    }
-//
-//
-//                } catch (MessagingException e) {
-//                    e.printStackTrace();
-//                }
-//                return true;
+//            for(Folder f : store.getDefaultFolder().list()){
+//                if(!f.isOpen())
+//                    f.open(Folder.READ_ONLY);
+//                map.put(f.getName(), MailEntry.getEntriesFromMessages(f.getMessages()));
+//                f.close();
 //            }
+//
+//            store.close();
+//
+//            return map;
+//
+//        } catch (MessagingException e){
+//            e.printStackTrace();//TODO: Fehlermeldung
 //        }
 //
-//        new TestAccount().execute(username, password);
+//        return null;
+//    }
 
-        return true;
+    public static EMail[] loadAllMessages(){
+        try {
+            final Store store = login();
+            final List<EMail> mails = new ArrayList<>();
+
+            Folder[] list = store.getDefaultFolder().list();
+            for (Folder f : list) {
+                if (!f.isOpen())
+                    f.open(Folder.READ_ONLY);
+
+                for (final Message m : f.getMessages()) {
+                    final EMail em = new EMail(m, f.getName());
+
+                    mails.add(em);
+
+                }
+
+                f.close();
+
+            }
+
+            return mails.toArray(new EMail[mails.size()]);
+        }catch (MessagingException e){
+            e.printStackTrace();
+        }
+        return null;
     }
+
+    private static Store login() throws MessagingException{
+        final Store store = Session.getDefaultInstance(props).getStore("imap");
+
+        store.connect(Credentials.getUsername(), Credentials.getPassword());
+
+        return store;
+    }
+
+    private static String addr2str(Address[] addresses){
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Address a : addresses)
+            stringBuilder.append(", ").append(a.toString());
+        stringBuilder.delete(0, 2);
+
+        return stringBuilder.toString();
+
+    }
+
+
+
 
 
 

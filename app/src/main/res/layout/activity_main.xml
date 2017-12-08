@@ -12,29 +12,32 @@
     <RelativeLayout android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                android:elevation="4dp"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-        <FrameLayout
-                android:id="@+id/content"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-        </FrameLayout>
+        <!--<android.support.v7.widget.Toolbar-->
+                <!--android:id="@+id/toolbar"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="?attr/actionBarSize"-->
+                <!--android:background="?attr/colorPrimary"-->
+                <!--android:elevation="4dp"-->
+                <!--android:theme="@style/ThemeOverlay.AppCompat.Dark"-->
+                <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>-->
 
         <android.support.design.widget.BottomNavigationView
                 android:id="@+id/navigation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
                 android:layout_alignParentBottom="true"
-                android:layout_gravity="bottom"
-                android:layout_alignBottom="@id/content"
                 android:background="?android:attr/windowBackground"
                 app:menu="@menu/navigation"/>
+
+        <FrameLayout
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/navigation">
+        </FrameLayout>
+
+
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>
 
