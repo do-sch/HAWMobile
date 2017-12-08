@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import de.haw_landshut.hawmobile.mail.MailOverview;
 import de.haw_landshut.hawmobile.schedule.ScheduleFragment;
 
-public class MainActivity extends AppCompatActivity implements MailOverview.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements MailOverview.OnFragmentInteractionListener, ScheduleFragment.OnFragmentInteractionListener {
 
     private Fragment mailfragment, schedulefragment;
 
