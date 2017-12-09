@@ -29,6 +29,7 @@
                                                         android:layout_alignParentEnd="true"
                                                         android:src="@drawable/create_icon"
                                                         app:backgroundTint="@color/colorPrimary"
-                                                        app:layout_anchorGravity="bottom|end"/>
+                                                        app:layout_anchorGravity="bottom|end"
+                                                        android:id="@+id/createMail"/>
 
 </RelativeLayout>
