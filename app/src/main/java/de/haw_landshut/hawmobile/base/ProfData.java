@@ -16,6 +16,7 @@ public class ProfData{
     @PrimaryKey(autoGenerate = true)
     private long profkey;
 
+
     private String lastName;
 
     public String getFirstName() {
