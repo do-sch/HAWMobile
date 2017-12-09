@@ -9,4 +9,5 @@ import android.arch.persistence.room.TypeConverters;
 public abstract class HAWDatabase extends RoomDatabase {
 
     public abstract EMailDao eMailDao();
+    public abstract ScheduleDao scheduleDao();
 }

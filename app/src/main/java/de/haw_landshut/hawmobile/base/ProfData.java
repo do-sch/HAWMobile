@@ -5,6 +5,11 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class ProfData{
+
+    public ProfData(String firstName,String lastName){
+        this.firstName=firstName;
+        this.lastName=lastName;
+    }
     @ColumnInfo()
     private String firstName;
 
