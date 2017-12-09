@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -39,7 +40,14 @@ public class ScheduleFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private View.OnClickListener ocl;
     public static BottomSheetBehavior mBottomSheetBehavior1;
+    View bottomSheet;
     public static TextView currentTV;
+    public static EditText et_fach;
+    public static EditText et_prof;
+    public static EditText et_raum;
+    Button edit;
+    Button save;
+    Button cancel;
 
 
     // TODO: Rename and change types of parameters
@@ -80,9 +88,9 @@ public class ScheduleFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-//        ocl = new OnClickLabel();
+        ocl = new OnClickLabel();
         preference=getActivity().getPreferences(Context.MODE_PRIVATE);
-       // new BeginnInsertion().execute();
+        //new BeginnInsertion().execute();
 
     }
 
@@ -91,11 +99,13 @@ public class ScheduleFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_schedule, container, false);
-        final Button edit = (Button)view.findViewById(R.id.btn_edit);
-        final EditText et_fach = (EditText)view.findViewById(R.id.et_fach);
-        final EditText et_prof = (EditText)view.findViewById(R.id.et_prof);
-        final EditText et_raum = (EditText)view.findViewById(R.id.et_raum);
-        View bottomSheet = view.findViewById(R.id.bottom_sheet1);
+        edit = (Button)view.findViewById(R.id.btn_edit);
+        save = (Button)view.findViewById(R.id.btn_save);
+        cancel = (Button)view.findViewById(R.id.btn_cancel);
+        et_fach = (EditText)view.findViewById(R.id.et_fach);
+        et_prof = (EditText)view.findViewById(R.id.et_prof);
+        et_raum = (EditText)view.findViewById(R.id.et_raum);
+        bottomSheet = view.findViewById(R.id.bottom_sheet1);
         mBottomSheetBehavior1 = BottomSheetBehavior.from(bottomSheet);
 
         //Montags
@@ -173,18 +183,47 @@ public class ScheduleFragment extends Fragment {
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(edit.getText().equals("Bearbeiten"))
-                {
-                    edit.setText("Speichern");
+                    cancel.setVisibility(View.VISIBLE);
+                    edit.setVisibility(View.GONE);
+                    save.setVisibility(View.VISIBLE);
                     et_fach.setEnabled(true);
                     et_prof.setEnabled(true);
                     et_raum.setEnabled(true);
-                }
-                if(edit.getText().equals("Speichern"))
-                {
-                    currentTV.setText(et_fach.getText());
 
-                }
+
+            }
+        });
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                    cancel.setVisibility(View.INVISIBLE);
+                    save.setVisibility(View.GONE);
+                    edit.setVisibility(View.VISIBLE);
+                    et_fach.setEnabled(false);
+                    et_prof.setEnabled(false);
+                    et_raum.setEnabled(false);
+                    currentTV.setText(et_fach.getText());
+                    ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                et_fach.setText("");
+                et_fach.setEnabled(false);
+                et_prof.setText("");
+                et_prof.setEnabled(false);
+                et_raum.setText("");
+                et_raum.setEnabled(false);
+                save.setVisibility(View.GONE);
+                edit.setVisibility(View.VISIBLE);
+                cancel.setVisibility(View.INVISIBLE);
+                ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
 

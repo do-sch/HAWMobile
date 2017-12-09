@@ -363,6 +363,21 @@
                             android:id="@+id/btn_edit"
                             android:textSize="14sp" android:layout_alignTop="@+id/et_fach"
                             android:layout_alignParentEnd="true"/>
+                    <Button
+                            android:text="Speichern"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/btn_save"
+                            android:textSize="14sp" android:layout_alignTop="@+id/et_fach"
+                            android:layout_alignParentEnd="true" android:visibility="gone"/>
+                    <Button
+                            android:text="Abbrechen"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/btn_cancel"
+                            android:textSize="14sp"
+                            android:layout_below="@+id/btn_save" android:layout_alignParentEnd="true"
+                            android:visibility="invisible"/>
                 </RelativeLayout>
             </android.support.v4.widget.NestedScrollView>
         </android.support.design.widget.CoordinatorLayout>
