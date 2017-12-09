@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import de.haw_landshut.hawmobile.MainActivity;
 import de.haw_landshut.hawmobile.R;
@@ -37,7 +38,8 @@ public class ScheduleFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private View.OnClickListener ocl;
-    public BottomSheetBehavior mBottomSheetBehavior1;
+    public static BottomSheetBehavior mBottomSheetBehavior1;
+    public static TextView currentTV;
 
 
     // TODO: Rename and change types of parameters
@@ -87,38 +89,100 @@ public class ScheduleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//Hi
+
         final View view = inflater.inflate(R.layout.fragment_schedule, container, false);
-
-
-
-
-        TextView m1 = (TextView)view.findViewById(R.id.schedule_tv_h1_monday);
-        //m1.setOnClickListener(ocl);
-        TextView m2 = (TextView)view.findViewById(R.id.schedule_tv_h3_monday);
-        m2.setOnClickListener(ocl);
-        TextView m3 = (TextView)view.findViewById(R.id.schedule_tv_h2_monday);
-        m3.setOnClickListener(ocl);
-        TextView m4 = (TextView)view.findViewById(R.id.schedule_tv_h4_monday);
-        m4.setOnClickListener(ocl);
-        TextView m5 = (TextView)view.findViewById(R.id.schedule_tv_h5_monday);
-        m5.setOnClickListener(ocl);
-        TextView m6 = (TextView)view.findViewById(R.id.schedule_tv_h6_monday);
-        m6.setOnClickListener(ocl);
-
+        final Button edit = (Button)view.findViewById(R.id.btn_edit);
+        final EditText et_fach = (EditText)view.findViewById(R.id.et_fach);
+        final EditText et_prof = (EditText)view.findViewById(R.id.et_prof);
+        final EditText et_raum = (EditText)view.findViewById(R.id.et_raum);
         View bottomSheet = view.findViewById(R.id.bottom_sheet1);
         mBottomSheetBehavior1 = BottomSheetBehavior.from(bottomSheet);
 
+        //Montags
+        final TextView m1 = (TextView)view.findViewById(R.id.schedule_tv_h1_monday);
+        m1.setOnClickListener(ocl);
+        final TextView m2 = (TextView)view.findViewById(R.id.schedule_tv_h3_monday);
+        m2.setOnClickListener(ocl);
+        final TextView m3 = (TextView)view.findViewById(R.id.schedule_tv_h2_monday);
+        m3.setOnClickListener(ocl);
+        final TextView m4 = (TextView)view.findViewById(R.id.schedule_tv_h4_monday);
+        m4.setOnClickListener(ocl);
+        final TextView m5 = (TextView)view.findViewById(R.id.schedule_tv_h5_monday);
+        m5.setOnClickListener(ocl);
+        final TextView m6 = (TextView)view.findViewById(R.id.schedule_tv_h6_monday);
+        m6.setOnClickListener(ocl);
 
-        m1.setOnClickListener(new View.OnClickListener() {
+        //Dienstags
+        final TextView d1 = (TextView)view.findViewById(R.id.schedule_tv_h1_tuesday);
+        d1.setOnClickListener(ocl);
+        final TextView d2 = (TextView)view.findViewById(R.id.schedule_tv_h3_tuesday);
+        d2.setOnClickListener(ocl);
+        final TextView d3 = (TextView)view.findViewById(R.id.schedule_tv_h2_tuesday);
+        d3.setOnClickListener(ocl);
+        final TextView d4 = (TextView)view.findViewById(R.id.schedule_tv_h4_tuesday);
+        d4.setOnClickListener(ocl);
+        final TextView d5 = (TextView)view.findViewById(R.id.schedule_tv_h5_tuesday);
+        d5.setOnClickListener(ocl);
+        final TextView d6 = (TextView)view.findViewById(R.id.schedule_tv_h6_tuesday);
+        d6.setOnClickListener(ocl);
+
+        //Mittwochs
+        final TextView w1 = (TextView)view.findViewById(R.id.schedule_tv_h1_wednesday);
+        w1.setOnClickListener(ocl);
+        final TextView w2 = (TextView)view.findViewById(R.id.schedule_tv_h3_wednesday);
+        w2.setOnClickListener(ocl);
+        final TextView w3 = (TextView)view.findViewById(R.id.schedule_tv_h2_wednesday);
+        w3.setOnClickListener(ocl);
+        final TextView w4 = (TextView)view.findViewById(R.id.schedule_tv_h4_wednesday);
+        w4.setOnClickListener(ocl);
+        final TextView w5 = (TextView)view.findViewById(R.id.schedule_tv_h5_wednesday);
+        w5.setOnClickListener(ocl);
+        final TextView w6 = (TextView)view.findViewById(R.id.schedule_tv_h6_wednesday);
+        w6.setOnClickListener(ocl);
+
+        //Donnerstags
+        final TextView do1 = (TextView)view.findViewById(R.id.schedule_tv_h1_thursday);
+        do1.setOnClickListener(ocl);
+        final TextView do2 = (TextView)view.findViewById(R.id.schedule_tv_h3_thursday);
+        do2.setOnClickListener(ocl);
+        final TextView do3 = (TextView)view.findViewById(R.id.schedule_tv_h2_thursday);
+        do3.setOnClickListener(ocl);
+        final TextView do4 = (TextView)view.findViewById(R.id.schedule_tv_h4_thursday);
+        do4.setOnClickListener(ocl);
+        final TextView do5 = (TextView)view.findViewById(R.id.schedule_tv_h5_thursday);
+        do5.setOnClickListener(ocl);
+        final TextView do6 = (TextView)view.findViewById(R.id.schedule_tv_h6_thursday);
+        do6.setOnClickListener(ocl);
+
+        //Freitags
+        final TextView f1 = (TextView)view.findViewById(R.id.schedule_tv_h1_friday);
+        f1.setOnClickListener(ocl);
+        final TextView f2 = (TextView)view.findViewById(R.id.schedule_tv_h3_friday);
+        f2.setOnClickListener(ocl);
+        final TextView f3 = (TextView)view.findViewById(R.id.schedule_tv_h2_friday);
+        f3.setOnClickListener(ocl);
+        final TextView f4 = (TextView)view.findViewById(R.id.schedule_tv_h4_friday);
+        f4.setOnClickListener(ocl);
+        final TextView f5 = (TextView)view.findViewById(R.id.schedule_tv_h5_friday);
+        f5.setOnClickListener(ocl);
+        final TextView f6 = (TextView)view.findViewById(R.id.schedule_tv_h6_monday);
+        f6.setOnClickListener(ocl);
+
+
+
+        edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mBottomSheetBehavior1.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-                    mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_EXPANDED);
-
+                if(edit.getText().equals("Bearbeiten"))
+                {
+                    edit.setText("Speichern");
+                    et_fach.setEnabled(true);
+                    et_prof.setEnabled(true);
+                    et_raum.setEnabled(true);
                 }
-                else {
-                    mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                if(edit.getText().equals("Speichern"))
+                {
+                    currentTV.setText(et_fach.getText());
 
                 }
             }
