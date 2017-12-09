@@ -10,16 +10,35 @@ public class ProfData{
         this.firstName=firstName;
         this.lastName=lastName;
     }
-    @ColumnInfo()
+
     private String firstName;
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    private long profkey;
+
     private String lastName;
 
-    public String getFirstName(){
-        return this.firstName;
+    public String getFirstName() {
+        return firstName;
     }
-    public String getLastName(){
-        return this.lastName;
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public long getProfkey() {
+        return profkey;
+    }
+
+    public void setProfkey(long profkey) {
+        this.profkey = profkey;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

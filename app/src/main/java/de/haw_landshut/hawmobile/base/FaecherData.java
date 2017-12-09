@@ -6,10 +6,16 @@ import android.arch.persistence.room.PrimaryKey;
 
 @Entity
 public class FaecherData{
+
+    public FaecherData(String studiengang,String fach){
+        this.fach=fach;
+        this.studiengang=studiengang;
+    }
+
     @PrimaryKey
     private String studiengang;
 
-    @ColumnInfo(name="fach")
+    @ColumnInfo()
     private String fach;
 
     public String getStudiengang(){
