@@ -95,7 +95,7 @@ public class ScheduleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+//Hi
         final View view = inflater.inflate(R.layout.fragment_schedule, container, false);
         final Button edit = (Button)view.findViewById(R.id.btn_edit);
         final EditText et_fach = (EditText)view.findViewById(R.id.et_fach);
