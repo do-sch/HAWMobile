@@ -13,11 +13,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import de.haw_landshut.hawmobile.base.HAWDatabase;
 import de.haw_landshut.hawmobile.mail.MailOverview;
+import de.haw_landshut.hawmobile.news.NewsOverview;
 import de.haw_landshut.hawmobile.schedule.ScheduleFragment;
 
-public class MainActivity extends AppCompatActivity implements MailOverview.OnFragmentInteractionListener, ScheduleFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements MailOverview.OnFragmentInteractionListener, ScheduleFragment.OnFragmentInteractionListener, NewsOverview.OnFragmentInteractionListener {
 
-    private Fragment currentFragment, mailFragment, scheduleFragment/*, mapFragment, newsFragment*/;
+    private Fragment currentFragment, mailFragment, scheduleFragment, newsFragment/*, mapFragment*/;
     private static HAWDatabase hawDatabase;
 
     private final BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -42,11 +43,9 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
                      */
                     return true;
                 case R.id.action_news:
-                    /*
                     if(newsFragment == null)
-                        newsFragment = NewsFragment.newInstance();
-                    changeFragment(newsFragment)
-                     */
+                        newsFragment = NewsOverview.newInstance();
+                    changeFragment(newsFragment);
                     return true;
             }
             return false;
