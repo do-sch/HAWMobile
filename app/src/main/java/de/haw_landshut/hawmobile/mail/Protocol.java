@@ -1,6 +1,10 @@
 package de.haw_landshut.hawmobile.mail;
 
 import android.util.Log;
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.IMAPMessage;
+import com.sun.mail.imap.IMAPNestedMessage;
+import com.sun.mail.pop3.POP3Folder;
 import de.haw_landshut.hawmobile.Credentials;
 import de.haw_landshut.hawmobile.base.EMail;
 
@@ -41,8 +45,27 @@ public class Protocol {
 
             store.connect(username, password);
 
+
             for (Folder f : store.getDefaultFolder().list()){
-                System.out.println(f.getName());
+
+                if(!f.isOpen())
+                    f.open(Folder.READ_ONLY);
+
+                IMAPFolder imapFolder = ((IMAPFolder) f);
+
+                System.out.println("\n\n------------------------------");
+                System.out.println(imapFolder.getName());
+                System.out.println("------------------------------");
+
+                for(Message m :imapFolder.getMessages()){
+                    IMAPMessage im = ((IMAPMessage) m);
+
+                    System.out.println(imapFolder.getUID(im));
+                    System.out.println(im.getSubject());
+                    System.out.println();
+
+                }
+
             }
 
             store.close();
@@ -83,18 +106,45 @@ public class Protocol {
             final List<EMail> mails = new ArrayList<>();
 
             Folder[] list = store.getDefaultFolder().list();
-            for (Folder f : list) {
-                if (!f.isOpen())
-                    f.open(Folder.READ_ONLY);
+            for (Folder folder : list) {
+                if (!folder.isOpen())
+                    folder.open(Folder.READ_ONLY);
 
-                for (final Message m : f.getMessages()) {
-                    final EMail em = new EMail(m, f.getName());
+                IMAPFolder imapFolder = ((IMAPFolder) folder);
+
+                for (final Message m : imapFolder.getMessages()) {
+                    final EMail em = new EMail(m, imapFolder.getUID(m), imapFolder.getName());
 
                     mails.add(em);
 
                 }
 
-                f.close();
+                imapFolder.close();
+
+            }
+
+            return mails.toArray(new EMail[mails.size()]);
+        }catch (MessagingException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static EMail[] loadAllMessagesAfter(long uid){
+        try {
+            final Store store = login();
+            final List<EMail> mails = new ArrayList<>();
+
+            Folder[] list = store.getDefaultFolder().list();
+            for (Folder folder : list) {
+                if (!folder.isOpen())
+                    folder.open(Folder.READ_ONLY);
+
+                IMAPFolder imapFolder = ((IMAPFolder) folder);
+
+                long validaty = imapFolder.getUIDValidity();
+
+                imapFolder.close();
 
             }
 
