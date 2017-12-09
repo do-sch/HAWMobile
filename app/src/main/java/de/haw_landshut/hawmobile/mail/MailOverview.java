@@ -94,7 +94,9 @@ public class MailOverview extends Fragment {
 
         mRecyclerView = view.findViewById(R.id.mailsRecycleView);
 
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), RecyclerView.VERTICAL));
