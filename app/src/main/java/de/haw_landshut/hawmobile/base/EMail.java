@@ -5,6 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.support.annotation.NonNull;
 
 import javax.mail.*;
+import javax.mail.internet.InternetAddress;
 import java.io.IOException;
 import java.util.Date;
 
@@ -25,8 +26,8 @@ public class EMail {
             this.setFoldername(foldername);
             this.setDate(message.getReceivedDate());
             this.setSenderMails(getFromAddresses(message.getFrom()));
-            this.setBcc(getFromAddresses(message.getRecipients(Message.RecipientType.BCC)));
-            this.setCc(getFromAddresses(message.getRecipients(Message.RecipientType.CC)));
+            this.setBcc(addresses2strings(message.getRecipients(Message.RecipientType.BCC)));
+            this.setCc(addresses2strings(message.getRecipients(Message.RecipientType.CC)));
             this.setFoldername(foldername);
 
         } catch (MessagingException m){
@@ -39,7 +40,9 @@ public class EMail {
     @NonNull
     private String foldername;
 
-    private String subject, cc, bcc, senderMails;
+    private String subject, senderMails;
+
+    private String[] cc, bcc;
 
     private Date date;
 
@@ -69,6 +72,22 @@ public class EMail {
         return senderMails;
     }
 
+    public String[] getCc() {
+        return cc;
+    }
+
+    public void setCc(String[] cc) {
+        this.cc = cc;
+    }
+
+    public String[] getBcc() {
+        return bcc;
+    }
+
+    public void setBcc(String[] bcc) {
+        this.bcc = bcc;
+    }
+
     public void setSenderMails(String senderMails) {
         this.senderMails = senderMails;
     }
@@ -79,22 +98,6 @@ public class EMail {
 
     public void setFoldername(String foldername) {
         this.foldername = foldername;
-    }
-
-    public String getCc() {
-        return cc;
-    }
-
-    public void setCc(String cc) {
-        this.cc = cc;
-    }
-
-    public String getBcc() {
-        return bcc;
-    }
-
-    public void setBcc(String bcc) {
-        this.bcc = bcc;
     }
 
     public boolean isSeen() {
@@ -137,18 +140,32 @@ public class EMail {
         this.text = text;
     }
 
-    private static String getFromAddresses(Address[] addresses){
-        StringBuilder stb = new StringBuilder();
-
-        if(addresses == null)
+    private static String[] addresses2strings(Address[] addresses){
+        if(addresses == null || addresses.length == 0)
             return null;
 
-        for(Address a : addresses)
-            stb.append(a.toString() + ", ");
+        final int addressesLength = addresses.length;
+        final String[] strings = new String[addresses.length];
+        for (int i = 0; i < addressesLength; i++) {
+            Address address = addresses[i];
+            final InternetAddress internetAddress = ((InternetAddress) address);
 
-        stb.deleteCharAt(stb.length()-1);
+            strings[i] = internetAddress.getPersonal() == null ? ((InternetAddress) address).getAddress() : internetAddress.getPersonal()+" ("+internetAddress.getAddress()+")";
+        }
+        return strings;
+    }
 
-        return stb.toString();
+    private static String getFromAddresses(Address[] addresses){
+
+        for(Address address : addresses){
+            InternetAddress internetAddress = ((InternetAddress) address);
+            final String name = internetAddress.getPersonal();
+            if (name == null)
+                return internetAddress.getAddress();
+            return name;
+        }
+
+        return null;
     }
 
     private String getText(Message p) throws MessagingException, IOException {

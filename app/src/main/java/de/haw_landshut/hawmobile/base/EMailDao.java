@@ -1,9 +1,6 @@
 package de.haw_landshut.hawmobile.base;
 
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Query;
+import android.arch.persistence.room.*;
 
 import java.util.List;
 
@@ -28,6 +25,9 @@ public interface EMailDao {
     @Query("SELECT COUNT(*) FROM email WHERE foldername=:foldername")
     long getMessageCountInFolder(String foldername);
 
+    @Query("SELECT name FROM contact WHERE address=:address")
+    String getNameFromEMail(String address);
+
     @Query("DELETE FROM email WHERE foldername=:foldername")
     void deleteAllEMailsFromFolder(String foldername);
 
@@ -37,8 +37,14 @@ public interface EMailDao {
     @Insert
     void insertAllFolders(EMailFolder... folders);
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertContacts(Contact... contacts);
+
     @Delete
     void deleteEMail(EMail email);
+
+    @Delete
+    void deleteContact(Contact... contacts);
 
 
 

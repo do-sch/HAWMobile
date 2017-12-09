@@ -2,6 +2,8 @@ package de.haw_landshut.hawmobile.mail;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +52,15 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         holder.senderView.setText(m.getSenderMails());
         holder.dateView.setText(df.format(m.getDate()));
         holder.contentView.setText(m.getText());
+
+        if(!m.isSeen()){
+            holder.subjectView.setTypeface(Typeface.DEFAULT_BOLD);
+            holder.senderView.setTypeface(Typeface.DEFAULT_BOLD);
+            holder.dateView.setTypeface(Typeface.DEFAULT_BOLD);
+            holder.dateView.setTextColor(Color.rgb(0, 150, 255));
+            holder.subjectView.setTextColor(Color.BLACK);
+            holder.senderView.setTextColor(Color.BLACK);
+        }
     }
 
     @Override

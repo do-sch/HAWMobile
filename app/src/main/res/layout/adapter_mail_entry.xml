@@ -5,8 +5,8 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="16dip"
                 android:paddingEnd="16dip"
-                android:paddingTop="6dip"
-                android:paddingBottom="6dip">
+                android:paddingTop="14dip"
+                android:paddingBottom="14dip">
 
     <TextView android:id="@+id/maildate"
               android:layout_width="wrap_content"
@@ -16,33 +16,40 @@
               android:text="01.01.2017"
               android:textSize="12sp"/>
 
-    <TextView android:id="@+id/subject" android:layout_width="match_parent" android:layout_height="26dp"
-              android:layout_alignParentTop="true"
+    <TextView android:id="@+id/subject" android:layout_width="match_parent"
+              android:layout_height="22dp"
               android:layout_alignParentStart="true"
               android:layout_alignWithParentIfMissing="true"
               android:layout_toStartOf="@id/maildate"
               android:gravity="center_vertical"
-              android:textSize="20sp"
+              android:textSize="16sp"
+              android:textColor="@color/oil"
+              android:ellipsize="end"
+              android:maxLines="1"
               android:text="Subject"/>
 
     <TextView android:id="@+id/sender"
               android:layout_width="match_parent"
-              android:layout_height="26dip"
+              android:layout_height="18dip"
               android:layout_alignParentStart="true"
               android:layout_alignParentEnd="true"
               android:layout_below="@id/subject"
               android:gravity="center_vertical"
+              android:ellipsize="end"
+              android:maxLines="1"
               android:text="sender@mail.com"
-              android:textSize="16sp"/>
+              android:textSize="14sp"/>
 
     <TextView android:id="@+id/mailcontent"
               android:layout_width="match_parent"
-              android:layout_height="26sp"
+              android:layout_height="18dp"
               android:layout_alignParentStart="true"
               android:layout_alignParentEnd="true"
               android:layout_below="@id/sender"
               android:gravity="center_vertical"
-              android:textSize="16sp"
+              android:ellipsize="end"
+              android:maxLines="1"
+              android:textSize="14sp"
               android:text="Dies ist Text"/>
 
 

@@ -7,11 +7,13 @@ import com.sun.mail.imap.IMAPMessage;
 import com.sun.mail.imap.IMAPNestedMessage;
 import com.sun.mail.pop3.POP3Folder;
 import de.haw_landshut.hawmobile.Credentials;
+import de.haw_landshut.hawmobile.base.Contact;
 import de.haw_landshut.hawmobile.base.EMail;
 import de.haw_landshut.hawmobile.base.EMailDao;
 import de.haw_landshut.hawmobile.base.EMailFolder;
 
 import javax.mail.*;
+import javax.mail.internet.InternetAddress;
 import java.io.IOException;
 import java.util.*;
 
@@ -55,12 +57,18 @@ public class Protocol {
             if(!folder.isOpen())
                 folder.open(Folder.READ_ONLY);
 
-            System.out.println("Next:" + folder.getUIDNext());
-            System.out.println(":::::::::::::::::::::::::::::::::::");
+            Message[] messages = folder.getMessages();
 
-            for (final Message m : folder.getMessages()){
-                System.out.println("UID: " + folder.getUID(m));
-                System.out.println("Subject: " + m.getSubject());
+            for(Message m : messages){
+                System.out.println(m.getSubject());
+                Address[] from = m.getFrom();
+                for (int i = 0, fromLength = from.length; i < fromLength; i++) {
+                    Address a = from[i];
+
+                    System.out.println(((InternetAddress) a).getPersonal());
+                    System.out.println(((InternetAddress) a).getAddress());
+
+                }
                 System.out.println();
             }
 
@@ -91,6 +99,8 @@ public class Protocol {
                 eMailFolders[i] = new EMailFolder(imapFolder.getName(), imapFolder.getUIDValidity(), imapFolder.getUIDNext());
 
                 for (final Message m : imapFolder.getMessages()) {
+                    //insert Addresses
+                    insertAddresses(dao, m.getFrom());
                     final EMail em = new EMail(m, imapFolder.getUID(m), imapFolder.getName());
 
                     mails.add(em);
@@ -108,7 +118,7 @@ public class Protocol {
         }
     }
 
-    public static void updateAllFolders(EMailDao eMailDao){
+    public static void updateAllFolders(EMailDao dao){
         try {
             final Store store = Protocol.store;
             final List<EMail> mails = new ArrayList<>();
@@ -123,20 +133,21 @@ public class Protocol {
                 final IMAPFolder imapFolder = ((IMAPFolder) folder);
 
 
-                final long oldNextuid = eMailDao.getFolderNextuid(imapFolder.getName());
+                final long oldNextuid = dao.getFolderNextuid(imapFolder.getName());
                 final long newNextuid = imapFolder.getUIDNext();
                 if(newNextuid != oldNextuid) {
                     //Wenn UIDs eines Ordners nicht mehr gültig
                     final long validaty = imapFolder.getUIDValidity();
-                    if (eMailDao.getFolderUIDValidaty(imapFolder.getName()) != validaty) {
+                    if (dao.getFolderUIDValidaty(imapFolder.getName()) != validaty) {
                         //Lösche Alle Emails des Ordners und lade sie neu in die Datenbank
-                        eMailDao.deleteAllEMailsFromFolder(imapFolder.getName());
+                        dao.deleteAllEMailsFromFolder(imapFolder.getName());
                         final EMail[] folderMails = new EMail[imapFolder.getMessageCount()];
                         for (int i = 0; i < imapFolder.getMessages().length; i++) {
                             final Message m = imapFolder.getMessage(i + 1);
                             folderMails[i] = new EMail(m, imapFolder.getUID(m), folder.getName());
+                            insertAddresses(dao, m.getFrom());
                         }
-                        eMailDao.insertAllEMails(folderMails);
+                        dao.insertAllEMails(folderMails);
                     } else {
                         //get new Messages
                         final Message[] newMessages = imapFolder.getMessagesByUID(oldNextuid-1, newNextuid-1);
@@ -144,15 +155,17 @@ public class Protocol {
                         for (int i = 0; i < newMessages.length; i++) {
                             final Message m = newMessages[i];
                             newEmails[i] = new EMail(m, imapFolder.getUID(m), imapFolder.getName());
+                            insertAddresses(dao, m.getFrom());
                         }
-                        eMailDao.insertAllEMails(newEmails);
+                        dao.insertAllEMails(newEmails);
 
+                        //TODO: was passiert, wenn eine Message gelöscht und eine neue anstattdessen hierher verschoben wird
                         //check for deleted Messages
-                        if (imapFolder.getMessageCount() != eMailDao.getMessageCountInFolder(imapFolder.getName())){
-                            final List<EMail> oldMails = eMailDao.getAllEmailsFromFolder(imapFolder.getName(), eMailDao.getFolderNextuid(imapFolder.getName()) - 1);
+                        if (imapFolder.getMessageCount() != dao.getMessageCountInFolder(imapFolder.getName())){
+                            final List<EMail> oldMails = dao.getAllEmailsFromFolder(imapFolder.getName(), dao.getFolderNextuid(imapFolder.getName()) - 1);
                             for (EMail m : oldMails){
                                 if (imapFolder.getMessageByUID(m.getUid()) == null)
-                                    eMailDao.deleteEMail(m);
+                                    dao.deleteEMail(m);
                             }
                         }
 
@@ -165,6 +178,12 @@ public class Protocol {
 
         }catch (MessagingException e){
             e.printStackTrace();
+        }
+    }
+
+    private static void insertAddresses(final EMailDao dao, final Address[] addresses){
+        for(final Address a : addresses){
+            dao.insertContacts(new Contact(a));
         }
     }
 

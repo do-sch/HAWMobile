@@ -12,8 +12,10 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.*;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 import de.haw_landshut.hawmobile.MainActivity;
 import de.haw_landshut.hawmobile.R;
@@ -84,6 +86,15 @@ public class MailOverview extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.d("onOptionsItemSelected", item.getTitle().toString());
+        switch (item.getItemId()){
+            case R.id.mailFolder:
+                final View folderButton = getActivity().findViewById(R.id.mailFolder);
+                final PopupMenu popupMenu = new PopupMenu(getActivity(), folderButton);
+                popupMenu.getMenu().add("Dies ist ein Test");
+                popupMenu.getMenu().add("Dis auch");
+                popupMenu.show();
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -100,6 +111,31 @@ public class MailOverview extends Fragment {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), RecyclerView.VERTICAL));
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(dy > 0 && mFloatingActionButton.isShown()){
+                    mFloatingActionButton.hide();
+                } else if (dy < 0 && !mFloatingActionButton.isShown()) {
+                    mFloatingActionButton.show();
+                }
+            }
+        });
+
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+        };
+        final ItemTouchHelper ith = new ItemTouchHelper(simpleCallback);
+        ith.attachToRecyclerView(mRecyclerView);
 
         mSwipeRefreshLayout = view.findViewById(R.id.swiperefresh);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
