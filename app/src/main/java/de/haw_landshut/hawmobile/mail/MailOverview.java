@@ -165,10 +165,10 @@ public class MailOverview extends Fragment {
             final List<EMail> mailList = eMailDao.getAllEmailsFromFolder("INBOX");
 
             if (mailList != null) {
-                final MailEntry[] mails = MailEntry.getEntriesFromBase(mailList);
-                Log.d("MailOverview.B2MEA", "doInBackground: mailsCount: " + mails.length);
+//                final MailEntry[] mails = MailEntry.getEntriesFromBase(mailList);
+//                Log.d("MailOverview.B2MEA", "doInBackground: mailsCount: " + mails.length);
 
-                return new MailEntryAdapter(mails);
+                return new MailEntryAdapter(mailList);
 
             }
             return null;

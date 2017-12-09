@@ -2,23 +2,23 @@ package de.haw_landshut.hawmobile.base;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import javax.mail.*;
 import java.io.IOException;
 import java.util.Date;
 
-@Entity
+@Entity(primaryKeys = {"uid", "foldername"})
 public class EMail {
 
     public EMail(){
 
     }
 
-    public EMail(Message message, String foldername){
+    public EMail(Message message, long uid, String foldername){
         try {
 
-            this.setMsgnum(message.getMessageNumber());
+            this.setUid(uid);
             this.setAnswered(message.isSet(Flags.Flag.ANSWERED));
             this.setSeen(message.isSet(Flags.Flag.SEEN));
             this.setSubject(message.getSubject());
@@ -34,12 +34,12 @@ public class EMail {
         }
     }
 
-    @PrimaryKey(autoGenerate = true)
-    private int emkey;
+    private long uid;
 
-    private int msgnum;
+    @NonNull
+    private String foldername;
 
-    private String subject, foldername, cc, bcc, senderMails;
+    private String subject, cc, bcc, senderMails;
 
     private Date date;
 
@@ -49,20 +49,12 @@ public class EMail {
     private String text;
 
 
-    public int getMsgnum() {
-        return msgnum;
+    public long getUid() {
+        return uid;
     }
 
-    public void setMsgnum(int msgnum) {
-        this.msgnum = msgnum;
-    }
-
-    public int getEmkey() {
-        return emkey;
-    }
-
-    public void setEmkey(int emkey) {
-        this.emkey = emkey;
+    public void setUid(long uid) {
+        this.uid = uid;
     }
 
     public String getSubject() {

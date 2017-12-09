@@ -1,5 +1,6 @@
 package de.haw_landshut.hawmobile.mail;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,6 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import de.haw_landshut.hawmobile.R;
+import de.haw_landshut.hawmobile.base.EMail;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.ViewHolder> {
 
@@ -21,9 +27,11 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         }
     }
 
-    private MailEntry[] messages;
+    private List<EMail> messages;
+    @SuppressLint("SimpleDateFormat")
+    private DateFormat df = new SimpleDateFormat("dd.MM.yy");
 
-    public MailEntryAdapter(MailEntry[] messages){
+    public MailEntryAdapter(List<EMail> messages){
         this.messages = messages;
     }
 
@@ -37,16 +45,16 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
 
     @Override
     public void onBindViewHolder(MailEntryAdapter.ViewHolder holder, int position) {
-        MailEntry m = messages[position];
+        EMail m = messages.get(position);
         holder.subjectView.setText(m.getSubject());
-        holder.senderView.setText(m.getSender());
-        holder.dateView.setText(m.getDate());
-        holder.contentView.setText(m.getContent());
+        holder.senderView.setText(m.getSenderMails());
+        holder.dateView.setText(df.format(m.getDate()));
+        holder.contentView.setText(m.getText());
     }
 
     @Override
     public int getItemCount() {
-        return messages.length;
+        return messages.size();
     }
 
 }

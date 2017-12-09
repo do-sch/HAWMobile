@@ -68,7 +68,7 @@ public class ScheduleFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        ocl = new OnClickLabel();
+//        ocl = new OnClickLabel();
     }
 
     @Override
