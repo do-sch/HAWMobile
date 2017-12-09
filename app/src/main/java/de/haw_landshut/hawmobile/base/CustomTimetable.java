@@ -7,23 +7,18 @@ import android.support.annotation.NonNull;
 
 @Entity
 public class CustomTimetable{
+
+    public CustomTimetable(){
+
+    }
     @PrimaryKey
-    @NonNull
-    private String weekDay;
+    private long timetablekey;
 
     @ColumnInfo
     private String prof;
 
     @ColumnInfo
     private String fach;
-
-    public String getWeekDay() {
-        return weekDay;
-    }
-
-    public void setWeekDay(String weekDay) {
-        this.weekDay = weekDay;
-    }
 
     public String getProf() {
         return prof;
@@ -40,4 +35,13 @@ public class CustomTimetable{
     public void setFach(String fach) {
         this.fach = fach;
     }
+
+    public long getTimetablekey() {
+        return timetablekey;
+    }
+
+    public void setTimetablekey(long timetablekey) {
+        this.timetablekey = timetablekey;
+    }
+
 }
