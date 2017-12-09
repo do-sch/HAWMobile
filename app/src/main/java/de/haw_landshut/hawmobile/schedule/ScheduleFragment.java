@@ -80,7 +80,7 @@ public class ScheduleFragment extends Fragment {
 
 //        ocl = new OnClickLabel();
         preference=getActivity().getPreferences(Context.MODE_PRIVATE);
-        new BeginnInsertion().execute();
+       // new BeginnInsertion().execute();
 
     }
 
