@@ -16,11 +16,23 @@ public interface ScheduleDao {
     @Query("SELECT * FROM FaecherData WHERE studiengang=:studiengang")
     List<FaecherData> getFaecherByStudiengang(String studiengang);
 
+    @Query("SELECT * FROM CustomTimetable")
+    List<CustomTimetable>getTimetable();
+
+    @Query("SELECT * FROM FaecherData WHERE studiengang=:studiengang AND fach LIKE:fach %")
+    List<FaecherData>getFaecherDataByChars(String studiengang,String fach);
+
+    @Query("DELETE * FROM CustomTimetable")
+    void deleteWholeCustomTimetable();
+
     @Insert
     void insertAlleProfs(ProfData... profs);
 
     @Insert
     void insertAlleFaecher(FaecherData... faecher);
+
+    @Insert
+    void insertEmptyTimetable(CustomTimetable...customtimetables);
 
     @Delete
     void deleteProf(ProfData prof);

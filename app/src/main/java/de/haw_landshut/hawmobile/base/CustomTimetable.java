@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 
 @Entity
 public class CustomTimetable{
-    static int keycounter = 1;
+    static int keycounter = 0;
 
     public CustomTimetable(String prof,String fach) {
         this.timetablekey=keycounter;
