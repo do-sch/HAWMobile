@@ -19,10 +19,11 @@ public interface ScheduleDao {
     @Query("SELECT * FROM CustomTimetable")
     List<CustomTimetable>getTimetable();
 
-    @Query("SELECT * FROM FaecherData WHERE studiengang=:studiengang AND fach LIKE:fach %")
+    //Leerzeichen bei LIKE:fach raus oder rein, wegen fach erkennen, oder erkennt er dann leerzeichen??? a % , oder a%
+    @Query("SELECT * FROM FaecherData WHERE studiengang=:studiengang AND fach LIKE:fach")
     List<FaecherData>getFaecherDataByChars(String studiengang,String fach);
 
-    @Query("DELETE * FROM CustomTimetable")
+    @Query("DELETE  FROM CustomTimetable")
     void deleteWholeCustomTimetable();
 
     @Insert

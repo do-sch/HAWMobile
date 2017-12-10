@@ -43,38 +43,38 @@
             <TableRow android:layout_width="match_parent" android:layout_height="match_parent"
                       android:layout_marginBottom="3dp">
                 <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_blanc"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_textView_blanc"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="Montag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_monday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_monday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="Dienstag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_tuesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_tuesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="Mittwoch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_wednesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_wednesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="Donnerstag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_thursday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_thursday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="Freitag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_friday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_friday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
             </TableRow>
@@ -83,37 +83,37 @@
                     android:layout_height="match_parent">
                 <TextView
                         android:text="08:45\n-\n10:15"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h1"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h1_monday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h1_monday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp" android:text="123123"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h1_tuesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h1_tuesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h1_wednesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h1_wednesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h1_thursday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h1_thursday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h1_friday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h1_friday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
             </TableRow>
@@ -122,38 +122,38 @@
                     android:layout_height="match_parent">
                 <TextView
                         android:text="10:30\n-\n12:00"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h2"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h2_monday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h2_monday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h2_tuesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h2_tuesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h2_wednesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h2_wednesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h2_thursday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h2_thursday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h2_friday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h2_friday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
             </TableRow>
@@ -162,38 +162,38 @@
                     android:layout_height="match_parent">
                 <TextView
                         android:text="12:50\n-\n14:20"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h3"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h3_monday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h3_monday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h3_tuesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h3_tuesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h3_wednesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h3_wednesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h3_thursday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h3_thursday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h3_friday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h3_friday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
             </TableRow>
@@ -202,76 +202,76 @@
                     android:layout_height="match_parent">
                 <TextView
                         android:text="14:30\n-\n16:00"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h4"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h4"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h4_monday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h4_monday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h4_tuesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h4_tuesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h4_wednesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h4_wednesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h4_thursday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h4_thursday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h4_friday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h4_friday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
             </TableRow>
             <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
                 <TextView
                         android:text="16.10\n-\n18:20"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h5"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h5"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h5_monday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h5_monday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h5_tuesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h5_tuesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h5_wednesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h5_wednesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h5_thursday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h5_thursday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h5_friday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h5_friday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
             </TableRow>
@@ -280,38 +280,38 @@
                     android:layout_height="match_parent">
                 <TextView
                         android:text="18.35\n-\n19.20"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h6"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h6"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h6_monday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h6_monday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h6_tuesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h6_tuesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h6_wednesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h6_wednesday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h6_thursday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h6_thursday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
                 <TextView
                         android:text="TextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_tv_h6_friday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" android:id="@+id/schedule_tv_h6_friday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                         android:paddingRight="2dp"/>
             </TableRow>

@@ -42,10 +42,13 @@ public class ScheduleFragment extends Fragment {
     private View.OnClickListener ocl;
     public static BottomSheetBehavior mBottomSheetBehavior1;
     View bottomSheet;
+    public static TextView mo1, mo2, mo3, mo4, mo5, mo6, di1, di2, di3, di4, di5, di6, mi1, mi2, mi3, mi4, mi5, mi6, do1, do2, do3, do4, do5, do6, fr1, fr2, fr3, fr4, fr5, fr6;
     public static TextView currentTV;
     public static EditText et_fach;
     public static EditText et_prof;
     public static EditText et_raum;
+
+
     Button edit;
     Button save;
     Button cancel;
@@ -91,7 +94,7 @@ public class ScheduleFragment extends Fragment {
 
         ocl = new OnClickLabel();
         preference=getActivity().getPreferences(Context.MODE_PRIVATE);
-        //new BeginnInsertion().execute();
+        new BeginnInsertion().execute();
 
     }
 
@@ -110,74 +113,74 @@ public class ScheduleFragment extends Fragment {
         mBottomSheetBehavior1 = BottomSheetBehavior.from(bottomSheet);
 
         //Montags
-        final TextView m1 = (TextView)view.findViewById(R.id.schedule_tv_h1_monday);
-        m1.setOnClickListener(ocl);
-        final TextView m2 = (TextView)view.findViewById(R.id.schedule_tv_h3_monday);
-        m2.setOnClickListener(ocl);
-        final TextView m3 = (TextView)view.findViewById(R.id.schedule_tv_h2_monday);
-        m3.setOnClickListener(ocl);
-        final TextView m4 = (TextView)view.findViewById(R.id.schedule_tv_h4_monday);
-        m4.setOnClickListener(ocl);
-        final TextView m5 = (TextView)view.findViewById(R.id.schedule_tv_h5_monday);
-        m5.setOnClickListener(ocl);
-        final TextView m6 = (TextView)view.findViewById(R.id.schedule_tv_h6_monday);
-        m6.setOnClickListener(ocl);
+        mo1 = (TextView)view.findViewById(R.id.schedule_tv_h1_monday);
+        mo1.setOnClickListener(ocl);
+        mo2 = (TextView)view.findViewById(R.id.schedule_tv_h3_monday);
+        mo2.setOnClickListener(ocl);
+        mo3 = (TextView)view.findViewById(R.id.schedule_tv_h2_monday);
+        mo3.setOnClickListener(ocl);
+        mo4 = (TextView)view.findViewById(R.id.schedule_tv_h4_monday);
+        mo4.setOnClickListener(ocl);
+        mo5 = (TextView)view.findViewById(R.id.schedule_tv_h5_monday);
+        mo5.setOnClickListener(ocl);
+        mo6 = (TextView)view.findViewById(R.id.schedule_tv_h6_monday);
+        mo6.setOnClickListener(ocl);
 
         //Dienstags
-        final TextView d1 = (TextView)view.findViewById(R.id.schedule_tv_h1_tuesday);
-        d1.setOnClickListener(ocl);
-        final TextView d2 = (TextView)view.findViewById(R.id.schedule_tv_h3_tuesday);
-        d2.setOnClickListener(ocl);
-        final TextView d3 = (TextView)view.findViewById(R.id.schedule_tv_h2_tuesday);
-        d3.setOnClickListener(ocl);
-        final TextView d4 = (TextView)view.findViewById(R.id.schedule_tv_h4_tuesday);
-        d4.setOnClickListener(ocl);
-        final TextView d5 = (TextView)view.findViewById(R.id.schedule_tv_h5_tuesday);
-        d5.setOnClickListener(ocl);
-        final TextView d6 = (TextView)view.findViewById(R.id.schedule_tv_h6_tuesday);
-        d6.setOnClickListener(ocl);
+        di1 = (TextView)view.findViewById(R.id.schedule_tv_h1_tuesday);
+        di1.setOnClickListener(ocl);
+        di2 = (TextView)view.findViewById(R.id.schedule_tv_h3_tuesday);
+        di2.setOnClickListener(ocl);
+        di3 = (TextView)view.findViewById(R.id.schedule_tv_h2_tuesday);
+        di3.setOnClickListener(ocl);
+        di4 = (TextView)view.findViewById(R.id.schedule_tv_h4_tuesday);
+        di4.setOnClickListener(ocl);
+        di5 = (TextView)view.findViewById(R.id.schedule_tv_h5_tuesday);
+        di5.setOnClickListener(ocl);
+        di6 = (TextView)view.findViewById(R.id.schedule_tv_h6_tuesday);
+        di6.setOnClickListener(ocl);
 
         //Mittwochs
-        final TextView w1 = (TextView)view.findViewById(R.id.schedule_tv_h1_wednesday);
-        w1.setOnClickListener(ocl);
-        final TextView w2 = (TextView)view.findViewById(R.id.schedule_tv_h3_wednesday);
-        w2.setOnClickListener(ocl);
-        final TextView w3 = (TextView)view.findViewById(R.id.schedule_tv_h2_wednesday);
-        w3.setOnClickListener(ocl);
-        final TextView w4 = (TextView)view.findViewById(R.id.schedule_tv_h4_wednesday);
-        w4.setOnClickListener(ocl);
-        final TextView w5 = (TextView)view.findViewById(R.id.schedule_tv_h5_wednesday);
-        w5.setOnClickListener(ocl);
-        final TextView w6 = (TextView)view.findViewById(R.id.schedule_tv_h6_wednesday);
-        w6.setOnClickListener(ocl);
+        mi1 = (TextView)view.findViewById(R.id.schedule_tv_h1_wednesday);
+        mi1.setOnClickListener(ocl);
+        mi2 = (TextView)view.findViewById(R.id.schedule_tv_h3_wednesday);
+        mi2.setOnClickListener(ocl);
+        mi3 = (TextView)view.findViewById(R.id.schedule_tv_h2_wednesday);
+        mi3.setOnClickListener(ocl);
+        mi4 = (TextView)view.findViewById(R.id.schedule_tv_h4_wednesday);
+        mi4.setOnClickListener(ocl);
+        mi5 = (TextView)view.findViewById(R.id.schedule_tv_h5_wednesday);
+        mi5.setOnClickListener(ocl);
+        mi6 = (TextView)view.findViewById(R.id.schedule_tv_h6_wednesday);
+        mi6.setOnClickListener(ocl);
 
         //Donnerstags
-        final TextView do1 = (TextView)view.findViewById(R.id.schedule_tv_h1_thursday);
+        do1 = (TextView)view.findViewById(R.id.schedule_tv_h1_thursday);
         do1.setOnClickListener(ocl);
-        final TextView do2 = (TextView)view.findViewById(R.id.schedule_tv_h3_thursday);
+        do2 = (TextView)view.findViewById(R.id.schedule_tv_h3_thursday);
         do2.setOnClickListener(ocl);
-        final TextView do3 = (TextView)view.findViewById(R.id.schedule_tv_h2_thursday);
+        do3 = (TextView)view.findViewById(R.id.schedule_tv_h2_thursday);
         do3.setOnClickListener(ocl);
-        final TextView do4 = (TextView)view.findViewById(R.id.schedule_tv_h4_thursday);
+        do4 = (TextView)view.findViewById(R.id.schedule_tv_h4_thursday);
         do4.setOnClickListener(ocl);
-        final TextView do5 = (TextView)view.findViewById(R.id.schedule_tv_h5_thursday);
+        do5 = (TextView)view.findViewById(R.id.schedule_tv_h5_thursday);
         do5.setOnClickListener(ocl);
-        final TextView do6 = (TextView)view.findViewById(R.id.schedule_tv_h6_thursday);
+        do6 = (TextView)view.findViewById(R.id.schedule_tv_h6_thursday);
         do6.setOnClickListener(ocl);
 
         //Freitags
-        final TextView f1 = (TextView)view.findViewById(R.id.schedule_tv_h1_friday);
-        f1.setOnClickListener(ocl);
-        final TextView f2 = (TextView)view.findViewById(R.id.schedule_tv_h3_friday);
-        f2.setOnClickListener(ocl);
-        final TextView f3 = (TextView)view.findViewById(R.id.schedule_tv_h2_friday);
-        f3.setOnClickListener(ocl);
-        final TextView f4 = (TextView)view.findViewById(R.id.schedule_tv_h4_friday);
-        f4.setOnClickListener(ocl);
-        final TextView f5 = (TextView)view.findViewById(R.id.schedule_tv_h5_friday);
-        f5.setOnClickListener(ocl);
-        final TextView f6 = (TextView)view.findViewById(R.id.schedule_tv_h6_monday);
-        f6.setOnClickListener(ocl);
+        fr1 = (TextView)view.findViewById(R.id.schedule_tv_h1_friday);
+        fr1.setOnClickListener(ocl);
+        fr2 = (TextView)view.findViewById(R.id.schedule_tv_h3_friday);
+        fr2.setOnClickListener(ocl);
+        fr3 = (TextView)view.findViewById(R.id.schedule_tv_h2_friday);
+        fr3.setOnClickListener(ocl);
+        fr4 = (TextView)view.findViewById(R.id.schedule_tv_h4_friday);
+        fr4.setOnClickListener(ocl);
+        fr5 = (TextView)view.findViewById(R.id.schedule_tv_h5_friday);
+        fr5.setOnClickListener(ocl);
+        fr6 = (TextView)view.findViewById(R.id.schedule_tv_h6_monday);
+        fr6.setOnClickListener(ocl);
 
 
 
