@@ -180,7 +180,7 @@ public class ScheduleFragment extends Fragment {
         fr4.setOnClickListener(ocl);
         fr5 = (TextView)view.findViewById(R.id.schedule_tv_h5_friday);
         fr5.setOnClickListener(ocl);
-        fr6 = (TextView)view.findViewById(R.id.schedule_tv_h6_monday);
+        fr6 = (TextView)view.findViewById(R.id.schedule_tv_h6_friday);
         fr6.setOnClickListener(ocl);
 
 
