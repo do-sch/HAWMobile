@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -209,6 +210,7 @@ public class MailOverview extends Fragment {
                 Protocol.loadAllMessagesAndFolders(eMailDao);
                 Protocol.logout();
             } catch (MessagingException e){
+                Looper.prepare();
                 Toast.makeText(getContext(), R.string.login_failed, Toast.LENGTH_SHORT).show();
             }
 
