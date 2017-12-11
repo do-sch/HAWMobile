@@ -2,16 +2,20 @@ package de.haw_landshut.hawmobile.base;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 @Entity
 public class CustomTimetable{
-    static int keycounter = 0;
 
-    public CustomTimetable(String prof,String fach) {
-        this.timetablekey=keycounter;
-        keycounter++;
+    public CustomTimetable(){
+
+    }
+
+    @Ignore
+    public CustomTimetable(int key, String prof,String fach) {
+        this.timetablekey=key;
         this.prof=prof;
         this.fach=fach;
 

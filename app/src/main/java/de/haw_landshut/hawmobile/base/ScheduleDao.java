@@ -1,9 +1,6 @@
 package de.haw_landshut.hawmobile.base;
 
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Query;
+import android.arch.persistence.room.*;
 
 import java.util.List;
 
@@ -37,6 +34,11 @@ public interface ScheduleDao {
 
     @Delete
     void deleteProf(ProfData prof);
+
+    @Update
+    void updateTimetable(CustomTimetable customTimetable);
+
+       //         scheduleDao.updateTimetable(new CustomTimetable(34, "Blug", "Leichtbau"));
 
     @Delete
     void deleteFach(FaecherData fach);
