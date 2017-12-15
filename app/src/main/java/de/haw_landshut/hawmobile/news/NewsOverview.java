@@ -1,14 +1,19 @@
 package de.haw_landshut.hawmobile.news;
 
+
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.TextView;
 import de.haw_landshut.hawmobile.R;
+import org.jsoup.Jsoup;
+import java.io.IOException;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +24,7 @@ import de.haw_landshut.hawmobile.R;
  * create an instance of this fragment.
  */
 public class NewsOverview extends Fragment {
+    private TextView textView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -48,8 +54,16 @@ public class NewsOverview extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_news_overview, container, false);
+        textView =  view.findViewById(R.id.textFromWeb);
+        String test="Hello Test";
+        textView.setText(test);
+        //getWebsiteContent();
         return inflater.inflate(R.layout.fragment_news_overview, container, false);
+
     }
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -89,4 +103,41 @@ public class NewsOverview extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+    /**
+     * for News (Schwarzes Brett)
+     */
+
+
+    public void getWebsiteContent()
+    {
+        new getIt().execute();
+    }
+    public class getIt extends AsyncTask<Void,Void,Void>
+    {
+        String content;
+
+        @Override
+        protected Void doInBackground(Void... voids)
+        {
+
+            try
+            {
+                org.jsoup.nodes.Document doc = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html").get();
+                content = doc.text();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            textView.setText(content);
+
+        }
+    }
+
 }
