@@ -2,10 +2,12 @@ package de.haw_landshut.hawmobile.news;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,10 +59,14 @@ public class NewsOverview extends Fragment {
         View view = inflater.inflate(R.layout.fragment_news_overview, container, false);
         textView =  view.findViewById(R.id.textFromWeb);
         String test="Hello Test";
-        textView.setText(test);
+        Log.d("NewOverview", test);
 
         //getWebsiteContent();
-        return inflater.inflate(R.layout.fragment_news_overview, container, false);
+
+        textView.setText(test);
+        textView.setTextColor(Color.BLUE);
+
+        return view;
 
     }
 
