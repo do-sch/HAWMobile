@@ -4,11 +4,13 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.support.design.widget.BottomSheetBehavior;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,7 @@ import de.haw_landshut.hawmobile.base.ProfData;
 import de.haw_landshut.hawmobile.base.ScheduleDao;
 import org.w3c.dom.Text;
 
+import java.util.List;
 import java.util.prefs.Preferences;
 
 /**
@@ -48,6 +51,7 @@ public class ScheduleFragment extends Fragment {
     public static EditText et_fach;
     public static EditText et_prof;
     public static EditText et_raum;
+    public static List<CustomTimetable> timetable;
 
 
     Button edit;
@@ -104,84 +108,85 @@ public class ScheduleFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_schedule, container, false);
-        edit = (Button)view.findViewById(R.id.btn_edit);
-        save = (Button)view.findViewById(R.id.btn_save);
-        cancel = (Button)view.findViewById(R.id.btn_cancel);
-        et_fach = (EditText)view.findViewById(R.id.et_fach);
-        et_prof = (EditText)view.findViewById(R.id.et_prof);
-        et_raum = (EditText)view.findViewById(R.id.et_raum);
+        edit = view.findViewById(R.id.btn_edit);
+        save = view.findViewById(R.id.btn_save);
+        cancel = view.findViewById(R.id.btn_cancel);
+        et_fach = view.findViewById(R.id.et_fach);
+        et_prof = view.findViewById(R.id.et_prof);
+        et_raum = view.findViewById(R.id.et_raum);
         bottomSheet = view.findViewById(R.id.bottom_sheet1);
         mBottomSheetBehavior1 = BottomSheetBehavior.from(bottomSheet);
 
         //Montags
-        mo1 = (TextView)view.findViewById(R.id.schedule_tv_h1_monday);
+        mo1 = view.findViewById(R.id.schedule_tv_h1_monday);
         mo1.setOnClickListener(ocl);
-        mo2 = (TextView)view.findViewById(R.id.schedule_tv_h3_monday);
+        mo2 = view.findViewById(R.id.schedule_tv_h3_monday);
         mo2.setOnClickListener(ocl);
-        mo3 = (TextView)view.findViewById(R.id.schedule_tv_h2_monday);
+        mo3 = view.findViewById(R.id.schedule_tv_h2_monday);
         mo3.setOnClickListener(ocl);
-        mo4 = (TextView)view.findViewById(R.id.schedule_tv_h4_monday);
+        mo4 = view.findViewById(R.id.schedule_tv_h4_monday);
         mo4.setOnClickListener(ocl);
-        mo5 = (TextView)view.findViewById(R.id.schedule_tv_h5_monday);
+        mo5 = view.findViewById(R.id.schedule_tv_h5_monday);
         mo5.setOnClickListener(ocl);
-        mo6 = (TextView)view.findViewById(R.id.schedule_tv_h6_monday);
+        mo6 = view.findViewById(R.id.schedule_tv_h6_monday);
         mo6.setOnClickListener(ocl);
 
         //Dienstags
-        di1 = (TextView)view.findViewById(R.id.schedule_tv_h1_tuesday);
+        di1 = view.findViewById(R.id.schedule_tv_h1_tuesday);
         di1.setOnClickListener(ocl);
-        di2 = (TextView)view.findViewById(R.id.schedule_tv_h3_tuesday);
+        di2 = view.findViewById(R.id.schedule_tv_h3_tuesday);
         di2.setOnClickListener(ocl);
-        di3 = (TextView)view.findViewById(R.id.schedule_tv_h2_tuesday);
+        di3 = view.findViewById(R.id.schedule_tv_h2_tuesday);
         di3.setOnClickListener(ocl);
-        di4 = (TextView)view.findViewById(R.id.schedule_tv_h4_tuesday);
+        di4 = view.findViewById(R.id.schedule_tv_h4_tuesday);
         di4.setOnClickListener(ocl);
-        di5 = (TextView)view.findViewById(R.id.schedule_tv_h5_tuesday);
+        di5 = view.findViewById(R.id.schedule_tv_h5_tuesday);
         di5.setOnClickListener(ocl);
-        di6 = (TextView)view.findViewById(R.id.schedule_tv_h6_tuesday);
+        di6 = view.findViewById(R.id.schedule_tv_h6_tuesday);
         di6.setOnClickListener(ocl);
 
         //Mittwochs
-        mi1 = (TextView)view.findViewById(R.id.schedule_tv_h1_wednesday);
+        mi1 = view.findViewById(R.id.schedule_tv_h1_wednesday);
         mi1.setOnClickListener(ocl);
-        mi2 = (TextView)view.findViewById(R.id.schedule_tv_h3_wednesday);
+        mi2 = view.findViewById(R.id.schedule_tv_h3_wednesday);
         mi2.setOnClickListener(ocl);
-        mi3 = (TextView)view.findViewById(R.id.schedule_tv_h2_wednesday);
+        mi3 = view.findViewById(R.id.schedule_tv_h2_wednesday);
         mi3.setOnClickListener(ocl);
-        mi4 = (TextView)view.findViewById(R.id.schedule_tv_h4_wednesday);
+        mi4 = view.findViewById(R.id.schedule_tv_h4_wednesday);
         mi4.setOnClickListener(ocl);
-        mi5 = (TextView)view.findViewById(R.id.schedule_tv_h5_wednesday);
+        mi5 = view.findViewById(R.id.schedule_tv_h5_wednesday);
         mi5.setOnClickListener(ocl);
-        mi6 = (TextView)view.findViewById(R.id.schedule_tv_h6_wednesday);
+        mi6 = view.findViewById(R.id.schedule_tv_h6_wednesday);
         mi6.setOnClickListener(ocl);
 
         //Donnerstags
-        do1 = (TextView)view.findViewById(R.id.schedule_tv_h1_thursday);
+        do1 = view.findViewById(R.id.schedule_tv_h1_thursday);
         do1.setOnClickListener(ocl);
-        do2 = (TextView)view.findViewById(R.id.schedule_tv_h3_thursday);
+        do2 = view.findViewById(R.id.schedule_tv_h3_thursday);
         do2.setOnClickListener(ocl);
-        do3 = (TextView)view.findViewById(R.id.schedule_tv_h2_thursday);
+        do3 = view.findViewById(R.id.schedule_tv_h2_thursday);
         do3.setOnClickListener(ocl);
-        do4 = (TextView)view.findViewById(R.id.schedule_tv_h4_thursday);
+        do4 = view.findViewById(R.id.schedule_tv_h4_thursday);
         do4.setOnClickListener(ocl);
-        do5 = (TextView)view.findViewById(R.id.schedule_tv_h5_thursday);
+        do5 = view.findViewById(R.id.schedule_tv_h5_thursday);
         do5.setOnClickListener(ocl);
-        do6 = (TextView)view.findViewById(R.id.schedule_tv_h6_thursday);
+        do6 = view.findViewById(R.id.schedule_tv_h6_thursday);
         do6.setOnClickListener(ocl);
 
         //Freitags
-        fr1 = (TextView)view.findViewById(R.id.schedule_tv_h1_friday);
+        fr1 = view.findViewById(R.id.schedule_tv_h1_friday);
         fr1.setOnClickListener(ocl);
-        fr2 = (TextView)view.findViewById(R.id.schedule_tv_h3_friday);
+        fr2 = view.findViewById(R.id.schedule_tv_h3_friday);
         fr2.setOnClickListener(ocl);
-        fr3 = (TextView)view.findViewById(R.id.schedule_tv_h2_friday);
+        fr3 = view.findViewById(R.id.schedule_tv_h2_friday);
         fr3.setOnClickListener(ocl);
-        fr4 = (TextView)view.findViewById(R.id.schedule_tv_h4_friday);
+        fr4 = view.findViewById(R.id.schedule_tv_h4_friday);
         fr4.setOnClickListener(ocl);
-        fr5 = (TextView)view.findViewById(R.id.schedule_tv_h5_friday);
+        fr5 = view.findViewById(R.id.schedule_tv_h5_friday);
         fr5.setOnClickListener(ocl);
-        fr6 = (TextView)view.findViewById(R.id.schedule_tv_h6_friday);
+        fr6 = view.findViewById(R.id.schedule_tv_h6_friday);
         fr6.setOnClickListener(ocl);
+
 
 
 
@@ -195,8 +200,7 @@ public class ScheduleFragment extends Fragment {
                     et_prof.setEnabled(true);
                     et_raum.setEnabled(true);
 
-
-            }
+                }
         });
 
         save.setOnClickListener(new View.OnClickListener() {
@@ -210,6 +214,8 @@ public class ScheduleFragment extends Fragment {
                     et_prof.setEnabled(false);
                     et_raum.setEnabled(false);
                     currentTV.setText(et_fach.getText());
+                    //ScheduleDao scheduleDao = MainActivity.getHawDatabase().scheduleDao();
+                    //scheduleDao.updateTimetable(new CustomTimetable(Integer.parseInt(currentTV.getTag().toString()),et_prof.getText().toString(),et_fach.getText().toString()));
                     ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
 
@@ -234,6 +240,11 @@ public class ScheduleFragment extends Fragment {
 
 
 
+
+        for (int i = 0; i<30; i++)
+        {
+
+        }
 
 
         return view;
@@ -296,6 +307,7 @@ public class ScheduleFragment extends Fragment {
                 }
                 preference.edit().putBoolean("Emptytimetable inserted",true).apply();
             }
+            ScheduleFragment.timetable = scheduleDao.getTimetable();
             return null;
         }
     }

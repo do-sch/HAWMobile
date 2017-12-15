@@ -26,6 +26,7 @@ import de.haw_landshut.hawmobile.base.EMailDao;
 import javax.mail.MessagingException;
 import javax.mail.Store;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * A simple {@link Fragment} subclass.
