@@ -33,15 +33,21 @@
                 android:theme="@style/LoginTheme">
         </activity>
 
-        <service android:name="de.haw_landshut.hawmobile.AuthenticatorService" android:exported="false">
+        <service
+                android:name=".AuthenticatorService"
+                android:exported="false">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator"/>
-        </service>
-    </application>
 
+            <meta-data
+                    android:name="android.accounts.AccountAuthenticator"
+                    android:resource="@xml/authenticator"/>
+        </service>
+
+        <activity android:name=".mail.MailView"
+                android:parentActivityName=".MainActivity">
+        </activity>
+    </application>
 
 </manifest>

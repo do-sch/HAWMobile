@@ -37,5 +37,8 @@
     <string name="Trash">Trash</string>
     <string name="Sent">Sent</string>
     <string name="Drafts">Drafts</string>
+    <string name="undefined">Undefined</string>
+    <string name="downloading">Downloading E-Mails</string>
+    <string name="downloaded">E-Mails were downloaded</string>
 
 </resources>

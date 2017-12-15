@@ -3,9 +3,13 @@ package de.haw_landshut.hawmobile.base;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import javax.activation.MimeType;
 import javax.mail.*;
+import javax.mail.internet.ContentType;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.ParameterList;
 import java.io.IOException;
 import java.util.Date;
 
@@ -29,9 +33,10 @@ public class EMail {
             this.setBcc(addresses2strings(message.getRecipients(Message.RecipientType.BCC)));
             this.setCc(addresses2strings(message.getRecipients(Message.RecipientType.CC)));
             this.setFoldername(foldername);
+            this.setText(getText(message));
 
-        } catch (MessagingException m){
-            m.printStackTrace();
+        } catch (MessagingException | IOException e){
+            e.printStackTrace();
         }
     }
 
@@ -39,6 +44,8 @@ public class EMail {
 
     @NonNull
     private String foldername;
+
+    private String encoding;
 
     private String subject, senderMails;
 
@@ -140,6 +147,14 @@ public class EMail {
         this.text = text;
     }
 
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
     private static String[] addresses2strings(Address[] addresses){
         if(addresses == null || addresses.length == 0)
             return null;
@@ -172,6 +187,7 @@ public class EMail {
         if (p.isMimeType("text/*")) {
             String s = (String)p.getContent();
             isHtml = p.isMimeType("text/html");
+            encoding = p.getContentType();
             return s;
         }
 
@@ -210,6 +226,8 @@ public class EMail {
         if (p.isMimeType("text/*")) {
             String s = (String)p.getContent();
             isHtml = p.isMimeType("text/html");
+//            Log.d("getTextP", new ContentType(p.getContentType()).getParameter("charset"));
+            encoding = p.getContentType();
             return s;
         }
 
