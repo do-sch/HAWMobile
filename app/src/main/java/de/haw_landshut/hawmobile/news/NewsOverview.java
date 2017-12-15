@@ -58,6 +58,7 @@ public class NewsOverview extends Fragment {
         textView =  view.findViewById(R.id.textFromWeb);
         String test="Hello Test";
         textView.setText(test);
+
         //getWebsiteContent();
         return inflater.inflate(R.layout.fragment_news_overview, container, false);
 
