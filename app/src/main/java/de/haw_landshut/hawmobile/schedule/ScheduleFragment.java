@@ -327,9 +327,10 @@ public class ScheduleFragment extends Fragment {
 
             for(int j = 0;j<timetable.size();j++){
                 final int i = j;
-                Log.d("SchFr", j+"");
-                final TextView current = elements[j / elements.length][j % elements[0].length];
+               Log.d("SchFr", elements.length+"");
+                final TextView current = elements[(j / (elements.length-1))][j % (elements[0].length-1)];
                 if (current != null) {
+                    Log.d("SchFr", j+"");
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
