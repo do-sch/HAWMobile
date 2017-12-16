@@ -1,56 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="16dip"
-                android:paddingEnd="16dip"
-                android:paddingTop="14dip"
-                android:paddingBottom="14dip">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <TextView android:id="@+id/maildate"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_alignParentEnd="true"
-              android:layout_alignParentTop="true"
-              android:text="01.01.2017"
-              android:textSize="12sp"/>
+    <RelativeLayout
+            android:id="@+id/view_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorAccent">
 
-    <TextView android:id="@+id/subject" android:layout_width="match_parent"
-              android:layout_height="22dp"
-              android:layout_alignParentStart="true"
-              android:layout_alignWithParentIfMissing="true"
-              android:layout_toStartOf="@id/maildate"
-              android:gravity="center_vertical"
-              android:textSize="16sp"
-              android:textColor="@color/oil"
-              android:ellipsize="end"
-              android:maxLines="1"
-              android:text="Subject"/>
+        <ImageView
+                android:id="@+id/delete_icon"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/delete_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:contentDescription="@string/delete"/>
 
-    <TextView android:id="@+id/sender"
-              android:layout_width="match_parent"
-              android:layout_height="18dip"
-              android:layout_alignParentStart="true"
-              android:layout_alignParentEnd="true"
-              android:layout_below="@id/subject"
-              android:gravity="center_vertical"
-              android:ellipsize="end"
-              android:maxLines="1"
-              android:text="sender@mail.com"
-              android:textSize="14sp"/>
+    </RelativeLayout>
 
-    <TextView android:id="@+id/mailcontent"
-              android:layout_width="match_parent"
-              android:layout_height="18dp"
-              android:layout_alignParentStart="true"
-              android:layout_alignParentEnd="true"
-              android:layout_below="@id/sender"
-              android:gravity="center_vertical"
-              android:ellipsize="end"
-              android:maxLines="1"
-              android:textSize="14sp"
-              android:text="Dies ist Text"/>
+    <RelativeLayout
+                    android:id="@+id/view_foreground"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dip"
+                    android:paddingEnd="16dip"
+                    android:paddingTop="14dip"
+                    android:background="@color/white"
+                    android:paddingBottom="14dip">
 
+        <TextView android:id="@+id/maildate"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentEnd="true"
+                  android:layout_alignParentTop="true"
+                  android:textSize="12sp"/>
 
-</RelativeLayout>
+        <TextView android:id="@+id/subject" android:layout_width="match_parent"
+                  android:layout_height="22dp"
+                  android:layout_alignParentStart="true"
+                  android:layout_alignWithParentIfMissing="true"
+                  android:layout_toStartOf="@id/maildate"
+                  android:gravity="center_vertical"
+                  android:textSize="16sp"
+                  android:textColor="@color/oil"
+                  android:ellipsize="end"
+                  android:maxLines="1"/>
+
+        <TextView android:id="@+id/sender"
+                  android:layout_width="match_parent"
+                  android:layout_height="18dip"
+                  android:layout_alignParentStart="true"
+                  android:layout_alignParentEnd="true"
+                  android:layout_below="@id/subject"
+                  android:gravity="center_vertical"
+                  android:ellipsize="end"
+                  android:maxLines="1"
+                  android:textSize="14sp"/>
+
+        <TextView android:id="@+id/mailcontent"
+                  android:layout_width="match_parent"
+                  android:layout_height="18dp"
+                  android:layout_alignParentStart="true"
+                  android:layout_alignParentEnd="true"
+                  android:layout_below="@id/sender"
+                  android:gravity="center_vertical"
+                  android:ellipsize="end"
+                  android:maxLines="1"
+                  android:textSize="14sp"/>
+
+    </RelativeLayout>
+</FrameLayout>

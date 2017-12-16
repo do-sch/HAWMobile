@@ -40,5 +40,6 @@
     <string name="undefined">Undefined</string>
     <string name="downloading">Downloading E-Mails</string>
     <string name="downloaded">E-Mails were downloaded</string>
+    <string name="delete">Delete</string>
 
 </resources>

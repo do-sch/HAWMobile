@@ -1,7 +1,7 @@
 package de.haw_landshut.hawmobile.mail;
 
-import android.os.AsyncTask;
 import android.util.Log;
+import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
 import de.haw_landshut.hawmobile.Credentials;
 import de.haw_landshut.hawmobile.base.Contact;
@@ -49,18 +49,22 @@ public class Protocol {
 
             store.connect(username, password);
 
-            IMAPFolder folder = ((IMAPFolder) store.getDefaultFolder().getFolder("Trash"));
+            IMAPFolder folder = ((IMAPFolder) store.getDefaultFolder().getFolder("INBOX"));
 
             if(!folder.isOpen())
-                folder.open(Folder.READ_ONLY);
+                folder.open(Folder.READ_WRITE);
 
             Message[] messages = folder.getMessages();
 
             for(Message m : messages){
-                System.out.println(m.getContentType());
+                if(folder.getUID(m) == 25){
+                    m.setFlag(Flags.Flag.DELETED, true);
+                    break;
+                }
 
             }
 
+            folder.close(true);
 
             store.close();
 
@@ -122,7 +126,7 @@ public class Protocol {
 
                 final IMAPFolder imapFolder = ((IMAPFolder) folder);
 
-
+                //TODO: Auf Flag.SEEN überprüfen
                 final long oldNextuid = dao.getFolderNextuid(imapFolder.getName());
                 final long newNextuid = imapFolder.getUIDNext();
                 if(newNextuid != oldNextuid) {
@@ -169,6 +173,116 @@ public class Protocol {
         }
     }
 
+    public static void markAsSeen(final EMailDao dao, final long uid, final String foldername){
+
+        try{
+            final Store store = Protocol.store;
+
+            final EMail eMail = dao.getEmailFromUidAndFolder(uid, foldername);
+
+            final IMAPFolder folder = ((IMAPFolder) store.getDefaultFolder().getFolder(foldername));
+            if (!folder.isOpen())
+                folder.open(Folder.READ_WRITE);
+
+            folder.getMessageByUID(eMail.getUid()).setFlag(Flags.Flag.SEEN, true);
+
+            folder.close();
+
+            //schon in der MarkAsSeen getan.. eigentlich unnötig
+            eMail.setSeen(true);
+
+            dao.updateEMails(eMail);
+
+        } catch (MessagingException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void markAsUnread(final EMailDao dao, final EMail... eMails){
+
+        try{
+
+            final Store store = Protocol.store;
+
+            final IMAPFolder folder = ((IMAPFolder) store.getDefaultFolder().getFolder(eMails[0].getFoldername()));
+
+            if (!folder.isOpen())
+                folder.open(Folder.READ_WRITE);
+
+            final int eMailsLength = eMails.length;
+            final long uids[] = new long[eMailsLength];
+            for (int i = 0; i < eMailsLength; i++) {
+                EMail email = eMails[i];
+                uids[i] = email.getUid();
+            }
+
+            final Message[] markasUnread = folder.getMessagesByUID(uids);
+
+            for (int i = 0; i < eMailsLength; i++) {
+                Message m = markasUnread[i];
+                m.setFlag(Flags.Flag.SEEN, false);
+                eMails[i].setSeen(false);
+            }
+
+            folder.close();
+
+            dao.updateEMails(eMails);
+        } catch (MessagingException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteOrMoveMessages(final EMailDao dao, final String dstFoldername, final EMail... eMails){
+        try{
+            final Store store = Protocol.store;
+
+            final IMAPFolder srcFolder = ((IMAPFolder) store.getFolder(eMails[0].getFoldername()));
+            final IMAPFolder dstFolder;
+
+            if(!srcFolder.isOpen())
+                srcFolder.open(Folder.READ_WRITE);
+
+            if(dstFoldername == null) {
+                dstFolder = null;
+            } else {
+                dstFolder = ((IMAPFolder) store.getFolder(dstFoldername));
+                if(!dstFolder.isOpen())
+                    dstFolder.open(Folder.READ_WRITE);
+            }
+
+            final int eMailsLenght = eMails.length;
+            final long[] uids = new long[eMailsLenght];
+            for (int i = 0; i < eMailsLenght; i++) {
+                uids[i] = eMails[i].getUid();
+            }
+
+            final Message[] messages = srcFolder.getMessagesByUID(uids);
+
+            if(dstFolder != null) {
+                //Wenn Ordner angegeben verschiebe alle übergebenen Nachrichten nach
+                final AppendUID[] newuids = srcFolder.moveUIDMessages(messages, dstFolder);
+                final String oldFolderName = srcFolder.getName();
+                for (int i = 0; i < eMailsLenght; i++) {
+                    dao.moveEMailToNewFolder(dstFoldername, oldFolderName, uids[i], newuids[i].uid);
+                }
+            } else {
+                //Wenn kein Ordner angegeben, markiere Ordner als gelöscht
+                for (int i = 0; i < eMailsLenght; i++) {
+                    messages[i].setFlag(Flags.Flag.DELETED, true);
+                    dao.deleteEMail(eMails[i]);
+                }
+            }
+            srcFolder.close(true);
+
+            if(dstFolder != null)
+                dstFolder.close(false);
+
+        }catch (MessagingException e){
+            e.printStackTrace();
+        }
+    }
+
     private static void insertAddresses(final EMailDao dao, final Address[] addresses){
         for(final Address a : addresses){
             dao.insertContacts(new Contact(a));
@@ -184,17 +298,11 @@ public class Protocol {
     }
 
     public static void logout() throws MessagingException{
-        Protocol.store.close();
-        store = null;
-        Log.i("Protocol", "logged out");
+        if (Protocol.store != null) {
+            Protocol.store.close();
+            store = null;
+            Log.i("Protocol", "logged out");
+        }
     }
-
-
-
-
-
-
-
-
 
 }
