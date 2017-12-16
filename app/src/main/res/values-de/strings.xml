@@ -33,4 +33,7 @@
     <string name="Trash">Gelöscht</string>
     <string name="Sent">Gesendet</string>
     <string name="Drafts">Entwürfe</string>
+    <string name="undefined">Nicht Definiert</string>
+    <string name="downloading">E-Mails werden heruntergeladen</string>
+    <string name="downloaded">Alle E-Mails wurde heruntergeladen</string>
 </resources>

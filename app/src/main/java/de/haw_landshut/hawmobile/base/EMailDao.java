@@ -16,6 +16,12 @@ public interface EMailDao {
     @Query("SELECT * FROM email WHERE foldername=:foldername AND uid < :maxuid")
     List<EMail> getAllEmailsFromFolder(String foldername, long maxuid);
 
+    @Query("SELECT * FROM emailfolder")
+    List<EMailFolder> getAllEmailFolders();
+
+    @Query("SELECT * FROM email WHERE uid=:uid")
+    EMail getEmailFromUid(long uid);
+
     @Query("SELECT uidvalidaty FROM emailfolder WHERE name=:foldername")
     long getFolderUIDValidaty(String foldername);
 

@@ -38,7 +38,7 @@
         <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-        >
+                android:id="@+id/table">
 
             <TableRow android:layout_width="match_parent" android:layout_height="match_parent"
                       android:layout_marginBottom="3dp">
@@ -313,7 +313,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" android:id="@+id/schedule_tv_h6_friday"
                         android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
-                        android:paddingRight="2dp"/>
+                        android:paddingRight="2dp" android:tag="29"/>
             </TableRow>
         </TableLayout>
         <android.support.design.widget.CoordinatorLayout

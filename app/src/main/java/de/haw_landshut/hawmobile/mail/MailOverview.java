@@ -1,13 +1,17 @@
 package de.haw_landshut.hawmobile.mail;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -22,11 +26,12 @@ import de.haw_landshut.hawmobile.MainActivity;
 import de.haw_landshut.hawmobile.R;
 import de.haw_landshut.hawmobile.base.EMail;
 import de.haw_landshut.hawmobile.base.EMailDao;
+import de.haw_landshut.hawmobile.base.EMailFolder;
 
 import javax.mail.MessagingException;
 import javax.mail.Store;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,16 +41,18 @@ import java.util.logging.Logger;
  * Use the {@link MailOverview#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MailOverview extends Fragment {
+public class MailOverview extends Fragment implements View.OnClickListener, PopupMenu.OnMenuItemClickListener{
 
     private OnFragmentInteractionListener mListener;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private FloatingActionButton mFloatingActionButton;
     private SharedPreferences preferences;
     private RecyclerView mRecyclerView;
+    private MailEntryAdapter mMailEntryAdapter;
     private EMailDao eMailDao;
 
     private Store store;
+    private List<EMailFolder> eMailFolders;
 
     public MailOverview() {
         // Required empty public constructor
@@ -70,6 +77,7 @@ public class MailOverview extends Fragment {
 
         preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
 
+        //TODO: Verhindern, dass alle E-Mail heruntergeladen werden
         if(!preferences.getBoolean("mailsFetched", false))
             new Mail2BaseTask().execute();
 
@@ -90,14 +98,36 @@ public class MailOverview extends Fragment {
         Log.d("onOptionsItemSelected", item.getTitle().toString());
         switch (item.getItemId()){
             case R.id.mailFolder:
+                if(eMailFolders == null)
+                    break;
                 final View folderButton = getActivity().findViewById(R.id.mailFolder);
                 final PopupMenu popupMenu = new PopupMenu(getActivity(), folderButton);
-                popupMenu.getMenu().add("Dies ist ein Test");
-                popupMenu.getMenu().add("Dis auch");
+                for(EMailFolder ef : eMailFolders){
+                    final Intent it = new Intent();
+                    final Resources res = getActivity().getResources();
+                    final int stringName = res.getIdentifier(ef.getName(), "string", getActivity().getPackageName());
+                    it.putExtra("FolderName", ef.getName());
+                    it.putExtra("StringName", stringName);
+                    popupMenu.getMenu().add(stringName).setIntent(it);
+                }
                 popupMenu.show();
+                popupMenu.setOnMenuItemClickListener(this);
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        final Intent intent = menuItem.getIntent();
+        getActivity().setTitle(intent.getIntExtra("StringName", R.string.undefined));
+        new Base2MailEntryAdapter().execute(intent.getStringExtra("FolderName"));
+        return false;
+    }
+
+    @Override
+    public void onClick(View view) {
+
     }
 
     @Override
@@ -196,26 +226,57 @@ public class MailOverview extends Fragment {
     /**
      * Fetches all Mails and writes them into the Database
      */
-    private class Mail2BaseTask extends AsyncTask<Void, Void, Void>{
+    public class Mail2BaseTask extends AsyncTask<Void, Integer, Void>{
+        private static final int ID = 1;
+        private Activity activity;
+        private NotificationManager mNotifyManager;
+        private NotificationCompat.Builder mBuilder;
         @Override
         protected void onPostExecute(Void aVoid) {
             preferences.edit().putBoolean("mailsFetched", true).apply();
+            mBuilder.setContentText(activity.getResources().getString(R.string.downloaded))
+                    .setProgress(0, 0, false);
+            mNotifyManager.notify(ID, mBuilder.build());
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
             final EMailDao eMailDao = MainActivity.getHawDatabase().eMailDao();
+            activity = MailOverview.this.getActivity();
+            mNotifyManager = ((NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE));
+            mBuilder = new NotificationCompat.Builder(activity);
+            mBuilder.setContentTitle(activity.getResources().getString(R.string.downloading))
+                    .setSmallIcon(R.drawable.mail_icon);
+
 
             try {
                 Protocol.login();
-                Protocol.loadAllMessagesAndFolders(eMailDao);
+                Protocol.loadAllMessagesAndFolders(eMailDao, this/*, mMailEntryAdapter*/);
                 Protocol.logout();
             } catch (MessagingException e){
-                Looper.prepare();
-                Toast.makeText(getContext(), R.string.login_failed, Toast.LENGTH_SHORT).show();
+                final Activity mainActivity = MailOverview.this.getActivity();
+                mainActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(activity, R.string.login_failed, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
+
             return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(final Integer... values) {
+            final int curr = values[0], max = values[1];
+            mBuilder.setProgress(max, curr, false);
+            mBuilder.setContentText(String.valueOf(curr + 1) + "/" + max);
+            mNotifyManager.notify(ID, mBuilder.build());
+        }
+
+        public void tellProgress(int curr, int max){
+            publishProgress(curr, max);
         }
     }
 
@@ -234,7 +295,7 @@ public class MailOverview extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(MailEntryAdapter mea) {
+        protected void onPostExecute(final MailEntryAdapter mea) {
             mRecyclerView.setAdapter(mea);
             mSwipeRefreshLayout.setRefreshing(false);
         }
@@ -242,9 +303,10 @@ public class MailOverview extends Fragment {
         @Override
         protected MailEntryAdapter doInBackground(String... name) {
 
+            eMailFolders = eMailDao.getAllEmailFolders();
             final List<EMail> mailList = eMailDao.getAllEmailsFromFolder(name[0]);
 
-            return new MailEntryAdapter(mailList);
+            return new MailEntryAdapter(mailList, MailOverview.this.getActivity());
         }
     }
 
@@ -265,6 +327,7 @@ public class MailOverview extends Fragment {
                 Protocol.login();
                 Protocol.updateAllFolders(eMailDao);
                 Protocol.logout();
+                eMailFolders = eMailDao.getAllEmailFolders();
             } catch (MessagingException e){
                 Toast.makeText(getContext(), R.string.login_failed, Toast.LENGTH_SHORT).show();
             }
