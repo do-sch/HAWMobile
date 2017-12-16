@@ -7,13 +7,18 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import de.haw_landshut.hawmobile.Credentials;
 import de.haw_landshut.hawmobile.R;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.w3c.dom.Document;
+
 import java.io.IOException;
 
 
@@ -58,14 +63,12 @@ public class NewsOverview extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_overview, container, false);
         textView =  view.findViewById(R.id.textFromWeb);
-        String test="Hello Test";
-        Log.d("NewOverview", test);
 
-        //getWebsiteContent();
-
-        textView.setText(test);
-        textView.setTextColor(Color.BLUE);
-
+//        String test="Hello Test";
+//        Log.d("NewOverview", test);
+//        textView.setText(test);
+//        textView.setTextColor(Color.BLUE);
+        getWebsiteContent();
         return view;
 
     }
@@ -126,11 +129,56 @@ public class NewsOverview extends Fragment {
         @Override
         protected Void doInBackground(Void... voids)
         {
-
             try
             {
-                org.jsoup.nodes.Document doc = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html").get();
-                content = doc.text();
+//                org.jsoup.nodes.Document doc = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
+//                        .data("user", Credentials.getUsername())
+//                        .data("pass",Credentials.getPassword())
+//                        .data("submit","")
+//                        .post();
+/**
+                Connection.Response login = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
+                        .data("user", Credentials.getUsername())
+                        .data("pass",Credentials.getPassword())
+                        .data("submit","")
+                        .method(Connection.Method.POST)
+                        .execute();
+                org.jsoup.nodes.Document doc = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
+                        .cookies(login.cookies())
+                        .get();
+
+                //TODO : not finished yet
+                String want,have;
+
+                have = "Infos zum laufenden Studienbetrieb: Hochschule Landshut";
+                //if login successfully return wanted
+                want = "Schwarzes Brett: Hochschule Landshut";
+                String docu = doc.toString();
+                Boolean search = docu.contains(want);
+
+
+                content = search + doc.toString();
+**/
+
+                Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
+                        .method(Connection.Method.GET)
+                        .execute();
+
+                org.jsoup.nodes.Document document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
+                        .data("cookieexists", "false")
+                        .data("user", Credentials.getUsername())
+                        .data("pass", Credentials.getPassword())
+                        .data("submit","")
+                        .cookies(loginForm.cookies())
+                        .post();
+                //debug info
+                String want = "Schwarzes Brett: Hochschule Landshut";
+                String have = "Infos zum laufenden Studienbetrieb: Hochschule Landshut";
+                String search = document.toString();
+                Boolean hav = search.contains(have);
+                Boolean wan = search.contains(want);
+               content = "Login page: "+hav+"\nLogged in Schwartes Brett: "+wan+"\n"+document.toString();
+
             }
             catch (IOException e)
             {
@@ -143,7 +191,7 @@ public class NewsOverview extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             textView.setText(content);
-
+            textView.setMovementMethod(new ScrollingMovementMethod());
         }
     }
 
