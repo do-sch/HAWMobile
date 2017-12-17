@@ -20,6 +20,7 @@ import org.jsoup.Jsoup;
 import org.w3c.dom.Document;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 
 /**
@@ -32,6 +33,7 @@ import java.io.IOException;
  */
 public class NewsOverview extends Fragment {
     private TextView textView;
+    Connection.Response document;
 
     private OnFragmentInteractionListener mListener;
 
@@ -118,7 +120,7 @@ public class NewsOverview extends Fragment {
      */
 
 
-    public void getWebsiteContent()
+    private void getWebsiteContent()
     {
         new getIt().execute();
     }
@@ -131,53 +133,33 @@ public class NewsOverview extends Fragment {
         {
             try
             {
-//                org.jsoup.nodes.Document doc = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
-//                        .data("user", Credentials.getUsername())
-//                        .data("pass",Credentials.getPassword())
-//                        .data("submit","")
-//                        .post();
-/**
-                Connection.Response login = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
-                        .data("user", Credentials.getUsername())
-                        .data("pass",Credentials.getPassword())
-                        .data("submit","")
-                        .method(Connection.Method.POST)
-                        .execute();
-                org.jsoup.nodes.Document doc = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
-                        .cookies(login.cookies())
-                        .get();
-
-                //TODO : not finished yet
-                String want,have;
-
-                have = "Infos zum laufenden Studienbetrieb: Hochschule Landshut";
-                //if login successfully return wanted
-                want = "Schwarzes Brett: Hochschule Landshut";
-                String docu = doc.toString();
-                Boolean search = docu.contains(want);
-
-
-                content = search + doc.toString();
-**/
-
+                HashMap<String, String> cookies = new HashMap<>();
+                HashMap<String, String> formData = new HashMap<>();
                 Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
                         .method(Connection.Method.GET)
                         .execute();
+                cookies.putAll(loginForm.cookies());
+                formData.put("utf8", "e2 9c 93");
+                formData.put("user", Credentials.getUsername());
+                formData.put("pass", Credentials.getPassword());
+                formData.put("logintype","login");
+                formData.put("redirect_url","nc/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html");
+                formData.put("tx_felogin_pi1[noredirect]", "0");
+                formData.put("submit", "");
 
-                org.jsoup.nodes.Document document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
-                        .data("cookieexists", "false")
-                        .data("user", Credentials.getUsername())
-                        .data("pass", Credentials.getPassword())
-                        .data("submit","")
-                        .cookies(loginForm.cookies())
-                        .post();
+                Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
+                        .cookies(cookies)
+                        .data(formData)
+                        .method(Connection.Method.POST)
+                        .execute();
+
                 //debug info
                 String want = "Schwarzes Brett: Hochschule Landshut";
                 String have = "Infos zum laufenden Studienbetrieb: Hochschule Landshut";
-                String search = document.toString();
+                String search = document.parse().toString();
                 Boolean hav = search.contains(have);
                 Boolean wan = search.contains(want);
-               content = "Login page: "+hav+"\nLogged in Schwartes Brett: "+wan+"\n"+document.toString();
+               content = "\ndebug info: Website loaded:\nSchwartes Brett: "+wan+"\nInfo zum Studienbetrieb: "+hav+"\n\n"+search;
 
             }
             catch (IOException e)
