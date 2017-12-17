@@ -27,9 +27,14 @@ public class MailView extends AppCompatActivity {
         setContentView(R.layout.activity_mail_view);
 
         final Intent intent = getIntent();
-        final long uid = intent.getLongExtra(MailEntryAdapter.ViewHolder.MESSAGE, -1);
+        final long uid = intent.getLongExtra(MailEntryAdapter.ViewHolder.MESSAGE_UID, -1);
+        final String foldername = intent.getStringExtra(MailEntryAdapter.ViewHolder.MESSAGE_FNA);
 
-        new InsertEMail().execute(uid);
+        final EMail indicies = new EMail();
+        indicies.setUid(uid);
+        indicies.setFoldername(foldername);
+
+        new InsertEMail().execute(indicies);
 
     }
 
@@ -38,12 +43,12 @@ public class MailView extends AppCompatActivity {
         return super.onCreateView(parent, name, context, attrs);
     }
 
-    private class InsertEMail extends AsyncTask<Long, Void, EMail>{
+    private class InsertEMail extends AsyncTask<EMail, Void, EMail>{
         @Override
         protected void onPostExecute(EMail mail) {
             final ActionBar actionBar = getSupportActionBar();
-            if(actionBar == null)
-                Log.d("onPostExecute", "actionBar is null");
+            Log.d("mail", (mail==null)+"");
+            Log.d("subject", mail.getSubject());
             actionBar.setTitle(mail.getSubject());
             actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -65,9 +70,12 @@ public class MailView extends AppCompatActivity {
         }
 
         @Override
-        protected EMail doInBackground(Long... uid) {
+        protected EMail doInBackground(EMail... eMail) {
             final EMailDao dao = MainActivity.getHawDatabase().eMailDao();
-            final EMail mail = dao.getEmailFromUid(uid[0]);
+            Log.d("uid", eMail[0].getUid()+"");
+            Log.d("foldername", eMail[0].getFoldername());
+            final EMail mail = dao.getEmailFromUidAndFolder(eMail[0].getUid(), eMail[0].getFoldername());
+
             return mail;
         }
     }

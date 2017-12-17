@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,7 +32,9 @@ import de.haw_landshut.hawmobile.base.EMailFolder;
 import javax.mail.MessagingException;
 import javax.mail.Store;
 import java.util.List;
-import java.util.Locale;
+
+import static de.haw_landshut.hawmobile.mail.MailEntryAdapter.ViewHolder.MESSAGE_FNA;
+import static de.haw_landshut.hawmobile.mail.MailEntryAdapter.ViewHolder.MESSAGE_UID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -127,6 +130,14 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
 
     @Override
     public void onClick(View view) {
+        Log.d("onClick", view.toString());
+    }
+
+    public void onMessageClicked(final EMail mail, int messagePos){
+        mail.setSeen(true);
+        new MarkAsSeen().execute(mail);
+
+        mMailEntryAdapter.notifyItemChanged(messagePos);
 
     }
 
@@ -155,7 +166,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
             }
         });
 
-        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
@@ -163,7 +174,28 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                //TODO: E-Mail löschen
+            }
 
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                final View foregroundView = ((MailEntryAdapter.ViewHolder) viewHolder).viewForeground;
+
+                getDefaultUIUtil().onDraw(c, recyclerView, foregroundView, dX, dY,
+                        actionState, isCurrentlyActive);
+            }
+
+            @Override
+            public void onChildDrawOver(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                final View foregroundView = ((MailEntryAdapter.ViewHolder) viewHolder).viewForeground;
+                getDefaultUIUtil().onDrawOver(c, recyclerView, foregroundView, dX, dY,
+                        actionState, isCurrentlyActive);
+            }
+
+            @Override
+            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                final View foregroundView = ((MailEntryAdapter.ViewHolder) viewHolder).viewForeground;
+                getDefaultUIUtil().clearView(foregroundView);
             }
         };
         final ItemTouchHelper ith = new ItemTouchHelper(simpleCallback);
@@ -206,6 +238,12 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        new Logout().execute();
     }
 
     /**
@@ -252,7 +290,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
             try {
                 Protocol.login();
                 Protocol.loadAllMessagesAndFolders(eMailDao, this/*, mMailEntryAdapter*/);
-                Protocol.logout();
+//                Protocol.logout();
             } catch (MessagingException e){
                 final Activity mainActivity = MailOverview.this.getActivity();
                 mainActivity.runOnUiThread(new Runnable() {
@@ -296,6 +334,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
 
         @Override
         protected void onPostExecute(final MailEntryAdapter mea) {
+            mMailEntryAdapter = mea;
             mRecyclerView.setAdapter(mea);
             mSwipeRefreshLayout.setRefreshing(false);
         }
@@ -306,7 +345,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
             eMailFolders = eMailDao.getAllEmailFolders();
             final List<EMail> mailList = eMailDao.getAllEmailsFromFolder(name[0]);
 
-            return new MailEntryAdapter(mailList, MailOverview.this.getActivity());
+            return new MailEntryAdapter(mailList, MailOverview.this);
         }
     }
 
@@ -326,12 +365,65 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
             try {
                 Protocol.login();
                 Protocol.updateAllFolders(eMailDao);
-                Protocol.logout();
+//                Protocol.logout();
                 eMailFolders = eMailDao.getAllEmailFolders();
             } catch (MessagingException e){
                 Toast.makeText(getContext(), R.string.login_failed, Toast.LENGTH_SHORT).show();
             }
 
+            return null;
+        }
+    }
+
+    private class MarkAsUnread extends AsyncTask<EMail, Void, Void>{
+        @Override
+        protected Void doInBackground(final EMail... eMails) {
+
+            try {
+                Protocol.login();
+                Protocol.markAsUnread(eMailDao, eMails);
+//                Protocol.logout();
+            } catch (MessagingException e){
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+    public class MarkAsSeen extends AsyncTask<EMail, Void, Void>{
+
+        @Override
+        protected Void doInBackground(EMail... email) {
+
+            try {
+                Protocol.login();
+
+                Protocol.markAsSeen(eMailDao, email[0].getUid(), email[0].getFoldername());
+
+
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+
+
+            Intent intent = new Intent(getActivity(), MailView.class);
+            intent.putExtra(MESSAGE_UID, email[0].getUid());
+            intent.putExtra(MESSAGE_FNA, email[0].getFoldername());
+            startActivity(intent);
+
+            return null;
+        }
+    }
+
+    private class Logout extends AsyncTask<Void, Void, Void>{
+        @Override
+        protected Void doInBackground(Void... voids) {
+        try {
+            Protocol.logout();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
             return null;
         }
     }
