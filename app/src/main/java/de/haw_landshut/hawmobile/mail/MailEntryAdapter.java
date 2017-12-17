@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.ViewHolder> {
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
         public TextView subjectView, senderView, contentView, dateView;
         public RelativeLayout viewBackground, viewForeground;
         private final MailOverview mailOverview;
@@ -39,6 +40,7 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
             this.viewBackground = itemView.findViewById(R.id.view_background);
             this.viewForeground = itemView.findViewById(R.id.view_foreground);
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         public void setMail(final EMail mail) {this.mail = mail; }
@@ -47,6 +49,12 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         @Override
         public void onClick(View view) {
             mailOverview.onMessageClicked(mail, pos);
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            Log.d("ViewHodler", "long clicked");
+            return false;
         }
     }
 
