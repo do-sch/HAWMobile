@@ -9,9 +9,7 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.TextView;
 import de.haw_landshut.hawmobile.Credentials;
 import de.haw_landshut.hawmobile.R;
@@ -20,7 +18,11 @@ import org.jsoup.Jsoup;
 import org.w3c.dom.Document;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -65,11 +67,6 @@ public class NewsOverview extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_overview, container, false);
         textView =  view.findViewById(R.id.textFromWeb);
-
-//        String test="Hello Test";
-//        Log.d("NewOverview", test);
-//        textView.setText(test);
-//        textView.setTextColor(Color.BLUE);
         getWebsiteContent();
         return view;
 
@@ -153,14 +150,32 @@ public class NewsOverview extends Fragment {
                         .method(Connection.Method.POST)
                         .execute();
 
-                //debug info
-                String want = "Schwarzes Brett: Hochschule Landshut";
+                //debug info start
                 String have = "Infos zum laufenden Studienbetrieb: Hochschule Landshut";
-                String search = document.parse().toString();
-                Boolean hav = search.contains(have);
-                Boolean wan = search.contains(want);
-               content = "\ndebug info: Website loaded:\nSchwartes Brett: "+wan+"\nInfo zum Studienbetrieb: "+hav+"\n\n"+search;
+                String doc = document.parse().toString();
+                //debug info end
+                List<String> allMatches = new ArrayList<String>();
+                //
+                //
+                Matcher m = Pattern.compile("<div class=\"list_date\".*>\\s*([[:ascii:]\\s\\wäüöß]*?)\\s*</div>[\\s]*<h2>([[:ascii:]üäöß]*?)</h2>[[:ascii:]üäöß]*?</p>\\s*<p>([[:ascii:]\\s\\wäüöß]*?)</p>\\s*<p>([[:ascii:]üäöß]*?)</p>(\\s*[[:ascii:]üäöß]*?)</div>")
+                        .matcher(doc);
+                while (m.find()) {
+                    allMatches.add(m.group(1)+"\n");
+                    allMatches.add(m.group(2).toUpperCase()+"\n");
+                    allMatches.add(m.group(3));
+                    allMatches.add(m.group(4));
+                    allMatches.add(m.group(5)+"\n\n");
+                }
+                Log.d(doc,"debug");
 
+
+
+
+
+                //debug info start
+                Boolean hav = doc.contains(have);
+               content = "\ndebug info: Website loaded:\nSchwartes Brett: "+!hav+"\nInfo zum Studienbetrieb: "+hav+"\n\n"+allMatches.size();
+               //debug info end
             }
             catch (IOException e)
             {
@@ -177,4 +192,12 @@ public class NewsOverview extends Fragment {
         }
     }
 
+
+//TODO: not working
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        getActivity().setTitle("Schwarzes Brett");
+    }
 }
