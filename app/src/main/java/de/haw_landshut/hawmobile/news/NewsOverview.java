@@ -15,7 +15,6 @@ import de.haw_landshut.hawmobile.Credentials;
 import de.haw_landshut.hawmobile.R;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ import java.util.regex.Pattern;
  */
 public class NewsOverview extends Fragment {
     private TextView textView;
-    Connection.Response document;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -154,7 +153,7 @@ public class NewsOverview extends Fragment {
                 String have = "Infos zum laufenden Studienbetrieb: Hochschule Landshut";
                 String doc = document.parse().toString();
                 //debug info end
-                List<String> allMatches = new ArrayList<String>();
+                List<String> allMatches = new ArrayList<>();
                 //
                 //
                 Matcher m = Pattern.compile("<div class=\"list_date\".*>\\s*([[:ascii:]\\s\\wäüöß]*?)\\s*</div>[\\s]*<h2>([[:ascii:]üäöß]*?)</h2>[[:ascii:]üäöß]*?</p>\\s*<p>([[:ascii:]\\s\\wäüöß]*?)</p>\\s*<p>([[:ascii:]üäöß]*?)</p>(\\s*[[:ascii:]üäöß]*?)</div>")
@@ -174,7 +173,7 @@ public class NewsOverview extends Fragment {
 
                 //debug info start
                 Boolean hav = doc.contains(have);
-               content = "\ndebug info: Website loaded:\nSchwartes Brett: "+!hav+"\nInfo zum Studienbetrieb: "+hav+"\n\n"+allMatches.size();
+               content = "\ndebug info: Website loaded:\nSchwartes Brett: "+!hav+"\nInfo zum Studienbetrieb: "+hav+"\n\n"+allMatches;
                //debug info end
             }
             catch (IOException e)
