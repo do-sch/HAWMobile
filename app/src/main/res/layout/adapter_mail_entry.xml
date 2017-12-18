@@ -2,7 +2,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+             android:clickable="true"
+             android:longClickable="true"
+             android:focusable="true"
+             android:foreground="?android:attr/selectableItemBackground">
 
     <RelativeLayout
             android:id="@+id/view_background"
@@ -30,8 +34,8 @@
                     android:paddingStart="16dip"
                     android:paddingEnd="16dip"
                     android:paddingTop="14dip"
-                    android:background="@color/white"
-                    android:paddingBottom="14dip">
+                    android:paddingBottom="14dip"
+                    android:background="@color/white">
 
         <TextView android:id="@+id/maildate"
                   android:layout_width="wrap_content"

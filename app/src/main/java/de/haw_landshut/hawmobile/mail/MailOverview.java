@@ -14,10 +14,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.*;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.*;
@@ -89,16 +86,36 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
 
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
         getActivity().setTitle(R.string.INBOX);
         menu.clear();
         inflater.inflate(R.menu.mailactionbar_default, menu);
+
+        final MenuItem searchItem = menu.findItem(R.id.mailSearch);
+        final SearchView searchView = ((SearchView) searchItem.getActionView());
+
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                menu.findItem(R.id.mailFolder).setVisible(false);
+                menu.findItem(R.id.mailSettings).setVisible(false);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                onCreateOptionsMenu(menu, inflater);
+                return true;
+            }
+        });
+
+
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d("onOptionsItemSelected", item.getTitle().toString());
         switch (item.getItemId()){
             case R.id.mailFolder:
                 if(eMailFolders == null)
@@ -245,6 +262,15 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
         super.onDestroy();
         new Logout().execute();
     }
+
+//    private void setItemsVisibility(final Menu menu, final MenuItem exception, final boolean visible){
+//        for (int i = menu.size() - 1; i >= 0; i--) {
+//            final MenuItem mi = menu.getItem(i);
+//            if(mi != exception){
+//                mi.setVisible(visible);
+//            }
+//        }
+//    }
 
     /**
      * This interface must be implemented by activities that contain this
