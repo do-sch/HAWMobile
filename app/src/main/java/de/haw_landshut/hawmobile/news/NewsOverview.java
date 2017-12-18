@@ -153,9 +153,8 @@ public class NewsOverview extends Fragment {
                 String have = "Infos zum laufenden Studienbetrieb: Hochschule Landshut";
                 String doc = document.parse().toString();
                 //debug info end
+
                 List<String> allMatches = new ArrayList<>();
-                //
-                //
                 Matcher m = Pattern.compile("<div class=\"list_date\".*>\\s*([[:ascii:]\\s\\wäüöß]*?)\\s*</div>[\\s]*<h2>([[:ascii:]üäöß]*?)</h2>[[:ascii:]üäöß]*?</p>\\s*<p>([[:ascii:]\\s\\wäüöß]*?)</p>\\s*<p>([[:ascii:]üäöß]*?)</p>(\\s*[[:ascii:]üäöß]*?)</div>")
                         .matcher(doc);
                 while (m.find()) {
@@ -165,12 +164,6 @@ public class NewsOverview extends Fragment {
                     allMatches.add(m.group(4));
                     allMatches.add(m.group(5)+"\n\n");
                 }
-                Log.d(doc,"debug");
-
-
-
-
-
                 //debug info start
                 Boolean hav = doc.contains(have);
                content = "\ndebug info: Website loaded:\nSchwartes Brett: "+!hav+"\nInfo zum Studienbetrieb: "+hav+"\n\n"+allMatches;
