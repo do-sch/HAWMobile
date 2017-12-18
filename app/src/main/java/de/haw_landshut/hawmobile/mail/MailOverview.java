@@ -16,6 +16,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.*;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.*;
 import android.widget.PopupMenu;
@@ -94,11 +95,31 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
         final MenuItem searchItem = menu.findItem(R.id.mailSearch);
         final SearchView searchView = ((SearchView) searchItem.getActionView());
 
+        //TODO: schneller machen
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                callSearch(s);
+                searchView.clearFocus();//TODO: http://droidmentor.com/searchview-animation-like-whatsapp/
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                callSearch(s);
+                return true;
+            }
+
+            private void callSearch(final String query){
+
+            }
+        });
+
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem menuItem) {
-                menu.findItem(R.id.mailFolder).setVisible(false);
                 menu.findItem(R.id.mailSettings).setVisible(false);
+                menu.findItem(R.id.mailFolder).setVisible(false);
                 return true;
             }
 
@@ -108,9 +129,6 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
                 return true;
             }
         });
-
-
-
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -263,14 +281,6 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
         new Logout().execute();
     }
 
-//    private void setItemsVisibility(final Menu menu, final MenuItem exception, final boolean visible){
-//        for (int i = menu.size() - 1; i >= 0; i--) {
-//            final MenuItem mi = menu.getItem(i);
-//            if(mi != exception){
-//                mi.setVisible(visible);
-//            }
-//        }
-//    }
 
     /**
      * This interface must be implemented by activities that contain this
