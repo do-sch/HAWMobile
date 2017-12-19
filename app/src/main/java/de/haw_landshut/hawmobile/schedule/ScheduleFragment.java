@@ -23,6 +23,8 @@ import de.haw_landshut.hawmobile.base.ProfData;
 import de.haw_landshut.hawmobile.base.ScheduleDao;
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.prefs.Preferences;
 
@@ -41,7 +43,7 @@ public class ScheduleFragment extends Fragment {
     private View.OnClickListener ocl;
     public static BottomSheetBehavior mBottomSheetBehavior1;
     View bottomSheet;
-    public static TextView mo1, mo2, mo3, mo4, mo5, mo6, di1, di2, di3, di4, di5, di6, mi1, mi2, mi3, mi4, mi5, mi6, do1, do2, do3, do4, do5, do6, fr1, fr2, fr3, fr4, fr5, fr6;
+    public static TextView mo1, mo2, mo3, mo4, mo5, mo6, di1, di2, di3, di4, di5, di6, mi1, mi2, mi3, mi4, mi5, mi6, do1, do2, do3, do4, do5, do6, fr1, fr2, fr3, fr4, fr5, fr6,currentDate,currentWeek;
     public static TextView currentTV;
     public static EditText et_fach;
     public static EditText et_prof;
@@ -109,6 +111,26 @@ public class ScheduleFragment extends Fragment {
         et_raum = view.findViewById(R.id.et_raum);
         bottomSheet = view.findViewById(R.id.bottom_sheet1);
         mBottomSheetBehavior1 = BottomSheetBehavior.from(bottomSheet);
+
+        //sets the current date and week
+        currentDate = view.findViewById(R.id.schedule_textView_currentDate);
+        GregorianCalendar now = new GregorianCalendar();
+        DateFormat df= DateFormat.getDateInstance(DateFormat.SHORT);
+        currentDate.setText(df.format(now.getTime()));
+/*
+        currentWeek=view.findViewById(R.id.schedule_textView_currentWeek);
+        if(now.getWeeksInWeekYear()%2==0){
+            currentWeek.setText("gerade");
+        }
+        else{
+            currentWeek.setText("ungerade");
+        }
+*/
+
+
+
+
+/*
 
         //Montags
         mo1 = view.findViewById(R.id.schedule_tv_h1_monday);
@@ -180,7 +202,7 @@ public class ScheduleFragment extends Fragment {
         fr6 = view.findViewById(R.id.schedule_tv_h6_friday);
         fr6.setOnClickListener(ocl);
 
-
+*/
 
 
 
@@ -232,7 +254,7 @@ public class ScheduleFragment extends Fragment {
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
-        
+
             return view;
 
     }
@@ -316,20 +338,19 @@ public class ScheduleFragment extends Fragment {
             ScheduleFragment.timetable = ScheduleFragment.scheduleDao.getTimetable();
             View view = getView();
             if(view!=null){
-            final TableLayout tl = getView().findViewById(R.id.table);
-            elements = new TextView[tl.getChildCount()-1][((TableRow) tl.getChildAt(1)).getChildCount()];
+                final TableLayout tl = getView().findViewById(R.id.table);
+                elements = new TextView[tl.getChildCount()-1][((TableRow) tl.getChildAt(1)).getChildCount()];
 
-            for(int y = 1; y < tl.getChildCount(); y++){
-                TableRow tr = ((TableRow) tl.getChildAt(y));
-                for (int x = 1; x < tr.getChildCount(); x++) {
-                    TextView tv = ((TextView) tr.getChildAt(x));
+                for(int y = 1; y < tl.getChildCount(); y++){
+                    TableRow tr = ((TableRow) tl.getChildAt(y));
+                    for (int x = 1; x < tr.getChildCount(); x++) {
+                        TextView tv = ((TextView) tr.getChildAt(x));
+                        tv.setText("");
+                        tv.setOnClickListener(ocl);
+                        elements[y-1][x-1] = tv;
 
-                    tv.setText("");
-
-                    elements[y-1][x-1] = tv;
-
+                    }
                 }
-            }
 
             for(int j = 0;j<timetable.size();j++){
                 final int i = j;
