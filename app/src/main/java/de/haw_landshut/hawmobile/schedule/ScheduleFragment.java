@@ -11,9 +11,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.support.design.widget.BottomSheetBehavior;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 
 import android.widget.*;
 import de.haw_landshut.hawmobile.Fakultaet;
@@ -94,6 +92,7 @@ public class ScheduleFragment extends Fragment {
 
         ocl = new OnClickLabel();
         preference=getActivity().getPreferences(Context.MODE_PRIVATE);
+        this.setHasOptionsMenu(true);
 
     }
 
@@ -233,15 +232,21 @@ public class ScheduleFragment extends Fragment {
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
-
-
-
-        try{
+        
             return view;
-        } finally {
-            new BeginnInsertion().execute();
-        }
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().setTitle(R.string.schedule);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        new BeginnInsertion().execute();
+        super.onActivityCreated(savedInstanceState);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -309,7 +314,8 @@ public class ScheduleFragment extends Fragment {
                 preference.edit().putBoolean("Emptytimetable inserted",true).apply();
             }
             ScheduleFragment.timetable = ScheduleFragment.scheduleDao.getTimetable();
-
+            View view = getView();
+            if(view!=null){
             final TableLayout tl = getView().findViewById(R.id.table);
             elements = new TextView[tl.getChildCount()-1][((TableRow) tl.getChildAt(1)).getChildCount()];
 
@@ -318,7 +324,7 @@ public class ScheduleFragment extends Fragment {
                 for (int x = 1; x < tr.getChildCount(); x++) {
                     TextView tv = ((TextView) tr.getChildAt(x));
 
-//                    tv.setText("y:"+y+"  x:"+x);
+                    tv.setText("");
 
                     elements[y-1][x-1] = tv;
 
@@ -339,7 +345,7 @@ public class ScheduleFragment extends Fragment {
                     });
                 }
 
-            }
+            }}
 
             return null;
         }
