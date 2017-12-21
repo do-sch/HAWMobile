@@ -24,6 +24,8 @@ import de.haw_landshut.hawmobile.base.ScheduleDao;
 import org.w3c.dom.Text;
 
 import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.prefs.Preferences;
@@ -117,15 +119,20 @@ public class ScheduleFragment extends Fragment {
         GregorianCalendar now = new GregorianCalendar();
         DateFormat df= DateFormat.getDateInstance(DateFormat.SHORT);
         currentDate.setText(df.format(now.getTime()));
-/*
+
         currentWeek=view.findViewById(R.id.schedule_textView_currentWeek);
-        if(now.getWeeksInWeekYear()%2==0){
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        int num_week = c.get(Calendar.WEEK_OF_YEAR);
+        Log.d("KW:", num_week+"");
+        if(num_week%2==0){
             currentWeek.setText("gerade");
         }
         else{
             currentWeek.setText("ungerade");
         }
-*/
+
 
 
 
@@ -345,7 +352,7 @@ public class ScheduleFragment extends Fragment {
                     TableRow tr = ((TableRow) tl.getChildAt(y));
                     for (int x = 1; x < tr.getChildCount(); x++) {
                         TextView tv = ((TextView) tr.getChildAt(x));
-                        tv.setText("");
+//                        tv.setText("");
                         tv.setOnClickListener(ocl);
                         elements[y-1][x-1] = tv;
 
