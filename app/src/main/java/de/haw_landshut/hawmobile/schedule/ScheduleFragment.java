@@ -41,11 +41,11 @@ import java.util.prefs.Preferences;
 public class ScheduleFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final int ENTRYCOUNT = 30;
+    private static final int ENTRYCOUNT = 60;
     private View.OnClickListener ocl;
     public static BottomSheetBehavior mBottomSheetBehavior1;
     View bottomSheet;
-    public static TextView mo1, mo2, mo3, mo4, mo5, mo6, di1, di2, di3, di4, di5, di6, mi1, mi2, mi3, mi4, mi5, mi6, do1, do2, do3, do4, do5, do6, fr1, fr2, fr3, fr4, fr5, fr6,currentDate,currentWeek;
+    public static TextView currentDate,currentWeek;
     public static TextView currentTV;
     public static EditText et_fach;
     public static EditText et_prof;
@@ -53,11 +53,14 @@ public class ScheduleFragment extends Fragment {
     public static List<CustomTimetable> timetable;
     public static ScheduleDao scheduleDao = MainActivity.getHawDatabase().scheduleDao();
     private TextView[][] elements;
+    protected static boolean isEven;
+    private boolean checkDouble;
 
 
     Button edit;
     Button save;
     Button cancel;
+   protected static CheckBox wöchentl;
 
 
     // TODO: Rename and change types of parameters
@@ -108,6 +111,7 @@ public class ScheduleFragment extends Fragment {
         edit = view.findViewById(R.id.btn_edit);
         save = view.findViewById(R.id.btn_save);
         cancel = view.findViewById(R.id.btn_cancel);
+        wöchentl = view.findViewById(R.id.wöchentlCheckbox);
         et_fach = view.findViewById(R.id.et_fach);
         et_prof = view.findViewById(R.id.et_prof);
         et_raum = view.findViewById(R.id.et_raum);
@@ -128,89 +132,28 @@ public class ScheduleFragment extends Fragment {
         Log.d("KW:", num_week+"");
         if(num_week%2==0){
             currentWeek.setText("gerade");
+            isEven=true;
         }
         else{
             currentWeek.setText("ungerade");
+            isEven=false;
         }
 
-
-
-
-
-/*
-
-        //Montags
-        mo1 = view.findViewById(R.id.schedule_tv_h1_monday);
-        mo1.setOnClickListener(ocl);
-        mo2 = view.findViewById(R.id.schedule_tv_h3_monday);
-        mo2.setOnClickListener(ocl);
-        mo3 = view.findViewById(R.id.schedule_tv_h2_monday);
-        mo3.setOnClickListener(ocl);
-        mo4 = view.findViewById(R.id.schedule_tv_h4_monday);
-        mo4.setOnClickListener(ocl);
-        mo5 = view.findViewById(R.id.schedule_tv_h5_monday);
-        mo5.setOnClickListener(ocl);
-        mo6 = view.findViewById(R.id.schedule_tv_h6_monday);
-        mo6.setOnClickListener(ocl);
-
-        //Dienstags
-        di1 = view.findViewById(R.id.schedule_tv_h1_tuesday);
-        di1.setOnClickListener(ocl);
-        di2 = view.findViewById(R.id.schedule_tv_h3_tuesday);
-        di2.setOnClickListener(ocl);
-        di3 = view.findViewById(R.id.schedule_tv_h2_tuesday);
-        di3.setOnClickListener(ocl);
-        di4 = view.findViewById(R.id.schedule_tv_h4_tuesday);
-        di4.setOnClickListener(ocl);
-        di5 = view.findViewById(R.id.schedule_tv_h5_tuesday);
-        di5.setOnClickListener(ocl);
-        di6 = view.findViewById(R.id.schedule_tv_h6_tuesday);
-        di6.setOnClickListener(ocl);
-
-        //Mittwochs
-        mi1 = view.findViewById(R.id.schedule_tv_h1_wednesday);
-        mi1.setOnClickListener(ocl);
-        mi2 = view.findViewById(R.id.schedule_tv_h3_wednesday);
-        mi2.setOnClickListener(ocl);
-        mi3 = view.findViewById(R.id.schedule_tv_h2_wednesday);
-        mi3.setOnClickListener(ocl);
-        mi4 = view.findViewById(R.id.schedule_tv_h4_wednesday);
-        mi4.setOnClickListener(ocl);
-        mi5 = view.findViewById(R.id.schedule_tv_h5_wednesday);
-        mi5.setOnClickListener(ocl);
-        mi6 = view.findViewById(R.id.schedule_tv_h6_wednesday);
-        mi6.setOnClickListener(ocl);
-
-        //Donnerstags
-        do1 = view.findViewById(R.id.schedule_tv_h1_thursday);
-        do1.setOnClickListener(ocl);
-        do2 = view.findViewById(R.id.schedule_tv_h3_thursday);
-        do2.setOnClickListener(ocl);
-        do3 = view.findViewById(R.id.schedule_tv_h2_thursday);
-        do3.setOnClickListener(ocl);
-        do4 = view.findViewById(R.id.schedule_tv_h4_thursday);
-        do4.setOnClickListener(ocl);
-        do5 = view.findViewById(R.id.schedule_tv_h5_thursday);
-        do5.setOnClickListener(ocl);
-        do6 = view.findViewById(R.id.schedule_tv_h6_thursday);
-        do6.setOnClickListener(ocl);
-
-        //Freitags
-        fr1 = view.findViewById(R.id.schedule_tv_h1_friday);
-        fr1.setOnClickListener(ocl);
-        fr2 = view.findViewById(R.id.schedule_tv_h3_friday);
-        fr2.setOnClickListener(ocl);
-        fr3 = view.findViewById(R.id.schedule_tv_h2_friday);
-        fr3.setOnClickListener(ocl);
-        fr4 = view.findViewById(R.id.schedule_tv_h4_friday);
-        fr4.setOnClickListener(ocl);
-        fr5 = view.findViewById(R.id.schedule_tv_h5_friday);
-        fr5.setOnClickListener(ocl);
-        fr6 = view.findViewById(R.id.schedule_tv_h6_friday);
-        fr6.setOnClickListener(ocl);
-
-*/
-
+        currentWeek.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                if(isEven){
+                    currentWeek.setText("ungerade");
+                    isEven=false;
+                    new BeginnInsertion().execute();
+                }
+                else{
+                    currentWeek.setText("gerade");
+                    isEven=true;
+                    new BeginnInsertion().execute();
+                }
+            }
+        });
 
 
         edit.setOnClickListener(new View.OnClickListener() {
@@ -219,9 +162,11 @@ public class ScheduleFragment extends Fragment {
                     cancel.setVisibility(View.VISIBLE);
                     edit.setVisibility(View.GONE);
                     save.setVisibility(View.VISIBLE);
+                    wöchentl.setVisibility(View.VISIBLE);
                     et_fach.setEnabled(true);
                     et_prof.setEnabled(true);
                     et_raum.setEnabled(true);
+                    checkDouble=wöchentl.isChecked();
 
                 }
         });
@@ -233,16 +178,43 @@ public class ScheduleFragment extends Fragment {
                     cancel.setVisibility(View.INVISIBLE);
                     save.setVisibility(View.GONE);
                     edit.setVisibility(View.VISIBLE);
+                    wöchentl.setVisibility(View.INVISIBLE);
                     et_fach.setEnabled(false);
                     et_prof.setEnabled(false);
                     et_raum.setEnabled(false);
                     currentTV.setText(et_fach.getText());
-                      CustomTimetable table = new CustomTimetable(Integer.parseInt(currentTV.getTag().toString()),et_prof.getText().toString(),et_fach.getText().toString(),et_raum.getText().toString());
-                      new UpdateTimetable().execute(table);
+                    int currentHour = Integer.parseInt(currentTV.getTag().toString());
+                    CustomTimetable table;
+                    if(wöchentl.isChecked()){
+                        table = new CustomTimetable(currentHour,et_prof.getText().toString(),et_fach.getText().toString(),et_raum.getText().toString());
+                        new UpdateTimetable().execute(table);
+                        currentHour = currentHour+(ENTRYCOUNT/2);
+                        table=new CustomTimetable(currentHour,et_prof.getText().toString(),et_fach.getText().toString(),et_raum.getText().toString());
+                        new UpdateTimetable().execute(table);
+                    }
+                    else {
+                        if(checkDouble){
+                            if(isEven){
+                                currentHour = currentHour + (ENTRYCOUNT/2);
+                                table=new CustomTimetable(currentHour,"","","");
+                                new UpdateTimetable().execute(table);
+                            }
+                            else{
+                                table=new CustomTimetable(currentHour,"","","");
+                                new UpdateTimetable().execute(table);
+                            }
+                        }
+                        else{
+                            if (!isEven) {
+                                currentHour = currentHour + (ENTRYCOUNT / 2);
+                            }
+                            table = new CustomTimetable(currentHour, et_prof.getText().toString(), et_fach.getText().toString(), et_raum.getText().toString());
+                            new UpdateTimetable().execute(table);
+                        }
+                      
 
-                    ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-
+                    }
+                ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
 
@@ -258,9 +230,13 @@ public class ScheduleFragment extends Fragment {
                 save.setVisibility(View.GONE);
                 edit.setVisibility(View.VISIBLE);
                 cancel.setVisibility(View.INVISIBLE);
+                wöchentl.setVisibility(View.INVISIBLE);
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
+
+        //wöchentl.setOnClickListener();
+
 
             return view;
 
@@ -359,9 +335,15 @@ public class ScheduleFragment extends Fragment {
                     }
                 }
 
-            for(int j = 0;j<timetable.size();j++){
-                final int i = j;
-               Log.d("SchFr", elements.length+"");
+            for(int j = 0;j<(timetable.size()/2);j++){
+                final int i;
+                if(isEven){
+                    i=j;
+                }
+                else{
+                    i=j+(ENTRYCOUNT/2);
+                }
+     //          Log.d("SchFr", elements.length+"");
                 final TextView current = elements[(j % (elements[0].length))][(j / (elements.length))];
                 if (current != null) {
                     Log.d("SchFr", j+"");
