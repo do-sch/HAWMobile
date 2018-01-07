@@ -45,7 +45,12 @@
                     android:resource="@xml/authenticator"/>
         </service>
 
-        <activity android:name=".mail.MailView"
+        <activity
+                android:name=".mail.MailView"
+                android:parentActivityName=".MainActivity">
+        </activity>
+        <activity
+                android:name=".mail.MailCreateActivity"
                 android:parentActivityName=".MainActivity">
         </activity>
     </application>

@@ -16,23 +16,23 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.*;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.*;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+import com.sun.mail.imap.IMAPFolder;
 import de.haw_landshut.hawmobile.MainActivity;
 import de.haw_landshut.hawmobile.R;
 import de.haw_landshut.hawmobile.base.EMail;
 import de.haw_landshut.hawmobile.base.EMailDao;
 import de.haw_landshut.hawmobile.base.EMailFolder;
 
-import javax.mail.MessagingException;
-import javax.mail.Store;
+import javax.mail.*;
+import java.util.ArrayList;
 import java.util.List;
 
-import static de.haw_landshut.hawmobile.mail.MailEntryAdapter.ViewHolder.MESSAGE_FNA;
-import static de.haw_landshut.hawmobile.mail.MailEntryAdapter.ViewHolder.MESSAGE_UID;
+import static de.haw_landshut.hawmobile.mail.MailEntryAdapter.ViewHolder.*;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,12 +44,19 @@ import static de.haw_landshut.hawmobile.mail.MailEntryAdapter.ViewHolder.MESSAGE
  */
 public class MailOverview extends Fragment implements View.OnClickListener, PopupMenu.OnMenuItemClickListener{
 
+    private long maxUID;
+    private int lastMessageNum = 1;
+    private String currentFolderName;
+
+    private static final int MESSAGESAVECOUNT = 20;
+
     private OnFragmentInteractionListener mListener;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private FloatingActionButton mFloatingActionButton;
     private SharedPreferences preferences;
     private RecyclerView mRecyclerView;
     private MailEntryAdapter mMailEntryAdapter;
+    private ProgressBar mProgressBar;
     private EMailDao eMailDao;
 
     private Store store;
@@ -78,9 +85,9 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
 
         preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
 
-        //TODO: Verhindern, dass alle E-Mail heruntergeladen werden
-        if(!preferences.getBoolean("mailsFetched", false))
-            new Mail2BaseTask().execute();
+//        //TODO: Verhindern, dass alle E-Mail heruntergeladen werden
+//        if(!preferences.getBoolean("mailsFetched", false))
+//            new Mail2BaseTask().execute();
 
     }
 
@@ -147,6 +154,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
                     it.putExtra("FolderName", ef.getName());
                     it.putExtra("StringName", stringName);
                     popupMenu.getMenu().add(stringName).setIntent(it);
+
                 }
                 popupMenu.show();
                 popupMenu.setOnMenuItemClickListener(this);
@@ -159,7 +167,8 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
     public boolean onMenuItemClick(MenuItem menuItem) {
         final Intent intent = menuItem.getIntent();
         getActivity().setTitle(intent.getIntExtra("StringName", R.string.undefined));
-        new Base2MailEntryAdapter().execute(intent.getStringExtra("FolderName"));
+//        new Base2MailEntryAdapter().execute(intent.getStringExtra("FolderName"));
+        new Update().execute(intent.getStringExtra("FolderName"));
         return false;
     }
 
@@ -170,7 +179,15 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
 
     public void onMessageClicked(final EMail mail, int messagePos){
         mail.setSeen(true);
-        new MarkAsSeen().execute(mail);
+//        new MarkAsSeen().execute(mail);
+        new OpenMail().execute(mail);
+
+        Intent intent = new Intent(getActivity(), MailView.class);
+        intent.putExtra(MESSAGE_FNA, mail.getFoldername());
+        intent.putExtra(MESSAGE_ENCODING, mail.getEncoding());
+        intent.putExtra(MESSAGE_SUBJECT, mail.getSubject());
+        intent.putExtra(MESSAGE_TEXT, mail.getText());
+        startActivity(intent);
 
         mMailEntryAdapter.notifyItemChanged(messagePos);
 
@@ -182,10 +199,11 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
         View view = inflater.inflate(R.layout.fragment_mail_overview, container, false);
 
         mRecyclerView = view.findViewById(R.id.mailsRecycleView);
+        mProgressBar = view.findViewById(R.id.progressBar);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-        layoutManager.setReverseLayout(true);
-        layoutManager.setStackFromEnd(true);
+//        layoutManager.setReverseLayout(true);
+//        layoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), RecyclerView.VERTICAL));
@@ -198,8 +216,18 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
                 } else if (dy < 0 && !mFloatingActionButton.isShown()) {
                     mFloatingActionButton.show();
                 }
+                //Lädt mehr E-Mails wenn am Ende des RecyclerViews
+                if(dy > 0 && mProgressBar.getVisibility() == View.GONE){
+                    if (layoutManager.getChildCount() + layoutManager.findLastVisibleItemPosition() >= layoutManager.getItemCount()){
+                        mProgressBar.setVisibility(View.VISIBLE);
+
+                        new FetchMessagesBefore().execute(currentFolderName);
+                        Log.d("onScrolled", "Bottom visible");
+                    }
+                }
             }
         });
+
 
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
@@ -209,7 +237,9 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                //TODO: E-Mail löschen
+                final int pos = viewHolder.getLayoutPosition();
+                mMailEntryAdapter.notifyItemRemoved(pos);
+
             }
 
             @Override
@@ -240,7 +270,8 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new UpdateBase().execute();
+//                new UpdateBase().execute();
+                new Update().execute(currentFolderName);
             }
         });
 
@@ -248,14 +279,20 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                final Intent intent = new Intent(getActivity(), MailCreateActivity.class);
+                startActivity(intent);
             }
         });
 
         //Fügt E-Mails in die Liste ein
-        new Base2MailEntryAdapter().execute("INBOX");
+//        new Base2MailEntryAdapter().execute("INBOX");
+        new Update().execute("INBOX");
 
         return view;
+    }
+
+    private synchronized Store getStore(){
+        return Protocol.getStore();
     }
 
     @Override
@@ -444,9 +481,182 @@ public class MailOverview extends Fragment implements View.OnClickListener, Popu
 
 
             Intent intent = new Intent(getActivity(), MailView.class);
-            intent.putExtra(MESSAGE_UID, email[0].getUid());
+//            intent.putExtra(MESSAGE_UID, email[0].getUid());
             intent.putExtra(MESSAGE_FNA, email[0].getFoldername());
             startActivity(intent);
+
+            return null;
+        }
+    }
+
+    private class Update extends AsyncTask<String, Void, MailEntryAdapter>{
+
+        @Override
+        protected void onPreExecute() {
+            mSwipeRefreshLayout.setRefreshing(true);
+        }
+
+        @Override
+        protected void onPostExecute(MailEntryAdapter mea) {
+            if(mea != null) {
+                mMailEntryAdapter = mea;
+                mRecyclerView.setAdapter(mMailEntryAdapter);
+            }
+            //TODO: Fehlermeldung
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+
+        @Override
+        protected MailEntryAdapter doInBackground(String... strings) {
+
+            final Store store = getStore();
+            currentFolderName = strings[0];
+//            final List<EMailFolder> folderList = eMailDao.getAllEmailFolders();
+
+            try {
+
+                if(store == null){
+                    Log.w("Update", "store is null");
+                    return null;
+                }
+
+                final IMAPFolder folder = ((IMAPFolder) store.getDefaultFolder().getFolder(currentFolderName));
+                if(!folder.isOpen())
+                    folder.open(Folder.READ_ONLY);
+
+                if(eMailFolders == null) {
+                    eMailFolders = new ArrayList<>();
+                    for (final Folder f : store.getDefaultFolder().list()) {
+                        final IMAPFolder imapFolder = ((IMAPFolder) f);
+                        final EMailFolder eMailFolder = new EMailFolder(imapFolder.getName(), imapFolder.getUIDValidity(), imapFolder.getUIDNext());
+                        eMailFolders.add(eMailFolder);
+                    }
+                }
+
+                final int messageCount = folder.getMessageCount();
+                if(messageCount == 0)
+                    return new MailEntryAdapter(new ArrayList<EMail>(), MailOverview.this);
+
+                lastMessageNum = messageCount - MESSAGESAVECOUNT;
+                if (lastMessageNum < 1)
+                    lastMessageNum = 1;
+
+                final Message[] messages = folder.getMessages(lastMessageNum, messageCount);
+
+                final List<EMail> mails = new ArrayList<>();
+                for (int i = messages.length - 1; i >= 0; i--) {
+                    Message m = messages[i];
+                    final EMail eMail = new EMail(m, folder.getUID(m), currentFolderName);
+                    mails.add(eMail);
+                }
+
+                folder.close(false);
+
+                return new MailEntryAdapter(mails, MailOverview.this);
+
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
+
+    private class FetchMessagesBefore extends AsyncTask<String, Void, Integer[]>{
+        @Override
+        protected Integer[] doInBackground(String... string) {
+            final Store store = getStore();
+            final String foldername = string[0];
+
+            try{
+
+                final IMAPFolder folder = ((IMAPFolder) store.getDefaultFolder().getFolder(foldername));
+                if(!folder.isOpen())
+                    folder.open(Folder.READ_ONLY);
+
+                final int lastMessage = lastMessageNum;
+                lastMessageNum -= MESSAGESAVECOUNT;
+                if(lastMessageNum < 1)
+                    lastMessageNum = 1;
+
+                //keine weiteren EMails
+                if(lastMessage == lastMessageNum)
+                    return null;
+
+                final Message[] messages = folder.getMessages(lastMessageNum, lastMessage-1);
+                final int oldMailAdapterSize = mMailEntryAdapter.getItemCount();
+                for (int i = messages.length - 1; i >= 0; i--) {
+                    Message m = messages[i];
+                    mMailEntryAdapter.addMessage(new EMail(m, folder.getUID(m), foldername));
+                }
+
+                folder.close(false);
+
+                return new Integer[]{oldMailAdapterSize, messages.length};
+
+            } catch (MessagingException e){
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Integer[] integers) {
+            mProgressBar.setVisibility(View.GONE);
+            if(integers != null)
+            mMailEntryAdapter.notifyItemRangeInserted(integers[0], integers[1]);
+        }
+    }
+
+    private class OpenMail extends AsyncTask<EMail, Void, Void>{
+
+        @Override
+        protected Void doInBackground(EMail... mail) {
+            final Store store = getStore();
+            final EMail eMail = mail[0];
+
+            try {
+                if (store == null) {
+                    return null;
+                }
+
+                final IMAPFolder folder = ((IMAPFolder) store.getDefaultFolder().getFolder(currentFolderName));
+                if(!folder.isOpen())
+                    folder.open(Folder.READ_WRITE);
+
+                final Message m = folder.getMessageByUID(eMail.getUid());
+
+                m.setFlag(Flags.Flag.SEEN, true);
+
+                folder.close(true);
+
+            } catch (MessagingException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private class DeleteMail extends AsyncTask<EMail, Void, Void>{
+        @Override
+        protected Void doInBackground(EMail... mail) {
+
+            final Store store = getStore();
+
+            try {
+                final IMAPFolder folder = ((IMAPFolder) store.getDefaultFolder().getFolder(currentFolderName));
+                if(!folder.isOpen())
+                    folder.open(Folder.READ_WRITE);
+
+                //TODO: in gelöscht verschieben
+                folder.getMessageByUID(mail[0].getUid()).setFlag(Flags.Flag.DELETED, true);
+
+                folder.close(true);
+
+            } catch (MessagingException e){
+                e.printStackTrace();
+            }
 
             return null;
         }

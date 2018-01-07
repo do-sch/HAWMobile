@@ -28,8 +28,12 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         private final MailOverview mailOverview;
         private int pos;
         private EMail mail;
-        public static final String MESSAGE_UID = "de.haw_landshut.hawmobile.MailView.uid";
+
+        public static final String MESSAGE_TEXT = "de.haw_landshut.hawmobile.MailView.text";
         public static final String MESSAGE_FNA = "de.haw_landshut.hawmobile.MailView.foldername";
+        public static final String MESSAGE_SUBJECT = "de.haw_landshut.hawmobile.MailView.subject";
+        public static final String MESSAGE_ENCODING = "de.haw_landshut.hawmobile.MailView.encoding";
+
         public ViewHolder(View itemView, MailOverview mailOverview) {
             super(itemView);
             this.mailOverview = mailOverview;
@@ -55,6 +59,10 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         public boolean onLongClick(View view) {
             Log.d("ViewHodler", "long clicked");
             return false;
+        }
+
+        public EMail getMail() {
+            return mail;
         }
     }
 

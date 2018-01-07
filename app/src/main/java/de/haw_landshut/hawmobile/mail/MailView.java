@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import de.haw_landshut.hawmobile.MainActivity;
@@ -27,20 +29,69 @@ public class MailView extends AppCompatActivity {
         setContentView(R.layout.activity_mail_view);
 
         final Intent intent = getIntent();
-        final long uid = intent.getLongExtra(MailEntryAdapter.ViewHolder.MESSAGE_UID, -1);
+        final String text = intent.getStringExtra(MailEntryAdapter.ViewHolder.MESSAGE_TEXT);
         final String foldername = intent.getStringExtra(MailEntryAdapter.ViewHolder.MESSAGE_FNA);
+        final String subject = intent.getStringExtra(MailEntryAdapter.ViewHolder.MESSAGE_SUBJECT);
+        final String encoding = intent.getStringExtra(MailEntryAdapter.ViewHolder.MESSAGE_ENCODING);
 
-        final EMail indicies = new EMail();
-        indicies.setUid(uid);
-        indicies.setFoldername(foldername);
+//        final EMail indicies = new EMail();
+//        indicies.setUid(uid);
+//        indicies.setFoldername(foldername);
 
-        new InsertEMail().execute(indicies);
+        final ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(subject);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        final WebView wv = findViewById(R.id.mailWebView);
+
+        ContentType contentType;
+        try {
+            contentType = new ContentType(encoding);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            ParameterList pl = new ParameterList();
+            pl.set("encoding", "utf-8");
+            contentType = new ContentType("text", "html", pl);
+        }
+
+        wv.loadDataWithBaseURL(null, text, contentType.getBaseType(), contentType.getParameter("encoding"), null);
+
+        Log.d("encoding", encoding);
+
+//        new InsertEMail().execute(indicies);
 
     }
 
     @Override
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
         return super.onCreateView(parent, name, context, attrs);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+
+        menu.clear();
+        getMenuInflater().inflate(R.menu.mailviewactionbar, menu);
+
+        final MenuItem deleteItem = menu.findItem(R.id.removeMail);
+        final MenuItem answerItem = menu.findItem(R.id.answerMail);
+
+        deleteItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+
+                return true;
+            }
+        });
+
+        answerItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                return true;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     private class InsertEMail extends AsyncTask<EMail, Void, EMail>{

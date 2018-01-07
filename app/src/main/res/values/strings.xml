@@ -41,5 +41,12 @@
     <string name="downloading">Downloading E-Mails</string>
     <string name="downloaded">E-Mails were downloaded</string>
     <string name="delete">Delete</string>
+    <string name="answer">Answer</string>
+
+    <string name="send">Send</string>
+    <string name="write">Write</string>
+    <string name="to">To</string>
+    <string name="subject">Subject</string>
+    <string name="write_mail">Write E-Mail</string>
 
 </resources>

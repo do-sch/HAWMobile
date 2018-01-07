@@ -52,15 +52,18 @@ public class Protocol {
             IMAPFolder folder = ((IMAPFolder) store.getDefaultFolder().getFolder("INBOX"));
 
             if(!folder.isOpen())
-                folder.open(Folder.READ_WRITE);
+                folder.open(Folder.READ_ONLY);
 
             Message[] messages = folder.getMessages();
 
+            System.out.println("folder.getMessageCount() = " + folder.getMessageCount());
+
+
             for(Message m : messages){
-                if(folder.getUID(m) == 25){
-                    m.setFlag(Flags.Flag.DELETED, true);
-                    break;
-                }
+                System.out.println("folder.getUID(m) = " + folder.getUID(m));
+                System.out.println("m.getMessageNumber() = " + m.getMessageNumber());
+                System.out.println("m.getSubject() = " + m.getSubject());
+                System.out.println();
 
             }
 
@@ -303,6 +306,21 @@ public class Protocol {
             store = null;
             Log.i("Protocol", "logged out");
         }
+    }
+
+    public static Store getStore(){
+        try{
+            if(store == null || !store.isConnected()) {
+                Protocol.store = Session.getDefaultInstance(props).getStore("imap");
+                Protocol.store.connect(Credentials.getUsername(), Credentials.getPassword());
+                Log.i("Protocol", "logged in as user " + Credentials.getUsername());
+            }
+                return store;
+        } catch (MessagingException e){
+            //TODO: Fehlermeldung: Probleme mit Internetverbindung
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
