@@ -115,5 +115,8 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
         return hawDatabase;
     }
 
+    public HAWDatabase getDatabase(){
+        return hawDatabase;
+    }
 
 }

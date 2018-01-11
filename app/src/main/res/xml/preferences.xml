@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="HAW Mobile"
+        android:key="pref_key_storage_settings">
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Neuigkeiten"
+        android:key="pref_key_storage_settings">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="switch_notifications"
+            android:title="Notifications" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
