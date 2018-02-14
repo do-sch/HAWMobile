@@ -3,6 +3,7 @@ package de.haw_landshut.hawmobile;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
 import de.haw_landshut.hawmobile.base.HAWDatabase;
 import de.haw_landshut.hawmobile.mail.MailOverview;
 import de.haw_landshut.hawmobile.news.NewsOverview;
@@ -19,37 +19,43 @@ import de.haw_landshut.hawmobile.schedule.ScheduleFragment;
 
 public class MainActivity extends AppCompatActivity implements MailOverview.OnFragmentInteractionListener, ScheduleFragment.OnFragmentInteractionListener, NewsOverview.OnFragmentInteractionListener {
 
-    private Fragment currentFragment, mailFragment, scheduleFragment, newsFragment/*, mapFragment*/;
     private static HAWDatabase hawDatabase;
-
+    private BottomNavigationView navigation;
     private final BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment fragment = null;
+            Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content);
             switch (item.getItemId()) {
                 case R.id.action_mail:
-                    changeFragment(mailFragment);
-                    return true;
+                    if (currentFragment.getClass() != MailOverview.class){
+                        fragment = MailOverview.newInstance();
+                    }
+                    break;
                 case R.id.action_schedule:
-                    if (scheduleFragment == null)
-                        scheduleFragment = ScheduleFragment.newInstance();
-                    changeFragment(scheduleFragment);
-                    return true;
+                    if (currentFragment.getClass() != ScheduleFragment.class)
+                        fragment = ScheduleFragment.newInstance();
+                    break;
                 case R.id.action_map:
                     /*
-                    if(mapFragment == null)
-                        mapFragment = MapFragment.newInstance();
-                    changeFragment(mapFragment)
+                    if (currentFramgnet.getClass() != MapFragment.class)
+                        fragment = MapFragment.newInstance();
+                    break;
                      */
                     return true;
                 case R.id.action_news:
-                    if(newsFragment == null)
-                        newsFragment = NewsOverview.newInstance();
-                    changeFragment(newsFragment);
-                    return true;
+                    if(currentFragment.getClass() != NewsOverview.class)
+                        fragment = NewsOverview.newInstance();
+                    break;
+                default:
+                    return false;
             }
-            return false;
+            if(fragment != null)
+                getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
+
+            return true;
         }
 
     };
@@ -59,19 +65,33 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        mailFragment = MailOverview.newInstance();
-        changeFragment(mailFragment);
 
-        if(hawDatabase == null)
+
+        final FragmentTransaction ft = getFragmentManager().beginTransaction();
+        if (savedInstanceState == null){
+            ft.replace(R.id.content, MailOverview.newInstance());
+            ft.commit();
+        } else {
+            navigation.setSelectedItemId(savedInstanceState.getInt("selectedNavID"));
+        }
+
+        if(hawDatabase == null || !hawDatabase.isOpen())
             hawDatabase = Room.databaseBuilder(getApplicationContext(), HAWDatabase.class, "haw").build();
+
         handleLogin();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("selectedNavID", navigation.getSelectedItemId());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -83,11 +103,6 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
     protected void onDestroy() {
         hawDatabase.close();
         super.onDestroy();
-    }
-
-    private void changeFragment(Fragment fragment){
-        currentFragment = fragment;
-        getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
     }
 
     private void handleLogin(){
