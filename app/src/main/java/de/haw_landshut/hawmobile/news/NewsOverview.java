@@ -14,7 +14,10 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
@@ -29,6 +32,10 @@ import de.haw_landshut.hawmobile.base.HAWDatabase;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.safety.Whitelist;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,12 +47,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -156,13 +160,13 @@ public class NewsOverview extends Fragment {
         return view;
 
     }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+//wer braucht des?
+//    // TODO: Rename method, update argument and hook method into UI event
+//    public void onButtonPressed(Uri uri) {
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
+//    }
 
     @Override
     public void onAttach(Context context) {
@@ -231,25 +235,18 @@ public class NewsOverview extends Fragment {
                         .method(Connection.Method.POST)
                         .execute();
 
-                //debug info start
-                String have = "Infos zum laufenden Studienbetrieb: Hochschule Landshut";
-                String doc = document.parse().toString();
-                //debug info end
+                Document doc = document.parse();
 
-                List<String> allMatches = new ArrayList<>();
-                Matcher m = Pattern.compile("<div class=\"list_date\".*>\\s*([[:ascii:]\\s\\wäüöß]*?)\\s*</div>[\\s]*<h2>([[:ascii:]üäöß]*?)</h2>[[:ascii:]üäöß]*?</p>\\s*<p>([[:ascii:]\\s\\wäüöß]*?)</p>\\s*<p>([[:ascii:]üäöß]*?)</p>(\\s*[[:ascii:]üäöß]*?)</div>")
-                        .matcher(doc);
-                while (m.find()) {
-                    allMatches.add(m.group(1) + "\n");
-                    allMatches.add(m.group(2).toUpperCase() + "\n");
-                    allMatches.add(m.group(3));
-                    allMatches.add(m.group(4));
-                    allMatches.add(m.group(5) + "\n\n");
+                Elements elements = doc.getElementsByAttributeValue("class","col-lg-9 col-sm-12");
+                String have = "Infos zum laufenden Studienbetrieb: Hochschule Landshut";
+
+                String el="";
+                for(Element e:elements) {
+                    el = el + br2nl(e.toString()) + "_____________________________________________";
                 }
-                //debug info start
-                Boolean hav = doc.contains(have);
-                content = "\ndebug info: Website loaded:\nSchwartes Brett: " + !hav + "\nInfo zum Studienbetrieb: " + hav + "\n\n" + allMatches;
-                //debug info end
+                el = el.replace("&nbsp;","");
+                content = el;
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -259,7 +256,9 @@ public class NewsOverview extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            textView.setText(textView.getText() + "\r\n" + content);
+            //textView.getText() + "\r\n" +
+            textView.setText(content);
+            textView.setPadding(80,80,80,80);
             textView.setMovementMethod(new ScrollingMovementMethod());
         }
     }
@@ -373,5 +372,17 @@ public class NewsOverview extends Fragment {
 
             return result;
         }
+    }
+    private static String br2nl(String html) {
+        if(html==null)
+            return null;
+        //html = html.replace("<h2>","<b>").replace("</h2>","</b>");
+        Document document = Jsoup.parse(html);
+
+        document.outputSettings(new Document.OutputSettings().prettyPrint(false));//makes html() preserve linebreaks and spacing
+        document.select("br").append("\n");
+        document.select("p").append("\n");
+        String s = document.html().replaceAll("\\\\n", "");
+        return Jsoup.clean(s, "", Whitelist.simpleText(), new Document.OutputSettings().prettyPrint(false));
     }
 }
