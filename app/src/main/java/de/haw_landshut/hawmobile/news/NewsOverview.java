@@ -123,10 +123,11 @@ public class NewsOverview extends Fragment {
             pendingNotifIntent = PendingIntent.getBroadcast(getActivity(), 0, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingNotifIntent);
         }
-        else
-        {
+//        else
+//        {
+            if(pendingNotifIntent!=null)
             am.cancel(pendingNotifIntent);
-        }
+//        }
         //Termine Ende
     }
 
