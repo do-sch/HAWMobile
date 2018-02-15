@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <ImageView android:id="@+id/mailUnread"
+               android:layout_height="match_parent"
+               android:layout_width="?attr/actionBarSize"
+               android:background="?attr/actionBarItemBackground"
+               android:scaleType="centerInside"
+               android:title="@string/mark_as_unread"
+               android:layout_alignParentEnd="true"
+               android:src="@drawable/mail_icon"/>
+    <ImageView android:id="@+id/mailDelete"
+               android:layout_height="match_parent"
+               android:layout_width="?attr/actionBarSize"
+               android:background="?attr/actionBarItemBackground"
+               android:scaleType="centerInside"
+               android:title="@string/delete"
+               android:layout_toStartOf="@id/mailUnread"
+               android:src="@drawable/delete_icon"/>
+    <ImageView android:id="@+id/mailMove"
+               android:layout_height="match_parent"
+               android:layout_width="?attr/actionBarSize"
+               android:background="?attr/actionBarItemBackground"
+               android:scaleType="centerInside"
+               android:title="@string/move"
+               android:paddingLeft="10dp"
+               android:paddingRight="10dp"
+               android:layout_toStartOf="@id/mailDelete"
+               android:src="@drawable/move_icon"/>
+    <ImageView android:id="@+id/mailExitSelection"
+               android:layout_width="?attr/actionBarSize"
+               android:background="?attr/actionBarItemBackground"
+               android:scaleType="centerInside"
+               android:layout_height="match_parent"
+               android:src="@drawable/back_icon"
+               android:title="@string/exit"
+               android:layout_alignParentStart="true"/>
+
+    <TextView android:id="@+id/mailSelectionCount"
+              android:layout_width="?attr/actionBarSize"
+              android:background="?attr/actionBarItemBackground"
+              android:scaleType="centerInside"
+              android:layout_height="match_parent"
+              android:textColor="@color/white"
+              android:gravity="center_vertical"
+              android:layout_toStartOf="@id/mailMove"
+              android:layout_toEndOf="@id/mailExitSelection"
+              android:textAppearance="@android:style/TextAppearance.DeviceDefault.Widget.ActionBar.Title"
+              android:textAlignment="gravity"/>
+
+</RelativeLayout>

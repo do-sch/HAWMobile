@@ -4,6 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import org.jsoup.Jsoup;
 
 import javax.activation.MimeType;
 import javax.mail.*;
@@ -16,9 +17,12 @@ import java.util.Date;
 @Entity(primaryKeys = {"uid", "foldername"})
 public class EMail {
 
+    private static final int SHORTTEXT_LENGTH=50;
+
     public EMail(){
 
     }
+
 
     public EMail(Message message, long uid, String foldername){
         try {
@@ -34,6 +38,7 @@ public class EMail {
             this.setCc(addresses2strings(message.getRecipients(Message.RecipientType.CC)));
             this.setFoldername(foldername);
             this.setText(getText(message));
+            this.setShortText(isHtml() ? cutString(Jsoup.parse(this.getText()).text()) : cutString(this.getText()));
 
         } catch (MessagingException | IOException e){
             e.printStackTrace();
@@ -57,7 +62,7 @@ public class EMail {
 
     @ColumnInfo(typeAffinity = ColumnInfo.TEXT)
     private String text;
-
+    private String shortText;
 
     public long getUid() {
         return uid;
@@ -145,6 +150,14 @@ public class EMail {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getShortText() {
+        return shortText;
+    }
+
+    public void setShortText(String shortText) {
+        this.shortText = shortText;
     }
 
     public String getEncoding() {
@@ -260,5 +273,13 @@ public class EMail {
         }
 
         return null;
+    }
+
+    private static String cutString(final String str){
+        if(str == null)
+            return "";
+        if(str.length() > SHORTTEXT_LENGTH)
+            return str.substring(0, 30);
+        return str;
     }
 }

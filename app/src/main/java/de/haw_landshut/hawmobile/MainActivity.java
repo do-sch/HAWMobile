@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
 
     private static HAWDatabase hawDatabase;
     private BottomNavigationView navigation;
+    private OnBackPressedListener onBackPressedListener;
     private final BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -105,6 +106,25 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
         super.onDestroy();
     }
 
+    /**
+     * Take care of popping the fragment back stack or finishing the activity
+     * as appropriate.
+     */
+    @Override
+    public void onBackPressed() {
+        if (onBackPressedListener != null) {
+            final boolean handled = onBackPressedListener.onBackPressed();
+            if (!handled)
+                super.onBackPressed();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public void setOnBackPressedListener(final OnBackPressedListener onBackPressedListener){
+        this.onBackPressedListener = onBackPressedListener;
+    }
+
     private void handleLogin(){
 
         //holt sich alle HAWMobile-Accounts auf dem Gerät
@@ -133,5 +153,6 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
     public HAWDatabase getDatabase(){
         return hawDatabase;
     }
+
 
 }

@@ -2,11 +2,11 @@ package de.haw_landshut.hawmobile.mail;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import de.haw_landshut.hawmobile.R;
 import de.haw_landshut.hawmobile.base.EMail;
-import org.jsoup.Jsoup;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,11 +21,18 @@ import java.util.List;
 
 public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.ViewHolder> {
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
+    public interface Selectable{
+        void select();
+        void deselect();
+        int getAdapterPosition();
+        EMail getMail();
+        boolean isSelected();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener, Selectable{
         public TextView subjectView, senderView, contentView, dateView;
         public RelativeLayout viewBackground, viewForeground;
-        private final MailOverview mailOverview;
-        private int pos;
+        private final MailEntryAdapter mea;
         private EMail mail;
 
         public static final String MESSAGE_TEXT = "de.haw_landshut.hawmobile.MailView.text";
@@ -34,9 +40,10 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         public static final String MESSAGE_SUBJECT = "de.haw_landshut.hawmobile.MailView.subject";
         public static final String MESSAGE_ENCODING = "de.haw_landshut.hawmobile.MailView.encoding";
 
-        public ViewHolder(View itemView, MailOverview mailOverview) {
+
+        public ViewHolder(View itemView, MailEntryAdapter mea) {
             super(itemView);
-            this.mailOverview = mailOverview;
+            this.mea = mea;
             this.subjectView = itemView.findViewById(R.id.subject);
             this.senderView = itemView.findViewById(R.id.sender);
             this.contentView = itemView.findViewById(R.id.mailcontent);
@@ -47,33 +54,56 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
             itemView.setOnLongClickListener(this);
         }
 
-        public void setMail(final EMail mail) {this.mail = mail; }
-        public void setPos(int pos) { this.pos = pos; }
+        @Override
+        public void select(){
+            mea.select(getAdapterPosition());
+            viewForeground.setSelected(true);
+        }
+
+        @Override
+        public void deselect(){
+            mea.deselect(getAdapterPosition());
+            viewForeground.setSelected(false);
+        }
+
+        @Override
+        public boolean isSelected(){
+            return viewForeground.isSelected();
+        }
 
         @Override
         public void onClick(View view) {
-            mailOverview.onMessageClicked(mail, pos);
+            mea.getListener().onItemClick(this);
         }
 
         @Override
         public boolean onLongClick(View view) {
-            Log.d("ViewHodler", "long clicked");
-            return false;
+            mea.getListener().onItemLongClick(this);
+            return true;
         }
 
+        @Override
         public EMail getMail() {
             return mail;
         }
+
+        public void setMail(final EMail mail) {this.mail = mail; }
     }
 
     private List<EMail> messages;
-    private final MailOverview mailOverview;
+    private SparseBooleanArray selectedItems;
+    private final MailEntryClickListener mailEntryClickListener;
     @SuppressLint("SimpleDateFormat")
     private DateFormat df = new SimpleDateFormat("dd.MM.yy");
 
-    public MailEntryAdapter(List<EMail> messages, MailOverview mailOverview){
+    public void setMessages(List<EMail> messages) {
         this.messages = messages;
-        this.mailOverview = mailOverview;
+    }
+
+    public MailEntryAdapter(List<EMail> messages, MailEntryClickListener mailEntryClickListener){
+        this.messages = messages;
+        this.mailEntryClickListener = mailEntryClickListener;
+        selectedItems = new SparseBooleanArray();
     }
 
     @Override
@@ -81,21 +111,18 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View v = inflater.inflate(R.layout.adapter_mail_entry, parent, false);
-        return new ViewHolder(v, mailOverview);
+        return new ViewHolder(v, this);
     }
 
     @Override
     public void onBindViewHolder(MailEntryAdapter.ViewHolder holder, int position) {
-        EMail m = messages.get(position);
+        final EMail m = messages.get(position);
         holder.setMail(m);
-        holder.setPos(position);
         holder.subjectView.setText(m.getSubject());
         holder.senderView.setText(m.getSenderMails());
         holder.dateView.setText(df.format(m.getDate()));
-        if(m.isHtml())
-            holder.contentView.setText(Jsoup.parse(m.getText()).text());
-        else
-            holder.contentView.setText(m.getText());
+        holder.contentView.setText(m.getShortText());
+        holder.viewForeground.setSelected(selectedItems.get(position, false));
 
         if(!m.isSeen()){
             holder.subjectView.setTypeface(Typeface.DEFAULT_BOLD);
@@ -104,7 +131,17 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
             holder.dateView.setTextColor(Color.rgb(0, 150, 255));
             holder.subjectView.setTextColor(Color.BLACK);
             holder.senderView.setTextColor(Color.BLACK);
+        } else {
+            holder.dateView.setTextAppearance(R.style.AppTheme);
+            holder.dateView.setTextColor(R.color.primary);
+            holder.senderView.setTextAppearance(R.style.AppTheme);
+            holder.subjectView.setTextAppearance(R.style.AppTheme);
         }
+
+    }
+
+    public int getSelectedItemCount(){
+        return selectedItems.size();
     }
 
     @Override
@@ -114,6 +151,35 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
 
     public void addMessage(EMail m){
         messages.add(m);
+    }
+
+    void select(int position){
+        selectedItems.put(position, true);
+//        this.notifyItemChanged(position);
+    }
+
+    void deselect(int position){
+        selectedItems.delete(position);
+//        this.notifyItemChanged(position);
+    }
+
+    void deselectAll(){
+        for(int i = 0; i < selectedItems.size(); i++){
+            final int pos = selectedItems.indexOfKey(i);
+            selectedItems.put(pos, false);
+            notifyItemChanged(pos);
+        }
+        selectedItems.clear();
+    }
+
+    MailEntryClickListener getListener(){
+        return mailEntryClickListener;
+    }
+
+
+    interface MailEntryClickListener{
+        void onItemClick(Selectable vh);
+        void onItemLongClick(Selectable vh);
     }
 
 }

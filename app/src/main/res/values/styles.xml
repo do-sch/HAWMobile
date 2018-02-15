@@ -6,6 +6,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:searchIcon">@drawable/search_icon</item>
+        <item name="android:queryBackground">@color/white</item>
+        <item name="android:searchHintIcon">@null</item>
+        <item name="android:queryHint">@string/search</item>
     </style>
 
     <style name="AppTheme.NoActionbar" parent="Theme.AppCompat.Light.NoActionBar">

@@ -93,7 +93,7 @@ public class Protocol {
             for (final Folder folder : list) {
                 IMAPFolder imapFolder = ((IMAPFolder) folder);
 
-                dao.insertAllFolders(new EMailFolder(imapFolder.getName(), imapFolder.getUIDValidity(), imapFolder.getUIDNext()));
+//                dao.insertAllFolders(new EMailFolder(imapFolder.getName(), imapFolder.getUIDValidity(), imapFolder.getUIDNext()));
 
                 Message[] messages = imapFolder.getMessages();
                 for (int mindex = 0, messagesLength = messages.length; mindex < messagesLength; mindex++, messageIndex++) {
@@ -317,8 +317,7 @@ public class Protocol {
             }
                 return store;
         } catch (MessagingException e){
-            //TODO: Fehlermeldung: Probleme mit Internetverbindung
-            e.printStackTrace();
+            Log.e("Protocol", "Connection Problems");
         }
         return null;
     }

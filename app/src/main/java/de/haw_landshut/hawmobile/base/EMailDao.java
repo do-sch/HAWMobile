@@ -37,6 +37,9 @@ public interface EMailDao {
     @Query("UPDATE email SET foldername=:newfolder,uid=:newuid WHERE uid=:olduid AND foldername=:oldfolder")
     void moveEMailToNewFolder(String newfolder, String oldfolder, long olduid, long newuid);
 
+    @Query("UPDATE email SET seen=1 WHERE foldername=:foldername AND uid=:uid")
+    void setEMailSeen(long uid, String foldername);
+
     @Query("DELETE FROM email WHERE foldername=:foldername")
     void deleteAllEMailsFromFolder(String foldername);
 
@@ -44,7 +47,10 @@ public interface EMailDao {
     void insertAllEMails(EMail... emails);
 
     @Insert
-    void insertAllFolders(EMailFolder... folders);
+    void insertAllEMails(List<EMail> eMails);
+
+    @Insert
+    void insertAllFolders(List<EMailFolder> folders);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertContacts(Contact... contacts);

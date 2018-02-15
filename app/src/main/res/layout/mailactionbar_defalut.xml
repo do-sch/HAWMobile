@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <ImageView android:layout_width="?attr/actionBarSize"
+               android:layout_height="match_parent"
+               android:contentDescription="@string/settings"
+               android:layout_alignParentEnd="true"
+               android:scaleType="centerInside"
+               android:src="@drawable/settings_icon"
+               android:background="?attr/selectableItemBackground"
+               android:clickable="true"
+               android:id="@+id/mailSettings"/>
+
+    <SearchView android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                style="@style/AppTheme"
+                android:contentDescription="@string/search"
+                android:id="@+id/mailSearch"
+                android:layout_alignParentTop="true"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:layout_toStartOf="@+id/mailSettings" />
+
+    <Spinner android:layout_width="wrap_content"
+             android:layout_height="match_parent"
+             android:anyDensity="false"
+             style="@style/AppTheme"
+             android:id="@+id/mailFolder"
+             android:backgroundTint="@color/white"
+             android:layout_alignParentStart="true"/>
+             <!--android:layout_toStartOf="@id/mailSearch"-->
+
+</RelativeLayout>
