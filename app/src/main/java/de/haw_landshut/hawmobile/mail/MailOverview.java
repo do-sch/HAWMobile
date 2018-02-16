@@ -110,7 +110,8 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        new Base2MailEntryAdapter().execute(eMailFolders.get(i).getName());
+        this.currentFolderName = eMailFolders.get(i).getName();
+        new Base2MailEntryAdapter().execute(currentFolderName);
     }
 
     @Override
@@ -407,6 +408,12 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    @Override
+    public void onResume() {
+        ((AppCompatActivity) this.getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(true);
+        super.onResume();
     }
 
     @Override

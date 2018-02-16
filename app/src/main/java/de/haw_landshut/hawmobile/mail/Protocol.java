@@ -25,15 +25,16 @@ public class Protocol {
         props.setProperty("mail.imap.starttls.enable", "true");
         props.setProperty("mail.imap.starttls.required", "true");
 
-//        props.setProperty("mail.smtp.host", "asmtp.haw-landshut.de");
-//        props.setProperty("mail.smtp.port", "587"); //STARTTLS
-//        props.setProperty("mail.smtp.starttls.enable", "true");
-//        props.setProperty("mail.smtp.starttls.required", "true");
-//        props.setProperty("mail.smtp.auth", "true");
+        props.setProperty("mail.smtp.host", "asmtp.haw-landshut.de");
+        props.setProperty("mail.smtp.port", "587"); //STARTTLS
+        props.setProperty("mail.smtp.starttls.enable", "true");
+        props.setProperty("mail.smtp.starttls.required", "true");
+        props.setProperty("mail.smtp.auth", "true");
 
     }
 
     private static Store store;
+    private static Session session;
 
     public static void main(String... args){
         try {
@@ -293,8 +294,8 @@ public class Protocol {
     }
 
     public static void login() throws MessagingException{
-        if(store == null || !store.isConnected()) {
-            Protocol.store = Session.getDefaultInstance(props).getStore("imap");
+        if (store == null || !store.isConnected()) {
+            Protocol.store = getSession().getStore("imap");
             Protocol.store.connect(Credentials.getUsername(), Credentials.getPassword());
             Log.i("Protocol", "logged in as user " + Credentials.getUsername());
         }
@@ -320,6 +321,12 @@ public class Protocol {
             Log.e("Protocol", "Connection Problems");
         }
         return null;
+    }
+
+    public static Session getSession(){
+        if (session == null)
+            Protocol.session = Session.getDefaultInstance(props);
+        return Protocol.session;
     }
 
 }

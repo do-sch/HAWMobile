@@ -15,44 +15,57 @@
             tools:layout_constraintTop_creator="1" tools:layout_constraintRight_creator="1"
             tools:layout_constraintBottom_creator="1" android:layout_marginStart="8dp"
             app:layout_constraintBottom_toBottomOf="parent" android:layout_marginEnd="8dp"
-            app:layout_constraintRight_toRightOf="parent" android:layout_marginTop="8dp"
+            app:layout_constraintRight_toRightOf="parent"
             tools:layout_constraintLeft_creator="1" android:layout_marginBottom="8dp"
             app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent">
         <RelativeLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+            <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:inputType="textEmailAddress"
+                    android:background="@android:color/transparent"
+                    android:ems="10"
+                    android:id="@+id/to_email_editText" android:layout_toEndOf="@+id/to_textView"/>
             <TextView
                     android:text="@string/to"
-                    android:layout_width="50dp"
+                    android:layout_width="64dp"
                     android:layout_height="wrap_content"
+                    android:labelFor="@id/to_email_editText"
                     android:ems="10"
                     android:id="@+id/to_textView"
                     android:textAppearance="@android:style/TextAppearance.Material.Medium.Inverse"
                     android:textSize="18sp"
                     android:textColor="?android:textColorHint"
-                    android:gravity="center_vertical|start" android:layout_centerVertical="true"
-                    android:layout_alignParentStart="true"/>
-            <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:ems="10"
-                    android:id="@+id/to_email_editText"
-                    android:layout_toEndOf="@id/to_textView"/>
+                    android:gravity="center_vertical|start"
+                    android:layout_alignBaseline="@+id/to_email_editText"
+                    android:layout_alignBottom="@+id/to_email_editText" android:layout_alignParentStart="true"/>
         </RelativeLayout>
+        <View style="@style/Divider"/>
         <EditText android:layout_width="match_parent"
                   android:layout_height="wrap_content"
+                  android:paddingTop="16dp"
+                  android:paddingBottom="16dp"
                   android:ems="10"
                   android:hint="@string/subject"
+                  android:background="@android:color/transparent"
                   android:id="@+id/subject_editText"/>
+        <View style="@style/Divider"/>
         <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
                 android:inputType="textMultiLine"
                 android:ems="10"
                 android:gravity="top|start"
                 android:id="@+id/email_text_editText" tools:ignore="TextFields"
+                android:background="@android:color/transparent"
                 android:textAlignment="textStart"
                 android:hint="@string/write_mail"/>
     </LinearLayout>

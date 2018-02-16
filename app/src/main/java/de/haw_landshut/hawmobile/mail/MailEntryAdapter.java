@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,8 +29,9 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener, Selectable{
-        public TextView subjectView, senderView, contentView, dateView;
-        public RelativeLayout viewBackground, viewForeground;
+
+        TextView subjectView, senderView, contentView, dateView;
+        RelativeLayout viewBackground, viewForeground;
         private final MailEntryAdapter mea;
         private EMail mail;
 
@@ -41,7 +41,7 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         public static final String MESSAGE_ENCODING = "de.haw_landshut.hawmobile.MailView.encoding";
 
 
-        public ViewHolder(View itemView, MailEntryAdapter mea) {
+        ViewHolder(View itemView, MailEntryAdapter mea) {
             super(itemView);
             this.mea = mea;
             this.subjectView = itemView.findViewById(R.id.subject);
@@ -90,6 +90,7 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         public void setMail(final EMail mail) {this.mail = mail; }
     }
 
+
     private List<EMail> messages;
     private SparseBooleanArray selectedItems;
     private final MailEntryClickListener mailEntryClickListener;
@@ -100,7 +101,7 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         this.messages = messages;
     }
 
-    public MailEntryAdapter(List<EMail> messages, MailEntryClickListener mailEntryClickListener){
+    MailEntryAdapter(List<EMail> messages, MailEntryClickListener mailEntryClickListener){
         this.messages = messages;
         this.mailEntryClickListener = mailEntryClickListener;
         selectedItems = new SparseBooleanArray();
