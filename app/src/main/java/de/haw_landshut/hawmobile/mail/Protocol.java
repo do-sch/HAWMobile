@@ -50,25 +50,8 @@ public class Protocol {
 
             store.connect(username, password);
 
-            IMAPFolder folder = ((IMAPFolder) store.getDefaultFolder().getFolder("INBOX"));
-
-            if(!folder.isOpen())
-                folder.open(Folder.READ_ONLY);
-
-            Message[] messages = folder.getMessages();
-
-            System.out.println("folder.getMessageCount() = " + folder.getMessageCount());
-
-
-            for(Message m : messages){
-                System.out.println("folder.getUID(m) = " + folder.getUID(m));
-                System.out.println("m.getMessageNumber() = " + m.getMessageNumber());
-                System.out.println("m.getSubject() = " + m.getSubject());
-                System.out.println();
-
-            }
-
-            folder.close(true);
+            for (Folder f : store.getDefaultFolder().list())
+                System.out.println(f.getName());
 
             store.close();
 

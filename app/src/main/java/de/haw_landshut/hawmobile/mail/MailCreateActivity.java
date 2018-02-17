@@ -9,16 +9,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import de.haw_landshut.hawmobile.Credentials;
 import de.haw_landshut.hawmobile.R;
 
 import javax.mail.*;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MailCreateActivity extends AppCompatActivity {
 
@@ -84,8 +84,17 @@ public class MailCreateActivity extends AppCompatActivity {
         actionSend = menu.findItem(R.id.action_send);
         actionSend.setEnabled(false);
 
+        final Bundle b = getIntent().getExtras();
+        if (b != null) {
+            actionSend.setEnabled(true);
+            toAddress.setText(b.getString("sender"));
+            subject.setText(b.getString("subject"));
+        }
+
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

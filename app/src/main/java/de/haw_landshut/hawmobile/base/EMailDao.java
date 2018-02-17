@@ -43,6 +43,9 @@ public interface EMailDao {
     @Query("DELETE FROM email WHERE foldername=:foldername")
     void deleteAllEMailsFromFolder(String foldername);
 
+    @Query("DELETE FROM email WHERE foldername=:foldername AND uid=:uid")
+    void deleteEMail(String foldername, long uid);
+
     @Insert
     void insertAllEMails(EMail... emails);
 

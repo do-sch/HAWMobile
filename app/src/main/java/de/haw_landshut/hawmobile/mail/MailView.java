@@ -23,16 +23,19 @@ import javax.mail.internet.ParseException;
 
 public class MailView extends AppCompatActivity {
 
+    private String subject, sender;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mail_view);
 
         final Intent intent = getIntent();
-        final String text = intent.getStringExtra(MailEntryAdapter.ViewHolder.MESSAGE_TEXT);
         final String foldername = intent.getStringExtra(MailEntryAdapter.ViewHolder.MESSAGE_FNA);
-        final String subject = intent.getStringExtra(MailEntryAdapter.ViewHolder.MESSAGE_SUBJECT);
         final String encoding = intent.getStringExtra(MailEntryAdapter.ViewHolder.MESSAGE_ENCODING);
+        final String text = intent.getStringExtra(MailEntryAdapter.ViewHolder.MESSAGE_TEXT);
+        subject = intent.getStringExtra(MailEntryAdapter.ViewHolder.MESSAGE_SUBJECT);
+        sender = intent.getStringExtra(MailEntryAdapter.ViewHolder.MESSAGE_SENDER);
 
 //        final EMail indicies = new EMail();
 //        indicies.setUid(uid);
@@ -87,6 +90,16 @@ public class MailView extends AppCompatActivity {
         answerItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
+                final Intent it = new Intent(MailView.this, MailCreateActivity.class);
+                final Bundle b = new Bundle();
+
+                b.putString("subject", "Re:"+subject);
+                b.putString("sender", sender);
+
+                it.putExtras(b);
+
+                startActivity(it);
+
                 return true;
             }
         });

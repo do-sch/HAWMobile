@@ -16,6 +16,7 @@ import de.haw_landshut.hawmobile.base.EMail;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.ViewHolder> {
@@ -39,6 +40,7 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         public static final String MESSAGE_FNA = "de.haw_landshut.hawmobile.MailView.foldername";
         public static final String MESSAGE_SUBJECT = "de.haw_landshut.hawmobile.MailView.subject";
         public static final String MESSAGE_ENCODING = "de.haw_landshut.hawmobile.MailView.encoding";
+        public static final String MESSAGE_SENDER = "de.haw_landshut.hawmobile.MailView.sender";
 
 
         ViewHolder(View itemView, MailEntryAdapter mea) {
@@ -123,7 +125,7 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         holder.senderView.setText(m.getSenderMails());
         holder.dateView.setText(df.format(m.getDate()));
         holder.contentView.setText(m.getShortText());
-        holder.viewForeground.setSelected(selectedItems.get(position, false));
+        holder.viewForeground.setSelected(selectedItems.get(position));
 
         if(!m.isSeen()){
             holder.subjectView.setTypeface(Typeface.DEFAULT_BOLD);
@@ -154,13 +156,19 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         messages.add(m);
     }
 
+    public void removeMessage(int position) {
+        messages.remove(position);
+    }
+
     void select(int position){
         selectedItems.put(position, true);
 //        this.notifyItemChanged(position);
     }
 
     void deselect(int position){
+        System.out.println("size before: " + selectedItems.size());
         selectedItems.delete(position);
+        System.out.println("size after: "+ selectedItems.size());
 //        this.notifyItemChanged(position);
     }
 
@@ -171,6 +179,25 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
             notifyItemChanged(pos);
         }
         selectedItems.clear();
+
+        for(int i = 0; i< selectedItems.size(); i++){
+            System.out.println(selectedItems.keyAt(i) + ": " + selectedItems.get(i));
+        }
+    }
+
+    EMail getMail(final int index){
+        return messages.get(index);
+    }
+
+    Integer[] getAllSelectedMessagePositions(){
+        final Integer[] selectedMessages = new Integer[selectedItems.size()];
+
+        for (int i = 0; i < selectedItems.size(); i++){
+            if (selectedItems.get(selectedItems.keyAt(i)))
+                selectedMessages[i] = selectedItems.keyAt(i);
+        }
+
+        return selectedMessages;
     }
 
     MailEntryClickListener getListener(){
