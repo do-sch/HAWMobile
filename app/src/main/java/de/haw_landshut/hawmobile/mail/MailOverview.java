@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static android.app.Activity.RESULT_OK;
 import static de.haw_landshut.hawmobile.mail.MailEntryAdapter.ViewHolder.*;
 
 /**
@@ -98,7 +99,6 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
         super.onCreate(savedInstanceState);
         this.setRetainInstance(true);
         this.setHasOptionsMenu(true);
-//        ((AppCompatActivity) this.getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         if(eMailDao == null)
             eMailDao = MainActivity.getHawDatabase().eMailDao();
@@ -128,7 +128,10 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 selectable.deselect();
                 if (mMailEntryAdapter.getSelectedItemCount() == 0){
 
-                    Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setCustomView(actionbarDefault);
+                    final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+                    if (actionBar != null) {
+                        actionBar.setCustomView(actionbarDefault);
+                    }
                     selectionMode = false;
                     return;
                 }
@@ -148,12 +151,30 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
             intent.putExtra(MESSAGE_SUBJECT, mail.getSubject());
             intent.putExtra(MESSAGE_SENDER, mail.getSenderMails());
             intent.putExtra(MESSAGE_TEXT, mail.getText());
-            startActivity(intent);
-
-            mMailEntryAdapter.notifyItemChanged(selectable.getAdapterPosition());
+            intent.putExtra(MESSAGE_ADAPTER_POSITION, selectable.getAdapterPosition());
+            startActivityForResult(intent, MailView.REQUEST_CODE);
+//
+//            mMailEntryAdapter.notifyItemChanged(selectable.getAdapterPosition());
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MailView.REQUEST_CODE)
+            if (resultCode == RESULT_OK) {
+                final int position = data.getIntExtra(MESSAGE_ADAPTER_POSITION, -1);
+                final boolean delete = data.getBooleanExtra(MailView.DELETE, false);
+
+                if (delete) {
+                    new MoveToFolder(DELETED).execute(position);
+                } else {
+                    mMailEntryAdapter.notifyItemChanged(position);
+                }
+
+            }
+
+    }
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -437,13 +458,21 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
 
     @Override
     public void onResume() {
-        ((AppCompatActivity) this.getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(true);
+        final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowCustomEnabled(true);
+        }
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        ((AppCompatActivity) this.getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
+
+        final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowCustomEnabled(false);
+        }
+
         super.onPause();
     }
 

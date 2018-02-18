@@ -41,6 +41,7 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         public static final String MESSAGE_SUBJECT = "de.haw_landshut.hawmobile.MailView.subject";
         public static final String MESSAGE_ENCODING = "de.haw_landshut.hawmobile.MailView.encoding";
         public static final String MESSAGE_SENDER = "de.haw_landshut.hawmobile.MailView.sender";
+        public static final String MESSAGE_ADAPTER_POSITION = "de.haw_landshut.hawmobile.MailView.adapterPosition";
 
 
         ViewHolder(View itemView, MailEntryAdapter mea) {
