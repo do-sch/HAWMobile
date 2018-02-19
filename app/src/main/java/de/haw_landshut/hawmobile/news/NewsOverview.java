@@ -3,24 +3,20 @@ package de.haw_landshut.hawmobile.news;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.preference.PreferenceManager;
-import android.support.v7.widget.Toolbar;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.method.ScrollingMovementMethod;
-import android.text.style.RelativeSizeSpan;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.*;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import de.haw_landshut.hawmobile.Credentials;
 import de.haw_landshut.hawmobile.MainActivity;
@@ -34,7 +30,6 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
@@ -47,6 +42,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +68,7 @@ public class NewsOverview extends Fragment {
     private Calendar calendar;
     //Termine Ende
 
-    private TextView textView;
+    private ListView listView;
     private OnFragmentInteractionListener mListener;
 
     public NewsOverview() {
@@ -156,18 +152,18 @@ public class NewsOverview extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_overview, container, false);
-        textView = view.findViewById(R.id.textFromWeb);
+        listView = view.findViewById(R.id.NewsListView);
         getWebsiteContent();
         return view;
 
     }
 //wer braucht des?
-//    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
+////    // TODO: Rename method, update argument and hook method into UI event
+////    public void onButtonPressed(Uri uri) {
+////        if (mListener != null) {
+////            mListener.onFragmentInteraction(uri);
+////        }
+////    }
 
     @Override
     public void onAttach(Context context) {
@@ -211,7 +207,7 @@ public class NewsOverview extends Fragment {
     }
 
     public class getIt extends AsyncTask<Void, Void, Void> {
-        String content;
+        List<Spanned> spanned = new ArrayList<>();
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -237,16 +233,10 @@ public class NewsOverview extends Fragment {
                         .execute();
 
                 Document doc = document.parse();
-
                 Elements elements = doc.getElementsByAttributeValue("class","col-lg-9 col-sm-12");
-                String have = "Infos zum laufenden Studienbetrieb: Hochschule Landshut";
-
-                String el="";
                 for(Element e:elements) {
-                    el = el + br2nl(e.toString()) + "_____________________________________________";
+                    spanned.add(fromHtml(String.valueOf("<br>"+e)));
                 }
-                el = el.replace("&nbsp;","");
-                content = el;
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -257,10 +247,21 @@ public class NewsOverview extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            //textView.getText() + "\r\n" +
-            textView.setText(content);
-            textView.setPadding(80,80,80,80);
-            textView.setMovementMethod(new ScrollingMovementMethod());
+            getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+            ArrayAdapter<Spanned> adapter = new ArrayAdapter<>(getView().getContext(),android.R.layout.simple_list_item_1,spanned);
+            listView.setAdapter(adapter);
+            listView.setPadding(30,0,30,0);
+        }
+
+        @SuppressWarnings("deprecation")
+        Spanned fromHtml(String html){
+            Spanned result;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                result = Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY);
+            } else {
+                result = Html.fromHtml(html);
+            }
+            return result;
         }
     }
 
@@ -373,17 +374,5 @@ public class NewsOverview extends Fragment {
 
             return result;
         }
-    }
-    private static String br2nl(String html) {
-        if(html==null)
-            return null;
-        //html = html.replace("<h2>","<b>").replace("</h2>","</b>");
-        Document document = Jsoup.parse(html);
-
-        document.outputSettings(new Document.OutputSettings().prettyPrint(false));//makes html() preserve linebreaks and spacing
-        document.select("br").append("\n");
-        document.select("p").append("\n");
-        String s = document.html().replaceAll("\\\\n", "");
-        return Jsoup.clean(s, "", Whitelist.simpleText(), new Document.OutputSettings().prettyPrint(false));
     }
 }
