@@ -10,6 +10,8 @@
         <item name="android:queryBackground">@color/white</item>
         <item name="android:searchHintIcon">@null</item>
         <item name="android:queryHint">@string/search</item>
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
     </style>
 
     <style name="AppTheme.NoActionbar" parent="Theme.AppCompat.Light.NoActionBar">

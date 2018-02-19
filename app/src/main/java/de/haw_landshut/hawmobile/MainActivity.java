@@ -140,8 +140,7 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
             final String password = accountManager.getPassword(a);
             final Fakultaet fa = Fakultaet.get(accountManager.getUserData(a, "FACULTY"));
 
-            Credentials.setCredentials(username, password, fa);
-
+            Credentials.setCredentialsForRuntime(username, password, fa);
         }
 
     }

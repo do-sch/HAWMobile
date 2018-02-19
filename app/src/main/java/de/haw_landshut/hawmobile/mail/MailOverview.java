@@ -14,6 +14,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
@@ -55,14 +56,12 @@ import static de.haw_landshut.hawmobile.mail.MailEntryAdapter.ViewHolder.*;
  */
 public class MailOverview extends Fragment implements View.OnClickListener, MailEntryAdapter.MailEntryClickListener, AdapterView.OnItemSelectedListener, OnBackPressedListener {
 
-
-    private long maxUID;
     private int lastMessageNum = 1;
     private String currentFolderName;
     private boolean selectionMode = false;
 
     private static final int MESSAGESAVECOUNT = 20;
-    private static final String INBOX = "INBOX", DELETED = "Trash";
+    public static final String INBOX = "INBOX", DELETED = "Trash";
 
     private OnFragmentInteractionListener mListener;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -105,12 +104,16 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
 
         preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
 
+        System.out.println(preferences.getString("notifications_new_message_ringtone", "LEER"));
+        MailService.schedulePeriodic(PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext()));
+
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         this.currentFolderName = eMailFolders.get(i).getName();
-        mMailEntryAdapter.deselectAll();
+        if (mMailEntryAdapter != null)
+            mMailEntryAdapter.deselectAll();
         new Base2MailEntryAdapter().execute(currentFolderName);
     }
 
@@ -708,6 +711,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 Log.d("Update", eMailFolders.toString());
 
                 final int messageCount = folder.getMessageCount();
+                eMailDao.updateFolderStuff(currentFolderName, folder.getUIDNext());
                 if(messageCount == 0) {
                     eMailDao.deleteAllEMailsFromFolder(currentFolderName);
                     return new ArrayList<>();

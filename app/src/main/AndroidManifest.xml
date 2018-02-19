@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+            android:name=".App"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -44,6 +45,11 @@
                     android:resource="@xml/authenticator" />
         </service>
 
+        <!--<service-->
+            <!--android:name=".mail.MailService"-->
+            <!--android:permission="android.permission.BIND_JOB_SERVICE"-->
+            <!--android:exported="true"/>-->
+
         <activity
                 android:name=".mail.MailView"
                 android:parentActivityName=".MainActivity" />
@@ -53,13 +59,19 @@
         <activity android:name=".SettingsActivity" />
 
         <activity android:name=".mail.MailSettingsActivity"
-                  android:label="@string/settings"
-                  android:theme="@style/AppTheme"/>
+                  android:label="@string/settings"/>
 
         <receiver
                 android:name=".news.AlarmReceiver"
                 android:enabled="true"
                 android:exported="true"/>
+
+        <!--<receiver android:name=".mail.AddMailReceiver"-->
+                  <!--android:exported="false">-->
+                <!--<intent-filter>-->
+                    <!--<action android:name="com.evernote.android.ADD_JOB_CREATOR"/>-->
+                <!--</intent-filter>-->
+        <!--</receiver>-->
     </application>
 
 </manifest>

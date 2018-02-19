@@ -301,6 +301,7 @@ public class Protocol {
             }
                 return store;
         } catch (MessagingException e){
+            e.printStackTrace();
             Log.e("Protocol", "Connection Problems");
         }
         return null;

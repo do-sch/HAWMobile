@@ -17,7 +17,7 @@ import java.util.Date;
 @Entity(primaryKeys = {"uid", "foldername"})
 public class EMail {
 
-    private static final int SHORTTEXT_LENGTH=50;
+    private static final int SHORTTEXT_LENGTH=100;
 
     public EMail(){
 

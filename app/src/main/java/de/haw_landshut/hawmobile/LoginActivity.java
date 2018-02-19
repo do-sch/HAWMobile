@@ -332,7 +332,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 accountManager.setUserData(account, "FACULTY", facultyIndex+"");
 
                 if (worked){
-                    Credentials.setCredentials(mEmail, mPassword, Fakultaet.get(facultyIndex + ""));
+                    Credentials.setCredentialsForRuntime(mEmail, mPassword, Fakultaet.get(facultyIndex + ""));
                 }
 
                 return worked;

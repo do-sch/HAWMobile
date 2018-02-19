@@ -1,8 +1,10 @@
 package de.haw_landshut.hawmobile.mail;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +18,12 @@ import android.view.View;
 import android.widget.EditText;
 import de.haw_landshut.hawmobile.Credentials;
 import de.haw_landshut.hawmobile.R;
+import de.haw_landshut.hawmobile.SettingsActivity;
 
 import javax.mail.*;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 
 public class MailCreateActivity extends AppCompatActivity {
 
@@ -32,8 +37,10 @@ public class MailCreateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mail_create);
 
         final ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.write);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.write);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         toAddress = findViewById(R.id.to_email_editText);
         subject = findViewById(R.id.subject_editText);
@@ -51,7 +58,7 @@ public class MailCreateActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 if (edited) {
-                    if (!isEmailValid(toAddress.getText().toString())) {
+                    if (isEmailInvalid(toAddress.getText().toString())) {
                         actionSend.setEnabled(false);
                         toAddress.setError(getString(R.string.invalid_mail_address));
                     } else {
@@ -66,7 +73,7 @@ public class MailCreateActivity extends AppCompatActivity {
             public void onFocusChange(View view, boolean b) {
                 if (!edited && !b) {
                     edited = true;
-                    if (!isEmailValid(toAddress.getText().toString()))
+                    if (isEmailInvalid(toAddress.getText().toString()))
                         toAddress.setError(getString(R.string.invalid_mail_address));
                     else
                         actionSend.setEnabled(true);
@@ -153,11 +160,9 @@ public class MailCreateActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
-    private boolean isEmailValid(CharSequence email) {
-        if (email == null)
-            return false;
+    private boolean isEmailInvalid(CharSequence email) {
+        return email == null || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
 
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private class SendTask extends AsyncTask<Void, Void, Void>{
@@ -173,7 +178,15 @@ public class MailCreateActivity extends AppCompatActivity {
                 final MimeMessage message = new MimeMessage(session);
                 final Transport transport = session.getTransport("smtp");
 
-                message.setFrom(Credentials.getUsername()+"@haw-landshut.de");
+                final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MailCreateActivity.this);
+                final String name = sharedPref.getString("pref_username", Credentials.getUsername());
+
+                try {
+                    message.setFrom(new InternetAddress(Credentials.getUsername() + "@haw-landshut.de", name));
+                } catch (UnsupportedEncodingException e) {
+                    message.setFrom(Credentials.getUsername() + "@haw-landshut.de");
+                }
+
 
                 message.addRecipients(Message.RecipientType.TO, toAddress.getText().toString());
 
