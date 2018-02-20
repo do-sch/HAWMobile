@@ -47,10 +47,14 @@
     <string name="exit">Exit</string>
 
     <string name="send">Send</string>
+    <string name="attach_file">Attach File</string>
+    <string name="choose_file">Choose a File</string>
     <string name="write">Write</string>
     <string name="to">To</string>
     <string name="subject">Subject</string>
     <string name="write_mail">Write E-Mail</string>
+    <string name="sent">E-Mail was sent</string>
+    <string name="not_sent">E-Mail was not sent</string>
     <string name="warning_abbort_title">Do you want to discard the Message?</string>
     <string name="warning_abbort_text">The written Text will be deleted</string>
     <string name="cancel">Cancel</string>

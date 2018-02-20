@@ -117,6 +117,8 @@ public class MailService extends Job {
         } catch (MessagingException e){
             e.printStackTrace();
             return Result.FAILURE;
+        } finally {
+            hawDatabase.close();
         }
 
         return Result.SUCCESS;
