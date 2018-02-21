@@ -1,17 +1,12 @@
 package de.haw_landshut.hawmobile.mail;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Fragment;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -20,7 +15,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -73,7 +67,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
     private RecyclerView mRecyclerView;
     private MailEntryAdapter mMailEntryAdapter;
     private ProgressBar mProgressBar;
-    private EMailDao eMailDao;
+//    private EMailDao eMailDao;
     private Snackbar mSnackBar;
     private Spinner mFolderIndicator;
     private TextView mSelectedCount;
@@ -102,12 +96,11 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
         this.setRetainInstance(true);
         this.setHasOptionsMenu(true);
 
-        if(eMailDao == null)
-            eMailDao = MainActivity.getHawDatabase().eMailDao();
+//        if(eMailDao == null)
+//            eMailDao = MainActivity.getHawDatabase().eMailDao();
 
         preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
 
-        System.out.println(preferences.getString("notifications_new_message_ringtone", "LEER"));
         MailService.schedulePeriodic(PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext()));
 
     }
@@ -428,8 +421,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
 
         mFolderIndicator = actionbarDefault.findViewById(R.id.mailFolder);
 
-        new Base2Spinner().execute();
-        new Base2MailEntryAdapter().execute(currentFolderName);
+        new Base2MailEntryAdapter(savedInstanceState == null).execute(currentFolderName);
 
         super.onViewCreated(view, savedInstanceState);
     }
@@ -539,71 +531,75 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
     }
 
 
-    /**
-     * Fetches all Mails and writes them into the Database
-     */
-    public class Mail2BaseTask extends AsyncTask<Void, Integer, Void>{
-        private static final int ID = 1;
-        private Activity activity;
-        private NotificationManager mNotifyManager;
-        private NotificationCompat.Builder mBuilder;
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            preferences.edit().putBoolean("mailsFetched", true).apply();
-            mBuilder.setContentText(activity.getResources().getString(R.string.downloaded))
-                    .setProgress(0, 0, false);
-            mNotifyManager.notify(ID, mBuilder.build());
-        }
+//    /**
+//     * Fetches all Mails and writes them into the Database
+//     */
+//    public class Mail2BaseTask extends AsyncTask<Void, Integer, Void>{
+//        private static final int ID = 1;
+//        private Activity activity;
+//        private NotificationManager mNotifyManager;
+//        private NotificationCompat.Builder mBuilder;
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            preferences.edit().putBoolean("mailsFetched", true).apply();
+//            mBuilder.setContentText(activity.getResources().getString(R.string.downloaded))
+//                    .setProgress(0, 0, false);
+//            mNotifyManager.notify(ID, mBuilder.build());
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            final EMailDao eMailDao = MainActivity.getHawDatabase().eMailDao();
+//            activity = MailOverview.this.getActivity();
+//            mNotifyManager = ((NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE));
+//            mBuilder = new NotificationCompat.Builder(activity);
+//            mBuilder.setContentTitle(activity.getResources().getString(R.string.downloading))
+//                    .setSmallIcon(R.drawable.mail_icon);
+//
+//
+//            try {
+//                Protocol.login();
+//                Protocol.loadAllMessagesAndFolders(eMailDao, this/*, mMailEntryAdapter*/);
+////                Protocol.logout();
+//            } catch (MessagingException e){
+//                final Activity mainActivity = MailOverview.this.getActivity();
+//                mainActivity.runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(activity, R.string.login_failed, Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//            }
+//
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(final Integer... values) {
+//            final int curr = values[0], max = values[1];
+//            mBuilder.setProgress(max, curr, false);
+//            mBuilder.setContentText(String.valueOf(curr + 1) + "/" + max);
+//            mNotifyManager.notify(ID, mBuilder.build());
+//        }
+//
+//        public void tellProgress(int curr, int max){
+//            publishProgress(curr, max);
+//        }
+//    }
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            final EMailDao eMailDao = MainActivity.getHawDatabase().eMailDao();
-            activity = MailOverview.this.getActivity();
-            mNotifyManager = ((NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE));
-            mBuilder = new NotificationCompat.Builder(activity);
-            mBuilder.setContentTitle(activity.getResources().getString(R.string.downloading))
-                    .setSmallIcon(R.drawable.mail_icon);
-
-
-            try {
-                Protocol.login();
-                Protocol.loadAllMessagesAndFolders(eMailDao, this/*, mMailEntryAdapter*/);
-//                Protocol.logout();
-            } catch (MessagingException e){
-                final Activity mainActivity = MailOverview.this.getActivity();
-                mainActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(activity, R.string.login_failed, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(final Integer... values) {
-            final int curr = values[0], max = values[1];
-            mBuilder.setProgress(max, curr, false);
-            mBuilder.setContentText(String.valueOf(curr + 1) + "/" + max);
-            mNotifyManager.notify(ID, mBuilder.build());
-        }
-
-        public void tellProgress(int curr, int max){
-            publishProgress(curr, max);
-        }
+    private EMailDao getEMailDao(){
+        return MainActivity.getHawDatabase(getContext()).eMailDao();
     }
 
     /**
      * Obtains all Emails from Database and creates an Adapter where the E-Mails will be inserted into
      */
     private class Base2MailEntryAdapter extends AsyncTask<String, Void, List<EMail>>{
-        @Override
-        protected void onPreExecute() {
+        final boolean appstart;
+        Base2MailEntryAdapter(){this.appstart = false;}
+        Base2MailEntryAdapter(final boolean appstart) {this.appstart = appstart; }
 
-        }
 
         @Override
         protected void onProgressUpdate(Void... values) {
@@ -619,6 +615,9 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
             mRecyclerView.setAdapter(mMailEntryAdapter);
             mMailEntryAdapter.setMessages(messages);
             mMailEntryAdapter.notifyDataSetChanged();
+            if (appstart) {
+                new Base2Spinner(true).execute();
+            }
         }
 
         @Override
@@ -626,13 +625,15 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
 
 //            if(eMailFolders == null || eMailFolders.isEmpty())
 //                eMailFolders = eMailDao.getAllEmailFolders();
-            return eMailDao.getAllEmailsFromFolder(name[0]);
+            return getEMailDao().getAllEmailsFromFolder(name[0]);
 
         }
     }
 
     private class Base2Spinner extends AsyncTask<Void, Void, List<EMailFolder>>{
-
+        boolean start = false;
+        Base2Spinner(){}
+        Base2Spinner(boolean start) {this.start = start;}
         @Override
         protected void onPostExecute(final List<EMailFolder> neweMailFolders) {
             if (neweMailFolders != null)
@@ -654,18 +655,22 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 mFolderIndicator.setAdapter(adapter);
                 mFolderIndicator.setSelection(inboxPos, false);
                 mFolderIndicator.setOnItemSelectedListener(MailOverview.this);
+
+                if (start)
+                    new Update().execute(currentFolderName);
             }
         }
 
         @Override
         protected List<EMailFolder> doInBackground(Void... voids) {
             if (eMailFolders == null || eMailFolders.isEmpty())
-                return eMailDao.getAllEmailFolders();
+                return getEMailDao().getAllEmailFolders();
             return null;
         }
     }
 
     private class Update extends AsyncTask<String, Void, List<EMail>>{
+        boolean foldersChanged = false;
 
         @Override
         protected void onPreExecute() {
@@ -681,12 +686,15 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
             mMailEntryAdapter.setMessages(mails);
             mMailEntryAdapter.notifyDataSetChanged();
             mSwipeRefreshLayout.setRefreshing(false);
+            if (foldersChanged)
+                new Base2Spinner().execute();
         }
 
         @Override
         protected List<EMail> doInBackground(String... strings) {
 
             final Store store = getStore();
+            final EMailDao eMailDao = getEMailDao();
 //            final List<EMailFolder> folderList = eMailDao.getAllEmailFolders();
 
             try {
@@ -701,6 +709,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                     folder.open(Folder.READ_ONLY);
 
                 if(eMailFolders == null || eMailFolders.isEmpty()) {
+                    foldersChanged = true;
                     eMailFolders = new ArrayList<>();
                     for (final Folder f : store.getDefaultFolder().list()) {
                         final IMAPFolder imapFolder = ((IMAPFolder) f);
@@ -712,7 +721,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 Log.d("Update", eMailFolders.toString());
 
                 final int messageCount = folder.getMessageCount();
-                eMailDao.updateFolderStuff(currentFolderName, folder.getUIDNext());
+                eMailDao.updateFolderStuff(currentFolderName, folder.getUIDNext(), folder.getUIDValidity());
                 if(messageCount == 0) {
                     eMailDao.deleteAllEMailsFromFolder(currentFolderName);
                     return new ArrayList<>();
@@ -727,16 +736,25 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 final List<EMail> mails = new ArrayList<>();
                 for (int i = messages.length - 1; i >= 0; i--) {
                     Message m = messages[i];
-                    final EMail eMail = new EMail(m, folder.getUID(m), currentFolderName);
-                    mails.add(eMail);
+                    final long uid = folder.getUID(m);
+                    final EMail savedMail = eMailDao.getEmailFromUidAndFolder(uid, currentFolderName);
+                    if (savedMail== null) {
+                        final EMail eMail = new EMail(m, uid, currentFolderName);
+                        mails.add(eMail);
+                    } else {
+                        final boolean mailSeen = m.isSet(Flags.Flag.SEEN);
+                        if (mailSeen ^ savedMail.isSeen())
+                            eMailDao.setEMailSeen(uid, currentFolderName, mailSeen);
+
+                    }
                 }
 
-                eMailDao.deleteAllEMailsFromFolder(currentFolderName);
                 eMailDao.insertAllEMails(mails);
+                eMailDao.deleteLowestUIDMailsFromFolder(currentFolderName, MESSAGESAVECOUNT);
 
                 folder.close(false);
 
-                return mails;
+                return eMailDao.getAllEmailsFromFolder(currentFolderName);
 
             } catch (MessagingException e) {
                 e.printStackTrace();
@@ -767,6 +785,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
         @Override
         protected Integer[] doInBackground(Integer... integers) {
 
+            final EMailDao eMailDao = getEMailDao();
             try{
 
                 final Store store = Protocol.getStore();
@@ -792,7 +811,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
 
                 for (final long uid : uids){
 
-                    eMailDao.setEMailSeen(uid, currentFolderName);
+                    eMailDao.setEMailSeen(uid, currentFolderName, false);
 
                 }
 
@@ -830,6 +849,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
         @Override
         protected Integer[] doInBackground(Integer... mailPositions) {
 
+            final EMailDao eMailDao = getEMailDao();
             final Store store = getStore();
 
             try {
@@ -962,7 +982,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 final Message m = folder.getMessageByUID(eMail.getUid());
 
                 m.setFlag(Flags.Flag.SEEN, true);
-                eMailDao.setEMailSeen(eMail.getUid(), currentFolderName);
+                getEMailDao().setEMailSeen(eMail.getUid(), currentFolderName, true);
 
                 folder.close(true);
 

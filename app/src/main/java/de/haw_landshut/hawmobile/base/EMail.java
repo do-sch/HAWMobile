@@ -17,7 +17,7 @@ import java.util.List;
 @Entity(primaryKeys = {"uid", "foldername"})
 public class EMail implements Serializable{
 
-    private static final int SHORTTEXT_LENGTH=100;
+    private static final int SHORTTEXT_LENGTH=70;
 
     public EMail(){
 
@@ -266,7 +266,7 @@ public class EMail implements Serializable{
         if(str == null)
             return "";
         if(str.length() > SHORTTEXT_LENGTH)
-            return str.substring(0, 30);
+            return str.substring(0, SHORTTEXT_LENGTH);
         return str;
     }
 }

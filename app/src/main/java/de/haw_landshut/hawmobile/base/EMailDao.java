@@ -7,14 +7,14 @@ import java.util.List;
 @Dao
 public interface EMailDao {
 
-    @Query("SELECT * FROM email")
-    List<EMail> getAllEmails();
+//    @Query("SELECT * FROM email")
+//    List<EMail> getAllEmails();
 
     @Query("SELECT * FROM email WHERE foldername=:foldername")
     List<EMail> getAllEmailsFromFolder(String foldername);
 
-    @Query("SELECT * FROM email WHERE foldername=:foldername AND uid < :maxuid")
-    List<EMail> getAllEmailsFromFolder(String foldername, long maxuid);
+//    @Query("SELECT * FROM email WHERE foldername=:foldername AND uid < :maxuid")
+//    List<EMail> getAllEmailsFromFolder(String foldername, long maxuid);
 
     @Query("SELECT * FROM emailfolder")
     List<EMailFolder> getAllEmailFolders();
@@ -28,20 +28,23 @@ public interface EMailDao {
     @Query("SELECT nextuid FROM emailfolder WHERE name=:foldername")
     long getFolderNextuid(String foldername);
 
-    @Query("SELECT COUNT(*) FROM email WHERE foldername=:foldername")
-    long getMessageCountInFolder(String foldername);
+    @Query("DELETE FROM email WHERE foldername=:foldername AND uid NOT IN (SELECT uid FROM email WHERE foldername=:foldername ORDER BY uid DESC LIMIT :savecount)")
+    void deleteLowestUIDMailsFromFolder(String foldername, int savecount);
 
-    @Query("SELECT name FROM contact WHERE address=:address")
-    String getNameFromEMail(String address);
+//    @Query("SELECT COUNT(*) FROM email WHERE foldername=:foldername")
+//    long getMessageCountInFolder(String foldername);
+
+//    @Query("SELECT name FROM contact WHERE address=:address")
+//    String getNameFromEMail(String address);
 
     @Query("UPDATE email SET foldername=:newfolder,uid=:newuid WHERE uid=:olduid AND foldername=:oldfolder")
     void moveEMailToNewFolder(String newfolder, String oldfolder, long olduid, long newuid);
 
-    @Query("UPDATE email SET seen=1 WHERE foldername=:foldername AND uid=:uid")
-    void setEMailSeen(long uid, String foldername);
+    @Query("UPDATE email SET seen=:seen WHERE foldername=:foldername AND uid=:uid")
+    void setEMailSeen(long uid, String foldername, boolean seen);
 
-    @Query("UPDATE emailfolder SET nextuid=:nextuid WHERE name=:foldername")
-    void updateFolderStuff(String foldername, long nextuid);
+    @Query("UPDATE emailfolder SET nextuid=:nextuid, uidvalidaty=:uidvalidaty WHERE name=:foldername")
+    void updateFolderStuff(String foldername, long nextuid, long uidvalidaty);
 
     @Query("DELETE FROM email WHERE foldername=:foldername")
     void deleteAllEMailsFromFolder(String foldername);
@@ -61,14 +64,14 @@ public interface EMailDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertContacts(Contact... contacts);
 
-    @Update
-    void updateEMails(EMail... eMail);
-
-    @Delete
-    void deleteEMail(EMail email);
-
-    @Delete
-    void deleteContact(Contact... contacts);
+//    @Update
+//    void updateEMails(EMail... eMail);
+//
+//    @Delete
+//    void deleteEMail(EMail email);
+//
+//    @Delete
+//    void deleteContact(Contact... contacts);
 
 
 

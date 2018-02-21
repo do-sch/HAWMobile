@@ -60,8 +60,14 @@ public class MailService extends Job {
             if (!imapFolder.isOpen())
                 imapFolder.open(Folder.READ_ONLY);
 
-            final long oldNextuid = dao.getFolderNextuid(imapFolder.getName());
+            final long oldNextuid = dao.getFolderNextuid(MailOverview.INBOX);
             final long newNextuid = imapFolder.getUIDNext();
+            final long oldUidvalidaty = dao.getFolderUIDValidaty(MailOverview.INBOX);
+            final long newUidvalidaty = imapFolder.getUIDValidity();
+
+            if (oldUidvalidaty != newUidvalidaty) {
+                //TODO: alles neu fetchen
+            }
 
             if (newNextuid != oldNextuid) {
 
@@ -106,7 +112,7 @@ public class MailService extends Job {
                     }
                 }
 
-                dao.updateFolderStuff(MailOverview.INBOX, newNextuid);
+                dao.updateFolderStuff(MailOverview.INBOX, newNextuid, newUidvalidaty);
 
             }
 

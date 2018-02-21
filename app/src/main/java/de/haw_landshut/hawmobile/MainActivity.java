@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -78,8 +79,6 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
             navigation.setSelectedItemId(savedInstanceState.getInt("selectedNavID"));
         }
 
-        if(hawDatabase == null || !hawDatabase.isOpen())
-            hawDatabase = Room.databaseBuilder(getApplicationContext(), HAWDatabase.class, "haw").build();
 
         handleLogin();
     }
@@ -145,12 +144,18 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
 
     }
 
-    public static HAWDatabase getHawDatabase(){
+    public static HAWDatabase getHawDatabase(Context context){
+        if(hawDatabase == null || !hawDatabase.isOpen())
+            hawDatabase = Room.databaseBuilder(context, HAWDatabase.class, "haw").build();
+        return hawDatabase;
+    }
+
+    public static HAWDatabase getHawDatabase() {
         return hawDatabase;
     }
 
     public HAWDatabase getDatabase(){
-        return hawDatabase;
+        return getHawDatabase(this);
     }
 
 
