@@ -1,5 +1,7 @@
 package de.haw_landshut.hawmobile.mail;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
@@ -9,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -75,7 +78,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
     private Spinner mFolderIndicator;
     private TextView mSelectedCount;
     private View actionbarDefault, actionbarSelect;
-    private SearchView searchView;
+//    private SearchView searchView;
 
     private List<EMailFolder> eMailFolders;
 
@@ -324,26 +327,26 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 ab.setCustomView(actionbarDefault);
             ab.setDisplayShowCustomEnabled(true);
 
-            searchView = actionbarDefault.findViewById(R.id.mailSearch);
-
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String s) {
-                    callSearch(s);
-                    searchView.clearFocus();//TODO: http://droidmentor.com/searchview-animation-like-whatsapp/
-                    return true;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String s) {
-                    callSearch(s);
-                    return true;
-                }
-
-                private void callSearch(final String query){
-
-                }
-            });
+//            searchView = actionbarDefault.findViewById(R.id.mailSearch);
+//
+//            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//                @Override
+//                public boolean onQueryTextSubmit(String s) {
+//                    callSearch(s);
+//                    searchView.clearFocus();//TODO: http://droidmentor.com/searchview-animation-like-whatsapp/
+//                    return true;
+//                }
+//
+//                @Override
+//                public boolean onQueryTextChange(String s) {
+//                    callSearch(s);
+//                    return true;
+//                }
+//
+//                private void callSearch(final String query){
+//
+//                }
+//            });
 
             final ImageView selectExitButton = actionbarSelect.findViewById(R.id.mailExitSelection);
             final ImageView deleteMailsButton = actionbarSelect.findViewById(R.id.mailDelete);
@@ -403,23 +406,24 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                     startActivity(intent);
                 }
             });
-            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-                @Override
-                public boolean onClose() {
-                    settingsButton.setVisibility(View.VISIBLE);
-                    mFolderIndicator.setVisibility(View.VISIBLE);
-                    ab.setDisplayShowTitleEnabled(true);
-                    return false;
-                }
-            });
-            searchView.setOnSearchClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    settingsButton.setVisibility(View.GONE);
-                    mFolderIndicator.setVisibility(View.GONE);
-                    ab.setDisplayShowTitleEnabled(false);
-                }
-            });
+//            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+//                @Override
+//                public boolean onClose() {
+//                    settingsButton.setVisibility(View.VISIBLE);
+//                    mFolderIndicator.setVisibility(View.VISIBLE);
+//                    ab.setDisplayShowTitleEnabled(true);
+//
+//                    return false;
+//                }
+//            });
+//            searchView.setOnSearchClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    settingsButton.setVisibility(View.GONE);
+//                    mFolderIndicator.setVisibility(View.GONE);
+//                    ab.setDisplayShowTitleEnabled(false);
+//                }
+//            });
         }
 
         mFolderIndicator = actionbarDefault.findViewById(R.id.mailFolder);
@@ -430,12 +434,13 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
         super.onViewCreated(view, savedInstanceState);
     }
 
+
     @Override
     public boolean onBackPressed() {
         if(selectionMode)
             deselectEverything();
-        else if (!searchView.isIconified())
-            searchView.setIconified(true);
+//        else if (!searchView.isIconified())
+//            searchView.setIconified(true);
         else return false;
         return true;
     }

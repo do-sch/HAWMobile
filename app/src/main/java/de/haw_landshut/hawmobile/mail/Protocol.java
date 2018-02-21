@@ -64,9 +64,6 @@ public class Protocol {
 
                 for (int i = 0; i < mp.getCount(); i++){
                     BodyPart bp = mp.getBodyPart(i);
-                    System.out.println(Part.ATTACHMENT.equalsIgnoreCase(bp.getDisposition()));
-                    System.out.println(bp.getDisposition());
-                    System.out.println(bp.getFileName());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
