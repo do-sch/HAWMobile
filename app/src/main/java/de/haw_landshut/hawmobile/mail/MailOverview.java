@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
-import static de.haw_landshut.hawmobile.mail.MailEntryAdapter.ViewHolder.*;
+import static de.haw_landshut.hawmobile.mail.MailEntryAdapter.ViewHolder.MESSAGE_ADAPTER_POSITION;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -149,11 +149,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
             new OpenMail().execute(mail);
 
             Intent intent = new Intent(getActivity(), MailView.class);
-            intent.putExtra(MESSAGE_FNA, mail.getFoldername());
-            intent.putExtra(MESSAGE_ENCODING, mail.getEncoding());
-            intent.putExtra(MESSAGE_SUBJECT, mail.getSubject());
-            intent.putExtra(MESSAGE_SENDER, mail.getSenderMails());
-            intent.putExtra(MESSAGE_TEXT, mail.getText());
+            intent.putExtra("mail", mail);
             intent.putExtra(MESSAGE_ADAPTER_POSITION, selectable.getAdapterPosition());
             startActivityForResult(intent, MailView.REQUEST_CODE);
 //

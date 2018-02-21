@@ -3,19 +3,19 @@ package de.haw_landshut.hawmobile.base;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import org.jsoup.Jsoup;
+import org.jsoup.helper.StringUtil;
 
-import javax.activation.MimeType;
 import javax.mail.*;
-import javax.mail.internet.ContentType;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.ParameterList;
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity(primaryKeys = {"uid", "foldername"})
-public class EMail {
+public class EMail implements Serializable{
 
     private static final int SHORTTEXT_LENGTH=100;
 
@@ -26,7 +26,6 @@ public class EMail {
 
     public EMail(Message message, long uid, String foldername){
         try {
-
             this.setUid(uid);
             this.setAnswered(message.isSet(Flags.Flag.ANSWERED));
             this.setSeen(message.isSet(Flags.Flag.SEEN));
@@ -39,9 +38,9 @@ public class EMail {
             this.setFoldername(foldername);
             this.setText(getText(message));
             this.setShortText(isHtml() ? cutString(Jsoup.parse(this.getText()).text()) : cutString(this.getText()));
-
+            this.setAttachmentNames(getAttachmentNames(message));
         } catch (MessagingException | IOException e){
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -55,6 +54,8 @@ public class EMail {
     private String subject, senderMails;
 
     private String[] cc, bcc;
+
+    private String[] attachmentNames;
 
     private Date date;
 
@@ -70,6 +71,14 @@ public class EMail {
 
     public void setUid(long uid) {
         this.uid = uid;
+    }
+
+    public String[] getAttachmentNames() {
+        return attachmentNames;
+    }
+
+    public void setAttachmentNames(String[] attachmentNames) {
+        this.attachmentNames = attachmentNames;
     }
 
     public String getSubject() {
@@ -196,50 +205,28 @@ public class EMail {
         return null;
     }
 
-    private String getText(Message p) throws MessagingException, IOException {
-        if (p.isMimeType("text/*")) {
-            String s = (String)p.getContent();
-            isHtml = p.isMimeType("text/html");
-            encoding = p.getContentType();
-            return s;
-        }
+    private static String[] getAttachmentNames(Part p) throws MessagingException, IOException {
+        if (p.isMimeType("text/*"))
+            return new String[0];
 
-        if (p.isMimeType("multipart/alternative")) {
-            // prefer html text over plain text
-            Multipart mp = (Multipart)p.getContent();
-            String text = null;
-            for (int i = 0; i < mp.getCount(); i++) {
+        final List<String> names = new ArrayList<>();
+        if (p.isMimeType("multipart/*")){
+            Multipart mp = ((Multipart) p.getContent());
+            for(int i = 0; i < mp.getCount(); i++){
                 Part bp = mp.getBodyPart(i);
-                if (bp.isMimeType("text/plain")) {
-                    if (text == null)
-                        text = getText(bp);
-                    continue;
-                } else if (bp.isMimeType("text/html")) {
-                    String s = getText(bp);
-                    if (s != null)
-                        return s;
-                } else {
-                    return getText(bp);
+                final String filename = bp.getFileName();
+                if (bp.getDisposition() != null && bp.getDisposition().equals(Part.ATTACHMENT) && !StringUtil.isBlank(filename)) {
+                    names.add(filename);
                 }
             }
-            return text;
-        } else if (p.isMimeType("multipart/*")) {
-            Multipart mp = (Multipart)p.getContent();
-            for (int i = 0; i < mp.getCount(); i++) {
-                String s = getText(mp.getBodyPart(i));
-                if (s != null)
-                    return s;
-            }
         }
-
-        return null;
+        return names.toArray(new String[names.size()]);
     }
 
-    private String getText(Part p) throws MessagingException, IOException{
+    private String getText(Part p) throws MessagingException, IOException {
         if (p.isMimeType("text/*")) {
             String s = (String)p.getContent();
             isHtml = p.isMimeType("text/html");
-//            Log.d("getTextP", new ContentType(p.getContentType()).getParameter("charset"));
             encoding = p.getContentType();
             return s;
         }

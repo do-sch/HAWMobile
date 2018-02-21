@@ -1,7 +1,10 @@
 package de.haw_landshut.hawmobile.base;
 
 import android.arch.persistence.room.TypeConverter;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.Date;
 
 public class EMailConverters {
@@ -18,21 +21,25 @@ public class EMailConverters {
 
     @TypeConverter
     public static String mailStringArrayToString(final String[] strings){
-        final StringBuilder stb = new StringBuilder();
-        if(strings == null)
-            return null;
-        for (final String s: strings) {
-            stb.append(s).append('\n');
-        }
-        stb.deleteCharAt(stb.length()-1);
-        return stb.toString();
+        return new Gson().toJson(strings);
+//        final StringBuilder stb = new StringBuilder();
+//        if(strings == null)
+//            return null;
+//        for (final String s: strings) {
+//            stb.append(s).append('\n');
+//        }
+//        stb.deleteCharAt(stb.length()-1);
+//        return stb.toString();
     }
 
     @TypeConverter
     public static String[] StringToMailstring(final String string){
         if(string == null)
             return null;
-        return string.split("\\n");
+
+        Type arrayType = new TypeToken<String[]>() {}.getType();
+        return new Gson().fromJson(string, arrayType);
+//        return string.split("\\n");
     }
 
 }

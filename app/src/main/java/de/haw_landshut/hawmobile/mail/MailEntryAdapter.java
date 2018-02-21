@@ -38,6 +38,7 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
 
         public static final String MESSAGE_TEXT = "de.haw_landshut.hawmobile.MailView.text";
         public static final String MESSAGE_FNA = "de.haw_landshut.hawmobile.MailView.foldername";
+        public static final String MESSAGE_UID = "de.haw_landshut.hasmobile.MailView.uid";
         public static final String MESSAGE_SUBJECT = "de.haw_landshut.hawmobile.MailView.subject";
         public static final String MESSAGE_ENCODING = "de.haw_landshut.hawmobile.MailView.encoding";
         public static final String MESSAGE_SENDER = "de.haw_landshut.hawmobile.MailView.sender";

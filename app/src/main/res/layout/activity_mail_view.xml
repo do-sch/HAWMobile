@@ -5,17 +5,30 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="de.haw_landshut.hawmobile.mail.MailView">
+        tools:context="de.haw_landshut.hawmobile.mail.MailView" tools:layout_editor_absoluteY="25dp"
+        tools:layout_editor_absoluteX="0dp">
 
+    <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="0dp"
+            android:layout_marginRight="8dp" app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginLeft="8dp" app:layout_constraintLeft_toLeftOf="parent"
+            android:id="@+id/attachment_view_scrollView" app:layout_constraintHorizontal_bias="0.0">
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="match_parent"
+                      android:orientation="vertical" android:id="@+id/attachment_chips"/>
+    </HorizontalScrollView>
     <WebView
             android:id="@+id/mailWebView"
             android:layout_height="0dp"
-            android:layout_width="0dp"
-            tools:layout_constraintTop_creator="1" tools:layout_constraintRight_creator="1"
-            tools:layout_constraintBottom_creator="1" android:layout_marginStart="0dp"
-            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginEnd="0dp"
-            app:layout_constraintRight_toRightOf="parent" android:layout_marginTop="0dp"
-            tools:layout_constraintLeft_creator="1" android:layout_marginBottom="0dp"
-            app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent"/>
+            android:layout_width="match_parent"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/attachment_view_scrollView"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="0dp" android:layout_marginRight="0dp"
+            app:layout_constraintRight_toRightOf="parent" android:layout_marginLeft="0dp"
+            app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintVertical_bias="1.0"/>
 
 </android.support.constraint.ConstraintLayout>

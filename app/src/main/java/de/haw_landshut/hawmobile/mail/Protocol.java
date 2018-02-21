@@ -7,9 +7,9 @@ import de.haw_landshut.hawmobile.Credentials;
 import de.haw_landshut.hawmobile.base.Contact;
 import de.haw_landshut.hawmobile.base.EMail;
 import de.haw_landshut.hawmobile.base.EMailDao;
-import de.haw_landshut.hawmobile.base.EMailFolder;
 
 import javax.mail.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
@@ -50,9 +50,29 @@ public class Protocol {
 
             store.connect(username, password);
 
-            for (Folder f : store.getDefaultFolder().list())
-                System.out.println(f.getName());
+            Folder f = store.getDefaultFolder().getFolder("INBOX");
+            f.open(Folder.READ_ONLY);
+            Message[] messages = f.getMessages();
 
+            Message m = messages[35];
+
+            System.out.println(m.getContentType());
+
+            try {
+                Multipart mp = ((Multipart) m.getContent());
+                System.out.println(mp.getCount());
+
+                for (int i = 0; i < mp.getCount(); i++){
+                    BodyPart bp = mp.getBodyPart(i);
+                    System.out.println(Part.ATTACHMENT.equalsIgnoreCase(bp.getDisposition()));
+                    System.out.println(bp.getDisposition());
+                    System.out.println(bp.getFileName());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            f.close();
             store.close();
 
 
