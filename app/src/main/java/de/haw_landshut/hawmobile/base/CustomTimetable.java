@@ -14,11 +14,13 @@ public class CustomTimetable{
     }
 
     @Ignore
-    public CustomTimetable(int key, String prof,String fach,String raum) {
+    public CustomTimetable(int key, String prof,String fach,String raum,int color) {
         this.timetablekey=key;
         this.prof=prof;
         this.fach=fach;
         this.raum=raum;
+        this.color=color;
+
 
     }
     @PrimaryKey
@@ -30,6 +32,12 @@ public class CustomTimetable{
     @ColumnInfo
     private String fach;
 
+    @ColumnInfo
+    private String raum;
+
+    @ColumnInfo
+    private int color;
+
     public String getRaum() {
         return raum;
     }
@@ -38,8 +46,6 @@ public class CustomTimetable{
         this.raum = raum;
     }
 
-    @ColumnInfo
-    private String raum;
 
     public String getProf() {
         return prof;
@@ -65,4 +71,11 @@ public class CustomTimetable{
         this.timetablekey = timetablekey;
     }
 
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
 }

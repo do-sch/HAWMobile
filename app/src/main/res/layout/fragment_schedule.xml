@@ -310,12 +310,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                <CheckBox
-                        android:text="wöchentl."
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/wöchentlCheckbox"
-                        android:layout_alignParentBottom="true" android:layout_alignStart="@+id/btn_cancel"
-                        android:visibility="invisible"/>
                 <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -340,6 +334,19 @@
                         android:id="@+id/et_raum" android:textSize="14sp"
                         android:layout_below="@+id/et_prof" android:layout_alignParentStart="true"
                         android:layout_alignEnd="@+id/et_prof" android:hint="Raum" android:enabled="false"/>
+                <CheckBox
+                        android:text="wöchentl."
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/wöchentlCheckbox"
+                        android:visibility="invisible"
+                        android:layout_alignStart="@+id/btn_save" android:layout_alignParentBottom="true"/>
+                <Button
+                        android:text="Farbe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/colorPicker"
+                        android:visibility="gone"
+                        android:layout_alignBaseline="@+id/btn_cancel" android:layout_alignBottom="@+id/btn_cancel"
+                        android:layout_toStartOf="@+id/wöchentlCheckbox"/>
                 <Button
                         android:text="Bearbeiten"
                         android:layout_width="wrap_content"
@@ -348,20 +355,20 @@
                         android:textSize="14sp" android:layout_alignTop="@+id/et_fach"
                         android:layout_alignParentEnd="true"/>
                 <Button
-                        android:text="Speichern"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/btn_save"
-                        android:textSize="14sp" android:layout_alignTop="@+id/et_fach"
-                        android:layout_alignParentEnd="true" android:visibility="gone"/>
-                <Button
                         android:text="Abbrechen"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/btn_cancel"
                         android:textSize="14sp"
-                        android:layout_below="@+id/btn_save" android:layout_alignParentEnd="true"
-                        android:visibility="invisible"/>
+                        android:visibility="invisible"
+                        android:layout_below="@+id/et_fach" android:layout_alignParentEnd="true"/>
+                <Button
+                        android:text="Speichern"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/btn_save"
+                        android:textSize="14sp" android:layout_alignTop="@+id/et_fach"
+                        android:layout_alignParentEnd="true" android:visibility="invisible"/>
             </RelativeLayout>
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>

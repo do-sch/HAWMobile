@@ -2,6 +2,7 @@ package de.haw_landshut.hawmobile.schedule;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.nfc.Tag;
@@ -14,6 +15,10 @@ import android.util.Log;
 import android.view.*;
 
 import android.widget.*;
+import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
+import com.flask.colorpicker.builder.ColorPickerClickListener;
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import de.haw_landshut.hawmobile.Fakultaet;
 import de.haw_landshut.hawmobile.MainActivity;
 import de.haw_landshut.hawmobile.R;
@@ -42,6 +47,7 @@ public class ScheduleFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final int ENTRYCOUNT = 60;
+    private static final int BASICCOLOR = 16777215;
     private View.OnClickListener ocl;
     public static BottomSheetBehavior mBottomSheetBehavior1;
     View bottomSheet;
@@ -55,11 +61,13 @@ public class ScheduleFragment extends Fragment {
     private TextView[][] elements;
     protected static boolean isEven;
     private boolean checkDouble;
+    private int colormaker;
 
 
     Button edit;
     Button save;
     Button cancel;
+    Button color;
    protected static CheckBox wöchentl;
 
 
@@ -111,6 +119,7 @@ public class ScheduleFragment extends Fragment {
         edit = view.findViewById(R.id.btn_edit);
         save = view.findViewById(R.id.btn_save);
         cancel = view.findViewById(R.id.btn_cancel);
+        color = view.findViewById(R.id.colorPicker);
         wöchentl = view.findViewById(R.id.wöchentlCheckbox);
         et_fach = view.findViewById(R.id.et_fach);
         et_prof = view.findViewById(R.id.et_prof);
@@ -162,6 +171,7 @@ public class ScheduleFragment extends Fragment {
                     cancel.setVisibility(View.VISIBLE);
                     edit.setVisibility(View.GONE);
                     save.setVisibility(View.VISIBLE);
+                    color.setVisibility(View.VISIBLE);
                     wöchentl.setVisibility(View.VISIBLE);
                     et_fach.setEnabled(true);
                     et_prof.setEnabled(true);
@@ -178,29 +188,33 @@ public class ScheduleFragment extends Fragment {
                     cancel.setVisibility(View.INVISIBLE);
                     save.setVisibility(View.GONE);
                     edit.setVisibility(View.VISIBLE);
+                    color.setVisibility(View.GONE);
                     wöchentl.setVisibility(View.INVISIBLE);
                     et_fach.setEnabled(false);
                     et_prof.setEnabled(false);
                     et_raum.setEnabled(false);
                     currentTV.setText(et_fach.getText());
+                    currentTV.setBackgroundColor(colormaker);
+                    Log.d("Test","COLOR:"+colormaker);
+
                     int currentHour = Integer.parseInt(currentTV.getTag().toString());
                     CustomTimetable table;
                     if(wöchentl.isChecked()){
-                        table = new CustomTimetable(currentHour,et_prof.getText().toString(),et_fach.getText().toString(),et_raum.getText().toString());
+                        table = new CustomTimetable(currentHour,et_prof.getText().toString(),et_fach.getText().toString(),et_raum.getText().toString(),colormaker);
                         new UpdateTimetable().execute(table);
                         currentHour = currentHour+(ENTRYCOUNT/2);
-                        table=new CustomTimetable(currentHour,et_prof.getText().toString(),et_fach.getText().toString(),et_raum.getText().toString());
+                        table=new CustomTimetable(currentHour,et_prof.getText().toString(),et_fach.getText().toString(),et_raum.getText().toString(),colormaker);
                         new UpdateTimetable().execute(table);
                     }
                     else {
                         if(checkDouble){
                             if(isEven){
                                 currentHour = currentHour + (ENTRYCOUNT/2);
-                                table=new CustomTimetable(currentHour,"","","");
+                                table=new CustomTimetable(currentHour,"","","",BASICCOLOR);
                                 new UpdateTimetable().execute(table);
                             }
                             else{
-                                table=new CustomTimetable(currentHour,"","","");
+                                table=new CustomTimetable(currentHour,"","","",BASICCOLOR);
                                 new UpdateTimetable().execute(table);
                             }
                         }
@@ -208,10 +222,10 @@ public class ScheduleFragment extends Fragment {
                             if (!isEven) {
                                 currentHour = currentHour + (ENTRYCOUNT / 2);
                             }
-                            table = new CustomTimetable(currentHour, et_prof.getText().toString(), et_fach.getText().toString(), et_raum.getText().toString());
+                            table = new CustomTimetable(currentHour, et_prof.getText().toString(), et_fach.getText().toString(), et_raum.getText().toString(),colormaker);
                             new UpdateTimetable().execute(table);
                         }
-                      
+
 
                     }
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -230,9 +244,43 @@ public class ScheduleFragment extends Fragment {
                 save.setVisibility(View.GONE);
                 edit.setVisibility(View.VISIBLE);
                 cancel.setVisibility(View.INVISIBLE);
+                color.setVisibility(View.GONE);
                 wöchentl.setVisibility(View.INVISIBLE);
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
+        });
+        color.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                ColorPickerDialogBuilder
+                        .with(view.getContext())
+                        .setTitle("Farbe auswählen")
+                        .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
+                        .density(3)
+                        .setOnColorSelectedListener(new OnColorSelectedListener() {
+                            @Override
+                            public void onColorSelected(int i) {
+
+                            }
+                        })
+                        .setPositiveButton("ok", new ColorPickerClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i, Integer[] integers) {
+                                colormaker=i;
+
+                            }
+                        })
+                        .setNegativeButton("abbrechen", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .build()
+                        .show();
+
+            }
+
         });
 
         //wöchentl.setOnClickListener();
@@ -278,6 +326,8 @@ public class ScheduleFragment extends Fragment {
         mListener = null;
     }
 
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -314,7 +364,7 @@ public class ScheduleFragment extends Fragment {
             }
             if(!preference.getBoolean("Emptytimetable inserted",false)){
                 for(int i = 0;i<ENTRYCOUNT;i++){
-                    ScheduleFragment.scheduleDao.insertEmptyTimetable(new CustomTimetable(i,"","",""));
+                    ScheduleFragment.scheduleDao.insertEmptyTimetable(new CustomTimetable(i,"","","",BASICCOLOR));
                 }
                 preference.edit().putBoolean("Emptytimetable inserted",true).apply();
             }
@@ -351,6 +401,7 @@ public class ScheduleFragment extends Fragment {
                         @Override
                         public void run() {
                             current.setText(timetable.get(i).getFach());
+                            current.setBackgroundColor(timetable.get(i).getColor());
                         }
                     });
                 }
