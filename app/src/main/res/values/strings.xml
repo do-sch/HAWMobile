@@ -115,4 +115,30 @@
     <string name="pref_title_vibrate">Vibrate</string>
 
 
+    <!-- Schedule -->
+    <string name="even">Even</string>
+    <string name="odd">Odd</string>
+    <string name="choose_color">Choose color</string>
+    <string name="ok">Ok</string>
+    <string name="set_cancel">Cancel</string>
+    <string name="date">Date</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="calendar_week">CW:</string>
+    <string name="setsubject">Subject</string>
+    <string name="room">Room</string>
+    <string name="prof">Prof</string>
+    <string name="weekly">weekly</string>
+    <string name="color">Color</string>
+    <string name="edit">Edit</string>
+    <string name="setsave">Save</string>
+
+
+
+
+
+
 </resources>

@@ -61,14 +61,14 @@ public class ScheduleFragment extends Fragment {
     private TextView[][] elements;
     protected static boolean isEven;
     private boolean checkDouble;
-    private int colormaker;
+    public static int colormaker;
 
 
     Button edit;
     Button save;
     Button cancel;
     Button color;
-   protected static CheckBox wöchentl;
+    protected static CheckBox wöchentl;
 
 
     // TODO: Rename and change types of parameters
@@ -138,13 +138,12 @@ public class ScheduleFragment extends Fragment {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
         int num_week = c.get(Calendar.WEEK_OF_YEAR);
-        Log.d("KW:", num_week+"");
         if(num_week%2==0){
-            currentWeek.setText("gerade");
+            currentWeek.setText(R.string.even);
             isEven=true;
         }
         else{
-            currentWeek.setText("ungerade");
+            currentWeek.setText(R.string.odd);
             isEven=false;
         }
 
@@ -152,12 +151,12 @@ public class ScheduleFragment extends Fragment {
             @Override
             public void onClick(View view){
                 if(isEven){
-                    currentWeek.setText("ungerade");
+                    currentWeek.setText(R.string.odd);
                     isEven=false;
                     new BeginnInsertion().execute();
                 }
                 else{
-                    currentWeek.setText("gerade");
+                    currentWeek.setText(R.string.even);
                     isEven=true;
                     new BeginnInsertion().execute();
                 }
@@ -195,7 +194,7 @@ public class ScheduleFragment extends Fragment {
                     et_raum.setEnabled(false);
                     currentTV.setText(et_fach.getText());
                     currentTV.setBackgroundColor(colormaker);
-                    Log.d("Test","COLOR:"+colormaker);
+
 
                     int currentHour = Integer.parseInt(currentTV.getTag().toString());
                     CustomTimetable table;
@@ -228,6 +227,7 @@ public class ScheduleFragment extends Fragment {
 
 
                     }
+                colormaker=BASICCOLOR;
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
@@ -254,7 +254,7 @@ public class ScheduleFragment extends Fragment {
             public void onClick(View view){
                 ColorPickerDialogBuilder
                         .with(view.getContext())
-                        .setTitle("Farbe auswählen")
+                        .setTitle(R.string.choose_color)
                         .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
                         .density(3)
                         .setOnColorSelectedListener(new OnColorSelectedListener() {
@@ -263,14 +263,14 @@ public class ScheduleFragment extends Fragment {
 
                             }
                         })
-                        .setPositiveButton("ok", new ColorPickerClickListener() {
+                        .setPositiveButton(R.string.ok, new ColorPickerClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i, Integer[] integers) {
                                 colormaker=i;
 
                             }
                         })
-                        .setNegativeButton("abbrechen", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.set_cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -282,8 +282,6 @@ public class ScheduleFragment extends Fragment {
             }
 
         });
-
-        //wöchentl.setOnClickListener();
 
 
             return view;
@@ -378,7 +376,6 @@ public class ScheduleFragment extends Fragment {
                     TableRow tr = ((TableRow) tl.getChildAt(y));
                     for (int x = 1; x < tr.getChildCount(); x++) {
                         TextView tv = ((TextView) tr.getChildAt(x));
-//                        tv.setText("");
                         tv.setOnClickListener(ocl);
                         elements[y-1][x-1] = tv;
 
@@ -393,10 +390,8 @@ public class ScheduleFragment extends Fragment {
                 else{
                     i=j+(ENTRYCOUNT/2);
                 }
-     //          Log.d("SchFr", elements.length+"");
                 final TextView current = elements[(j % (elements[0].length))][(j / (elements.length))];
                 if (current != null) {
-                    Log.d("SchFr", j+"");
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

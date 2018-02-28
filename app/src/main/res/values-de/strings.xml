@@ -36,4 +36,28 @@
     <string name="undefined">Nicht Definiert</string>
     <string name="downloading">E-Mails werden heruntergeladen</string>
     <string name="downloaded">Alle E-Mails wurde heruntergeladen</string>
+
+
+
+    <!-- Schedule -->
+    <string name="even">gerade</string>
+    <string name="odd">ungerade</string>
+    <string name="choose_color">Farbe auswählen</string>
+    <string name="ok">Ok</string>
+    <string name="set_cancel">Abbrechen</string>
+    <string name="date">Datum</string>
+    <string name="monday">Montag</string>
+    <string name="tuesday">Dienstag</string>
+    <string name="wednesday">Mittwoch</string>
+    <string name="thursday">Donnerstag</string>
+    <string name="friday">Freitag</string>
+    <string name="calendar_week">KW:</string>
+    <string name="setsubject">Fach</string>
+    <string name="room">Raum</string>
+    <string name="prof">Prof</string>
+    <string name="weekly">wöchentl.</string>
+    <string name="color">Farbe</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="setsave">Speichern</string>
+
 </resources>

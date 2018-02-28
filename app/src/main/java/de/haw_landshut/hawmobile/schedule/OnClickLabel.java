@@ -21,6 +21,7 @@ public class OnClickLabel implements View.OnClickListener {
             ScheduleFragment.et_fach.setText(current.getFach());
             ScheduleFragment.et_prof.setText(current.getProf());
             ScheduleFragment.et_raum.setText(current.getRaum());
+            ScheduleFragment.colormaker=current.getColor();
             if(current.getFach().equals(ScheduleFragment.timetable.get((currentNumber+30)%60).getFach())){
                 ScheduleFragment.wöchentl.setChecked(true);
             }

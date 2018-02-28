@@ -19,7 +19,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                 <TextView
-                        android:text="Datum"
+                        android:text="@string/date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:id="@+id/schedule_textView_date"
                         android:layout_weight="1"/>
@@ -29,12 +29,12 @@
                         android:layout_height="wrap_content" android:id="@+id/schedule_textView_currentDate"
                         android:layout_weight="1"/>
                 <TextView
-                        android:text="KW: "
+                        android:text="@string/calendar_week"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:id="@+id/schedule_textView_KW"
                         android:layout_weight="1"/>
                 <TextView
-                        android:text="43"
+                        android:text=""
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:id="@+id/schedule_textView_currentWeek"
                         android:layout_weight="0.21"/>
@@ -52,31 +52,31 @@
                             android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                             android:paddingRight="2dp"/>
                     <TextView
-                            android:text="Montag"
+                            android:text="@string/monday"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" android:id="@+id/schedule_tv_monday"
                             android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                             android:paddingRight="2dp"/>
                     <TextView
-                            android:text="Dienstag"
+                            android:text="@string/tuesday"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" android:id="@+id/schedule_tv_tuesday"
                             android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                             android:paddingRight="2dp"/>
                     <TextView
-                            android:text="Mittwoch"
+                            android:text="@string/wednesday"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" android:id="@+id/schedule_tv_wednesday"
                             android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                             android:paddingRight="2dp"/>
                     <TextView
-                            android:text="Donnerstag"
+                            android:text="@string/thursday"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" android:id="@+id/schedule_tv_thursday"
                             android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
                             android:paddingRight="2dp"/>
                     <TextView
-                            android:text="Freitag"
+                            android:text="@string/friday"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" android:id="@+id/schedule_tv_friday"
                             android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
@@ -317,7 +317,7 @@
                         android:ems="10"
                         android:id="@+id/et_fach" android:textSize="14sp"
                         android:layout_alignParentTop="true" android:layout_alignParentStart="true"
-                        android:layout_toStartOf="@+id/btn_edit" android:hint="Fach" android:enabled="false"/>
+                        android:layout_toStartOf="@+id/btn_edit" android:hint="@string/setsubject" android:enabled="false"/>
                 <EditText
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -325,7 +325,7 @@
                         android:ems="10"
                         android:id="@+id/et_prof" android:textSize="14sp"
                         android:layout_below="@+id/et_fach" android:layout_alignParentStart="true"
-                        android:layout_toStartOf="@+id/btn_edit" android:hint="Professor" android:enabled="false"/>
+                        android:layout_toStartOf="@+id/btn_edit" android:hint="@string/prof" android:enabled="false"/>
                 <EditText
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -333,29 +333,29 @@
                         android:ems="10"
                         android:id="@+id/et_raum" android:textSize="14sp"
                         android:layout_below="@+id/et_prof" android:layout_alignParentStart="true"
-                        android:layout_alignEnd="@+id/et_prof" android:hint="Raum" android:enabled="false"/>
+                        android:layout_alignEnd="@+id/et_prof" android:hint="@string/room" android:enabled="false"/>
                 <CheckBox
-                        android:text="wöchentl."
+                        android:text="@string/weekly"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:id="@+id/wöchentlCheckbox"
                         android:visibility="invisible"
                         android:layout_alignStart="@+id/btn_save" android:layout_alignParentBottom="true"/>
                 <Button
-                        android:text="Farbe"
+                        android:text="@string/color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:id="@+id/colorPicker"
                         android:visibility="gone"
                         android:layout_alignBaseline="@+id/btn_cancel" android:layout_alignBottom="@+id/btn_cancel"
                         android:layout_toStartOf="@+id/wöchentlCheckbox"/>
                 <Button
-                        android:text="Bearbeiten"
+                        android:text="@string/edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/btn_edit"
                         android:textSize="14sp" android:layout_alignTop="@+id/et_fach"
                         android:layout_alignParentEnd="true"/>
                 <Button
-                        android:text="Abbrechen"
+                        android:text="@string/set_cancel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/btn_cancel"
@@ -363,7 +363,7 @@
                         android:visibility="invisible"
                         android:layout_below="@+id/et_fach" android:layout_alignParentEnd="true"/>
                 <Button
-                        android:text="Speichern"
+                        android:text="@string/setsave"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/btn_save"
