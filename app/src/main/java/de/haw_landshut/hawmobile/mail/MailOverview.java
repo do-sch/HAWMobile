@@ -484,6 +484,10 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
         mListener = null;
     }
 
+    public void firstStart(){
+        new Update().execute(currentFolderName);
+    }
+
     private void deselectEverything(){
         mMailEntryAdapter.deselectAll();
         Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setCustomView(actionbarDefault);

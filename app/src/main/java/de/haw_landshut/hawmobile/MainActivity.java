@@ -124,6 +124,23 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
         this.onBackPressedListener = onBackPressedListener;
     }
 
+    /**
+     * Dispatch incoming result to the correct fragment.
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == LOGINREQUEST){
+            Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content);
+            if (currentFragment != null && currentFragment.getClass() == MailOverview.class)
+                ((MailOverview) currentFragment).firstStart();
+        }
+    }
+
+    public static final int LOGINREQUEST = 1;
     private void handleLogin(){
 
         //holt sich alle HAWMobile-Accounts auf dem Gerät
@@ -131,7 +148,8 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
         Account[] accounts = accountManager.getAccountsByType("de.haw_landshut.hawmobile.ACCOUNT");
         if (accounts.length == 0){
             Intent loginIntent = new Intent(this, LoginActivity.class);
-            startActivity(loginIntent);
+            startActivityForResult(loginIntent, LOGINREQUEST);
+
         } else {
 
             final Account a = accounts[0];
