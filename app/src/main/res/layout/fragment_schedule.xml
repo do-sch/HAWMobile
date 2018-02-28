@@ -86,7 +86,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                     <TextView
-                            android:text="08:45\n-\n10:15"
+                            android:text="@string/hourOne"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" android:id="@+id/schedule_tv_h1"
                             android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
@@ -121,7 +121,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                     <TextView
-                            android:text="10:30\n-\n12:00"
+                            android:text="@string/hourTwo"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" android:id="@+id/schedule_tv_h2"
                             android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
@@ -156,7 +156,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                     <TextView
-                            android:text="12:50\n-\n14:20"
+                            android:text="@string/hourThree"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" android:id="@+id/schedule_tv_h3"
                             android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
@@ -191,7 +191,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                     <TextView
-                            android:text="14:30\n-\n16:00"
+                            android:text="@string/hourFour"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" android:id="@+id/schedule_tv_h4"
                             android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
@@ -224,7 +224,7 @@
                 </TableRow>
                 <TableRow android:layout_width="match_parent" android:layout_height="match_parent">
                     <TextView
-                            android:text="16.10\n-\n18:20"
+                            android:text="@string/hourFive"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" android:id="@+id/schedule_tv_h5"
                             android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
@@ -259,7 +259,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                     <TextView
-                            android:text="18.35\n-\n19.20"
+                            android:text="@string/hourSix"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" android:id="@+id/schedule_tv_h6"
                             android:layout_marginTop="5dp" android:paddingTop="2dp" android:paddingLeft="2dp"
