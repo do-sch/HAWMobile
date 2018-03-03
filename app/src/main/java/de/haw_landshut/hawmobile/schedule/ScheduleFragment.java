@@ -19,6 +19,7 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
+import de.haw_landshut.hawmobile.Credentials;
 import de.haw_landshut.hawmobile.Fakultaet;
 import de.haw_landshut.hawmobile.MainActivity;
 import de.haw_landshut.hawmobile.R;
@@ -53,7 +54,7 @@ public class ScheduleFragment extends Fragment {
     View bottomSheet;
     public static TextView currentDate,currentWeek;
     public static TextView currentTV;
-    public static EditText et_fach;
+    public static AutoCompleteTextView et_fach;
     public static EditText et_prof;
     public static EditText et_raum;
     public static List<CustomTimetable> timetable;
@@ -62,6 +63,10 @@ public class ScheduleFragment extends Fragment {
     protected static boolean isEven;
     private boolean checkDouble;
     public static int colormaker;
+    private  Context context;
+    String[] subjects;
+    String[] profs;
+
 
 
     Button edit;
@@ -106,6 +111,7 @@ public class ScheduleFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         ocl = new OnClickLabel();
+        context=this.getContext();
         preference=getActivity().getPreferences(Context.MODE_PRIVATE);
         this.setHasOptionsMenu(true);
 
@@ -126,6 +132,7 @@ public class ScheduleFragment extends Fragment {
         et_raum = view.findViewById(R.id.et_raum);
         bottomSheet = view.findViewById(R.id.bottom_sheet1);
         mBottomSheetBehavior1 = BottomSheetBehavior.from(bottomSheet);
+
 
         //sets the current date and week
         currentDate = view.findViewById(R.id.schedule_textView_currentDate);
@@ -173,9 +180,13 @@ public class ScheduleFragment extends Fragment {
                     color.setVisibility(View.VISIBLE);
                     wöchentl.setVisibility(View.VISIBLE);
                     et_fach.setEnabled(true);
+                    final ArrayAdapter<String> subjectAdapter=new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,subjects);
+                    et_fach.setAdapter(subjectAdapter);
+
                     et_prof.setEnabled(true);
                     et_raum.setEnabled(true);
                     checkDouble=wöchentl.isChecked();
+
 
                 }
         });
@@ -184,11 +195,11 @@ public class ScheduleFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                    cancel.setVisibility(View.INVISIBLE);
+                    cancel.setVisibility(View.GONE);
                     save.setVisibility(View.GONE);
                     edit.setVisibility(View.VISIBLE);
                     color.setVisibility(View.GONE);
-                    wöchentl.setVisibility(View.INVISIBLE);
+                    wöchentl.setVisibility(View.GONE);
                     et_fach.setEnabled(false);
                     et_prof.setEnabled(false);
                     et_raum.setEnabled(false);
@@ -243,9 +254,9 @@ public class ScheduleFragment extends Fragment {
                 et_raum.setEnabled(false);
                 save.setVisibility(View.GONE);
                 edit.setVisibility(View.VISIBLE);
-                cancel.setVisibility(View.INVISIBLE);
+                cancel.setVisibility(View.GONE);
                 color.setVisibility(View.GONE);
-                wöchentl.setVisibility(View.INVISIBLE);
+                wöchentl.setVisibility(View.GONE);
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
@@ -255,8 +266,8 @@ public class ScheduleFragment extends Fragment {
                 ColorPickerDialogBuilder
                         .with(view.getContext())
                         .setTitle(R.string.choose_color)
-                        .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
-                        .density(3)
+                        .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                        .density(5)
                         .setOnColorSelectedListener(new OnColorSelectedListener() {
                             @Override
                             public void onColorSelected(int i) {
@@ -282,8 +293,6 @@ public class ScheduleFragment extends Fragment {
             }
 
         });
-
-
             return view;
 
     }
@@ -367,6 +376,18 @@ public class ScheduleFragment extends Fragment {
                 preference.edit().putBoolean("Emptytimetable inserted",true).apply();
             }
             ScheduleFragment.timetable = ScheduleFragment.scheduleDao.getTimetable();
+
+
+            subjects=ScheduleFragment.scheduleDao.getFaecherByStudiengang(Credentials.getFakultaet());
+            profs=ScheduleFragment.scheduleDao.getProflastName();
+
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
             View view = getView();
             if(view!=null){
                 final TableLayout tl = getView().findViewById(R.id.table);
@@ -382,30 +403,24 @@ public class ScheduleFragment extends Fragment {
                     }
                 }
 
-            for(int j = 0;j<(timetable.size()/2);j++){
-                final int i;
-                if(isEven){
-                    i=j;
-                }
-                else{
-                    i=j+(ENTRYCOUNT/2);
-                }
-                final TextView current = elements[(j % (elements[0].length))][(j / (elements.length))];
-                if (current != null) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            current.setText(timetable.get(i).getFach());
-                            current.setBackgroundColor(timetable.get(i).getColor());
-                        }
-                    });
-                }
+                for(int j = 0;j<(timetable.size()/2);j++){
+                    final int i;
+                    if(isEven){
+                        i=j;
+                    }
+                    else{
+                        i=j+(ENTRYCOUNT/2);
+                    }
+                    final TextView current = elements[(j % (elements[0].length))][(j / (elements.length))];
+                    if (current != null) {
+                        current.setText(timetable.get(i).getFach());
+                        current.setBackgroundColor(timetable.get(i).getColor());
 
-            }}
+                    }
 
-            return null;
+                }
+            }
         }
     }
-
 
 }

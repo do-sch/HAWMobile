@@ -1,6 +1,7 @@
 package de.haw_landshut.hawmobile.base;
 
 import android.arch.persistence.room.*;
+import de.haw_landshut.hawmobile.Fakultaet;
 
 import java.util.List;
 
@@ -10,15 +11,15 @@ public interface ScheduleDao {
     @Query("SELECT * FROM ProfData")
     List<ProfData> getAllProfs();
 
-    @Query("SELECT * FROM FaecherData WHERE studiengang=:studiengang")
-    List<FaecherData> getFaecherByStudiengang(String studiengang);
+    @Query("SELECT fach FROM FaecherData WHERE studiengang=:fakultaet")
+    String[] getFaecherByStudiengang(Fakultaet fakultaet);
+
+    @Query("SELECT lastName FROM ProfData")
+    String[] getProflastName();
+
 
     @Query("SELECT * FROM CustomTimetable")
     List<CustomTimetable>getTimetable();
-
-    //Leerzeichen bei LIKE:fach raus oder rein, wegen fach erkennen, oder erkennt er dann leerzeichen??? a % , oder a%
-    @Query("SELECT * FROM FaecherData WHERE studiengang=:studiengang AND fach LIKE :fach")
-    List<FaecherData>getFaecherDataByChars(String studiengang,String fach);
 
     @Query("DELETE  FROM CustomTimetable")
     void deleteWholeCustomTimetable();

@@ -18,9 +18,9 @@ public class OnClickLabel implements View.OnClickListener {
         if(ScheduleFragment.mBottomSheetBehavior1.getState() != BottomSheetBehavior.STATE_EXPANDED) {
             ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_EXPANDED);
             CustomTimetable current = ScheduleFragment.timetable.get(currentNumber);
-            ScheduleFragment.et_fach.setText(current.getFach());
-            ScheduleFragment.et_prof.setText(current.getProf());
-            ScheduleFragment.et_raum.setText(current.getRaum());
+            ScheduleFragment.et_fach.setEnabled(false);ScheduleFragment.et_fach.setText(current.getFach());
+            ScheduleFragment.et_prof.setEnabled(false);ScheduleFragment.et_prof.setText(current.getProf());
+            ScheduleFragment.et_raum.setEnabled(false);ScheduleFragment.et_raum.setText(current.getRaum());
             ScheduleFragment.colormaker=current.getColor();
             if(current.getFach().equals(ScheduleFragment.timetable.get((currentNumber+30)%60).getFach())){
                 ScheduleFragment.wöchentl.setChecked(true);
