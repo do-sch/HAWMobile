@@ -5,15 +5,8 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="1000dp">
 
-        <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingTop="0dp">
+
             <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -28,17 +21,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" android:id="@+id/schedule_textView_currentDate"
                         android:layout_weight="1"/>
-                <TextView
-                        android:text="@string/calendar_week"
+                <Switch
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_KW"
+                        android:layout_height="wrap_content" android:id="@+id/calendar_week_switch"
                         android:layout_weight="1"/>
-                <TextView
-                        android:text=""
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/schedule_textView_currentWeek"
-                        android:layout_weight="0.21"/>
             </LinearLayout>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp">
+
+            <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="1000dp">
             <TableLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -291,8 +288,9 @@
                             android:paddingRight="2dp" android:tag="29"/>
                 </TableRow>
             </TableLayout>
+        </HorizontalScrollView>
+
         </LinearLayout>
-    </HorizontalScrollView>
     <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -304,9 +302,11 @@
                 android:background="@android:color/white"
                 app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
                 app:behavior_peekHeight="0dp">
-                <include layout="@layout/adapter_schedule"
-                />
+
+            <include layout="@layout/adapter_schedule"
+            />
 
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>
+
 </FrameLayout>

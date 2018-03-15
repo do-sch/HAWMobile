@@ -55,7 +55,7 @@ public class ScheduleFragment extends Fragment {
     public static TextView currentDate,currentWeek;
     public static TextView currentTV;
     public static AutoCompleteTextView et_fach;
-    public static EditText et_prof;
+    public static AutoCompleteTextView et_prof;
     public static EditText et_raum;
     public static List<CustomTimetable> timetable;
     public static ScheduleDao scheduleDao = MainActivity.getHawDatabase().scheduleDao();
@@ -64,8 +64,8 @@ public class ScheduleFragment extends Fragment {
     private boolean checkDouble;
     public static int colormaker;
     private  Context context;
-    String[] subjects;
-    String[] profs;
+    private  String[] subjects;
+    private String[] profs;
 
 
 
@@ -140,7 +140,7 @@ public class ScheduleFragment extends Fragment {
         DateFormat df= DateFormat.getDateInstance(DateFormat.SHORT);
         currentDate.setText(df.format(now.getTime()));
 
-        currentWeek=view.findViewById(R.id.schedule_textView_currentWeek);
+        currentWeek=view.findViewById(R.id.calendar_week_switch);
 
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
@@ -180,10 +180,13 @@ public class ScheduleFragment extends Fragment {
                     color.setVisibility(View.VISIBLE);
                     wöchentl.setVisibility(View.VISIBLE);
                     et_fach.setEnabled(true);
-                    final ArrayAdapter<String> subjectAdapter=new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,subjects);
+                    ArrayAdapter<String> subjectAdapter=new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,subjects);
                     et_fach.setAdapter(subjectAdapter);
 
                     et_prof.setEnabled(true);
+                    ArrayAdapter<String> profAdapter=new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,profs);
+                    et_prof.setAdapter(profAdapter);
+
                     et_raum.setEnabled(true);
                     checkDouble=wöchentl.isChecked();
 
@@ -203,6 +206,8 @@ public class ScheduleFragment extends Fragment {
                     et_fach.setEnabled(false);
                     et_prof.setEnabled(false);
                     et_raum.setEnabled(false);
+                    et_fach.setAdapter(null);
+                    et_prof.setAdapter(null);
                     currentTV.setText(et_fach.getText());
                     currentTV.setBackgroundColor(colormaker);
 

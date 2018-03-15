@@ -5,26 +5,40 @@
               android:layout_height="match_parent">
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="127dp">
+            android:layout_height="wrap_content">
 
-        <AutoCompleteTextView
-                android:hint="@string/subject"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/et_fach"
-                android:layout_alignParentTop="true" android:layout_alignParentStart="true"/>
+        <EditText
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/et_raum"
+            android:hint="@string/room" android:enabled="false"
+            android:layout_below="@+id/et_prof"
+            android:layout_alignParentStart="true"
+            android:textSize="14sp"
+            android:imeOptions="actionDone"
+
+        />
         <AutoCompleteTextView
                 android:hint="@string/prof"
-                android:layout_width="wrap_content"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content" android:id="@+id/et_prof"
-                android:layout_below="@+id/et_fach" android:layout_alignParentStart="true"/>
-        <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
-                android:id="@+id/et_raum" android:textSize="14sp"
-                android:hint="@string/room" android:enabled="false"
-                android:layout_below="@+id/et_prof" android:layout_alignParentStart="true"/>
+                android:layout_below="@+id/et_fach" android:layout_alignParentStart="true"
+                android:nextFocusForward="@id/et_raum"
+                android:inputType="text"
+                android:imeOptions="actionNext"
+
+        />
+        <AutoCompleteTextView
+                android:hint="@string/subject"
+                android:layout_width="300dp"
+                android:layout_height="match_parent" android:id="@+id/et_fach"
+                android:layout_alignParentTop="true" android:layout_alignParentStart="true"
+                android:nextFocusForward="@id/et_prof"
+                android:inputType="text"
+                android:imeOptions="actionNext"
+        />
         <CheckBox
                 android:text="@string/weekly"
                 android:layout_width="wrap_content"
