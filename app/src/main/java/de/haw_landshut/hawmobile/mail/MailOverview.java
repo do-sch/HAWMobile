@@ -53,11 +53,13 @@ import static de.haw_landshut.hawmobile.mail.MailEntryAdapter.ViewHolder.MESSAGE
  */
 public class MailOverview extends Fragment implements View.OnClickListener, MailEntryAdapter.MailEntryClickListener, AdapterView.OnItemSelectedListener, OnBackPressedListener {
 
+    static MailOverview instance;
+
     private int lastMessageNum = 1;
     private String currentFolderName;
     private boolean selectionMode = false;
 
-    private static final int MESSAGESAVECOUNT = 20;
+    static final int MESSAGESAVECOUNT = 20;
     public static final String INBOX = "INBOX", DELETED = "Trash";
 
     private OnFragmentInteractionListener mListener;
@@ -93,6 +95,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         this.setRetainInstance(true);
         this.setHasOptionsMenu(true);
 
@@ -426,6 +429,15 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
         super.onViewCreated(view, savedInstanceState);
     }
 
+    void updateAdapter(){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new Base2MailEntryAdapter().execute(currentFolderName);
+            }
+        });
+    }
+
 
     @Override
     public boolean onBackPressed() {
@@ -475,6 +487,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
     @Override
     public void onDestroy() {
         super.onDestroy();
+        instance = null;
         new Logout().execute();
     }
 
@@ -485,7 +498,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
     }
 
     public void firstStart(){
-        new Update().execute(currentFolderName);
+//        new Update().execute(currentFolderName);
     }
 
     private void deselectEverything(){
@@ -660,8 +673,8 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 mFolderIndicator.setSelection(inboxPos, false);
                 mFolderIndicator.setOnItemSelectedListener(MailOverview.this);
 
-                if (start)
-                    new Update().execute(currentFolderName);
+//                if (start)
+//                    new Update().execute(currentFolderName);
             }
         }
 
@@ -742,7 +755,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                     Message m = messages[i];
                     final long uid = folder.getUID(m);
                     final EMail savedMail = eMailDao.getEmailFromUidAndFolder(uid, currentFolderName);
-                    if (savedMail== null) {
+                    if (savedMail == null) {
                         final EMail eMail = new EMail(m, uid, currentFolderName);
                         mails.add(eMail);
                     } else {

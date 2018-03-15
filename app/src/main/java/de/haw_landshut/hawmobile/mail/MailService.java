@@ -1,16 +1,11 @@
 package de.haw_landshut.hawmobile.mail;
 
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.arch.persistence.room.Room;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
@@ -19,7 +14,6 @@ import android.util.Log;
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobRequest;
 import com.sun.mail.imap.IMAPFolder;
-import com.sun.mail.pop3.POP3Folder;
 import de.haw_landshut.hawmobile.Credentials;
 import de.haw_landshut.hawmobile.MainActivity;
 import de.haw_landshut.hawmobile.R;
@@ -29,7 +23,6 @@ import de.haw_landshut.hawmobile.base.EMailDao;
 import de.haw_landshut.hawmobile.base.HAWDatabase;
 
 import javax.mail.*;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -79,12 +72,19 @@ public class MailService extends Job {
                         final EMail mail = new EMail(message, imapFolder.getUID(message), MailOverview.INBOX);
                         final boolean seen = message.getFlags().contains(Flags.Flag.SEEN);
 
+
                         dao.insertAllEMails(mail);
+                        dao.deleteLowestUIDMailsFromFolder(MailOverview.INBOX, MailOverview.MESSAGESAVECOUNT);
 
                         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+
                         if (!seen) {//TODO: vibration, sound
 
                             if (prefs.getBoolean("notifications_new_message", true)) {
+
+                                //TODO: set Mail and Intent
+                                final Intent notificationIntent = new Intent(getContext(), MailView.class);
 
 
                                 final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getContext())
@@ -96,6 +96,7 @@ public class MailService extends Job {
                                         .setShowWhen(true)
                                         .setColor(Color.RED)
                                         .setLocalOnly(true);
+
 
                                 final String soundUri = prefs.getString("notifications_new_message_ringtone", "");
                                 if (!soundUri.isEmpty())
@@ -110,9 +111,16 @@ public class MailService extends Job {
                             }
                         }
                     }
+
+                    if (MailOverview.instance != null) {
+                        Log.d("MailService", "updateAdapter");
+                        MailOverview.instance.updateAdapter();
+                    }
                 }
 
                 dao.updateFolderStuff(MailOverview.INBOX, newNextuid, newUidvalidaty);
+
+                //aktuallisiert MailOverview, wenn offen
 
             }
 

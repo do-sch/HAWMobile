@@ -10,7 +10,7 @@ public interface EMailDao {
 //    @Query("SELECT * FROM email")
 //    List<EMail> getAllEmails();
 
-    @Query("SELECT * FROM email WHERE foldername=:foldername")
+    @Query("SELECT * FROM email WHERE foldername=:foldername ORDER BY uid DESC")
     List<EMail> getAllEmailsFromFolder(String foldername);
 
 //    @Query("SELECT * FROM email WHERE foldername=:foldername AND uid < :maxuid")
