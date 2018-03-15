@@ -28,6 +28,7 @@ import com.pchmn.materialchips.ChipView;
 import com.sun.mail.imap.IMAPFolder;
 import de.haw_landshut.hawmobile.R;
 import de.haw_landshut.hawmobile.base.EMail;
+import de.haw_landshut.hawmobile.base.EMailDao;
 
 import javax.mail.*;
 import javax.mail.internet.ContentType;

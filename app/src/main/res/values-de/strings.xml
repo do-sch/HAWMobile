@@ -1,4 +1,5 @@
 <resources>
+    <string name="mail">E-Mail</string>
     <string name="schedule">Stundenplan</string>
     <string name="map">Lageplan</string>
     <string name="news">Neuigkeiten</string>
@@ -25,6 +26,7 @@
         <item>Soziale Arbeit</item>
     </string-array>
     <string name="login_failed">Die Verbindung zur HAW ist fehlgeschlagen</string>
+
     <string name="settings">Einstellungen</string>
     <string name="search">Suchen</string>
     <string name="folder">Ordner</string>
@@ -36,8 +38,32 @@
     <string name="undefined">Nicht Definiert</string>
     <string name="downloading">E-Mails werden heruntergeladen</string>
     <string name="downloaded">Alle E-Mails wurde heruntergeladen</string>
+    <string name="delete">Löschen</string>
+    <string name="answer">Antworten</string>
+    <string name="move">In Ordner verschieben</string>
+    <string name="mark_as_unread">Als Ungelesen markieren</string>
+    <string name="exit">Beenden</string>
 
+    <string name="send">Senden</string>
+    <string name="attach_file">Datei anhängen</string>
+    <string name="choose_file">Datei auswählen</string>
+    <string name="write">Schreiben</string>
+    <string name="to">An</string>
+    <string name="subject">Betreff</string>
+    <string name="write_mail">E-Mail schreiben</string>
+    <string name="sent">E-Mail gesendet</string>
+    <string name="not_sent">E-Mail wurde nicht gesendet</string>
+    <string name="warning_abbort_title">Soll die E-Mail verworfen werden?</string>
+    <string name="warning_abbort_text">Der geschriebene Text wird gelöscht</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="discard">Verwerfen</string>
+    <string name="invalid_mail_address">Die eingegebene E-Mail Adresse ist ungültig</string>
+    <string name="title_activity_mail_settings">Einstellungen</string>
 
+    <string name="save">Speichern</string>
+    <string name="open">Öffnen</string>
+
+    <string name="offline_mode">Offline Modus</string>
 
     <!-- Schedule -->
     <string name="even">gerade</string>
