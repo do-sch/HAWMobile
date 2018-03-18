@@ -2,17 +2,38 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="HAW Mobile"
+        android:title="@string/haw_mobile"
         android:key="pref_key_storage_settings">
+        <ListPreference
+            android:key="pref_faculty"
+            android:title="@string/faculty"
+            android:entries="@array/faculty"
+            android:summary="%s"
+            android:entryValues="@array/faculty_value"
+            android:defaultValue="IF"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"/>
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Neuigkeiten"
+        android:title="@string/news"
         android:key="pref_key_storage_settings">
         <SwitchPreference
             android:defaultValue="false"
-            android:key="switch_notifications"
-            android:title="Notifications" />
+            android:summary="@string/notification_summary"
+            android:key="pref_switch_notifications"
+            android:title="@string/notification" />
+        <de.haw_landshut.hawmobile.news.NotificationTimePreference
+            android:title="@string/notification_timer"
+            android:dialogLayout="@layout/notification_time_layout"
+            android:key="pref_notification_time"
+            android:positiveButtonText="OK"
+            android:negativeButtonText="Abbruch" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:summary="@string/vibration_summary"
+            android:key="pref_switch_vibrate"
+            android:title="@string/vibration_alert" />
     </PreferenceCategory>
 
 </PreferenceScreen>

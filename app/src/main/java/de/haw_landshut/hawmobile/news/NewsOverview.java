@@ -2,6 +2,8 @@ package de.haw_landshut.hawmobile.news;
 
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +12,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -42,6 +47,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -62,12 +68,14 @@ public class NewsOverview extends Fragment {
     private HAWDatabase database;
     private List<Appointment> appointments;
 
-    private AlarmManager am;
     private Intent notifIntent;
     private PendingIntent pendingNotifIntent;
     private Calendar calendar;
+
+    private SharedPreferences sharedPref;
     //Termine Ende
 
+    private String faculty;
     private ListView listView;
     private OnFragmentInteractionListener mListener;
 
@@ -91,24 +99,118 @@ public class NewsOverview extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setHasOptionsMenu(true);
+
         getActivity().setTitle("Neuigkeiten");
+
         database = ((MainActivity) getActivity()).getDatabase();
         dao = database.appointmentDao();
 
+        //Termine
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sharedPref.registerOnSharedPreferenceChangeListener(prefListener);
+
         new LoadAppointmentsTask().execute();
+        //Termine ende
+        String prefFaculty = sharedPref.getString("pref_faculty", "IF");
+
+        switch (prefFaculty){
+            case "BW":
+                faculty = "betriebswirtschaft";
+                break;
+            case "EW":
+                faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
+                break;
+            case "IF":
+                faculty = "informatik";
+                break;
+            case "IS":
+                faculty = "interdisziplinaere-studien";
+                break;
+            case "MA":
+                faculty = "maschinenbau";
+                break;
+            case "SA":
+                faculty = "soziale-arbeit";
+                break;
+            default :
+                faculty = "informatik";
+                break;
+        }
     }
+
+    private SharedPreferences.OnSharedPreferenceChangeListener prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            boolean prefNotificationEnabled = sharedPref.getBoolean("pref_switch_notifications", false);
+            int prefNotificationTime = sharedPref.getInt("pref_notification_time", 600);
+            String prefFaculty = sharedPref.getString("pref_faculty", "IF");
+
+            switch (prefFaculty){
+                case "BW":
+                    faculty = "betriebswirtschaft";
+                    break;
+                case "EW":
+                    faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
+                    break;
+                case "IF":
+                    faculty = "informatik";
+                    break;
+                case "IS":
+                    faculty = "interdisziplinaere-studien";
+                    break;
+                case "MA":
+                    faculty = "maschinenbau";
+                    break;
+                case "SA":
+                    faculty = "soziale-arbeit";
+                    break;
+                default :
+                    faculty = "informatik";
+                    break;
+            }
+
+            new getIt().execute();
+
+            while(getActivity() == null){
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            AlarmManager am = getActivity().getSystemService(AlarmManager.class);
+            notifIntent = new Intent(getActivity(), AlarmReceiver.class);
+            pendingNotifIntent = PendingIntent.getBroadcast(getActivity(), 0, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            if (prefNotificationEnabled) {
+                calendar = Calendar.getInstance();
+                calendar.set(Calendar.HOUR_OF_DAY, prefNotificationTime / 100);
+                calendar.set(Calendar.MINUTE, prefNotificationTime % 100);
+                calendar.set(Calendar.SECOND, 0);
+
+                am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingNotifIntent);
+
+                new LoadAppointmentsTask().execute();
+            } else {
+                if (pendingNotifIntent != null)
+                    am.cancel(pendingNotifIntent);
+            }
+        }
+    };
 
     @Override
     public void onResume() {
         super.onResume();
 
         //Termine
-        //TODO settings / preferences changed listener
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+/*        //TODO settings / preferences changed listener
+        //SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        //sharedPref.registerOnSharedPreferenceChangeListener(prefListener);
         boolean prefNotificationEnabled = sharedPref.getBoolean("switch_notifications", false);
 
         am = getActivity().getSystemService(AlarmManager.class);
-        if (prefNotificationEnabled){
+        if (prefNotificationEnabled) {
             calendar = Calendar.getInstance();
             //calendar.add(Calendar.DAY_OF_MONTH, 1); //DEBUG ohne Listener spammt der shit
             calendar.set(Calendar.HOUR_OF_DAY, 6);
@@ -121,9 +223,9 @@ public class NewsOverview extends Fragment {
         }
 //        else
 //        {
-            if(pendingNotifIntent!=null)
+        if (pendingNotifIntent != null)
             am.cancel(pendingNotifIntent);
-//        }
+//        }*/
         //Termine Ende
     }
 
@@ -139,6 +241,9 @@ public class NewsOverview extends Fragment {
         switch (item.getItemId()) {
             case R.id.app_bar_settings:
                 startActivity(new Intent(getActivity(), SettingsActivity.class));
+                return true;
+            case R.id.app_bar_appointments:
+                startActivity(new Intent(getActivity(), AppointmentActivity.class));
                 return true;
 
             default:
@@ -214,7 +319,7 @@ public class NewsOverview extends Fragment {
             try {
                 HashMap<String, String> cookies = new HashMap<>();
                 HashMap<String, String> formData = new HashMap<>();
-                Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
+                Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb.html")
                         .method(Connection.Method.GET)
                         .execute();
                 cookies.putAll(loginForm.cookies());
@@ -222,20 +327,20 @@ public class NewsOverview extends Fragment {
                 formData.put("user", Credentials.getUsername());
                 formData.put("pass", Credentials.getPassword());
                 formData.put("logintype", "login");
-                formData.put("redirect_url", "nc/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html");
+                formData.put("redirect_url", "nc/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html");
                 formData.put("tx_felogin_pi1[noredirect]", "0");
                 formData.put("submit", "");
 
-                Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
+                Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
                         .cookies(cookies)
                         .data(formData)
                         .method(Connection.Method.POST)
                         .execute();
 
                 Document doc = document.parse();
-                Elements elements = doc.getElementsByAttributeValue("class","col-lg-9 col-sm-12");
-                for(Element e:elements) {
-                    spanned.add(fromHtml(String.valueOf("<br>"+e)));
+                Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
+                for (Element e : elements) {
+                    spanned.add(fromHtml(String.valueOf("<br>" + e)));
                 }
 
             } catch (IOException e) {
@@ -247,17 +352,19 @@ public class NewsOverview extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-            ArrayAdapter<Spanned> adapter = new ArrayAdapter<>(getView().getContext(),android.R.layout.simple_list_item_1,spanned);
-            listView.setAdapter(adapter);
-            listView.setPadding(30,0,30,0);
+            if(getView() != null) {
+                getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                ArrayAdapter<Spanned> adapter = new ArrayAdapter<>(getView().getContext(), android.R.layout.simple_list_item_1, spanned);
+                listView.setAdapter(adapter);
+                listView.setPadding(30, 0, 30, 0);
+            }
         }
 
         @SuppressWarnings("deprecation")
-        Spanned fromHtml(String html){
+        Spanned fromHtml(String html) {
             Spanned result;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                result = Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY);
+                result = Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
             } else {
                 result = Html.fromHtml(html);
             }
@@ -269,18 +376,20 @@ public class NewsOverview extends Fragment {
         private final String TAG = "LoadAppointmentsTask";
         private String[] downloadedAppointments;
 
+
+
         @Override
         protected Void doInBackground(Void... voids) {
             Log.d(TAG, "Get data from database.");
 
-            while(dao == null)
+            while (dao == null)
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-            //dao.deleteAllAppointments(); //Debug
+            dao.deleteAllAppointments(); //Debug
             appointments = dao.getAllAppointments();
 
             if (appointments.size() == 0) {
@@ -297,8 +406,6 @@ public class NewsOverview extends Fragment {
                         tmp = downloadedAppointments[i].trim().split(" - ");
                         dao.insertAppointment(new Appointment(tmp[0].trim(), tmp[1].trim()));
                     }
-                    dao.insertAppointment(new Appointment("12.01.2018", "Test asdf"));
-                    dao.insertAppointment(new Appointment("18.01.2018", "Test asdf"));
                 }
                 appointments = dao.getAllAppointments();
             }
@@ -326,7 +433,7 @@ public class NewsOverview extends Fragment {
             OutputStream output = null;
             HttpURLConnection connection = null;
 
-            if(getActivity() == null)
+            if (getActivity() == null)
                 return null;
 
             try {

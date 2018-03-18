@@ -2,11 +2,15 @@ package de.haw_landshut.hawmobile.news;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.arch.persistence.room.Room;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -14,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import de.haw_landshut.hawmobile.MainActivity;
 import de.haw_landshut.hawmobile.R;
 import de.haw_landshut.hawmobile.base.Appointment;
 import de.haw_landshut.hawmobile.base.AppointmentDao;
@@ -25,16 +30,17 @@ public class AlarmReceiver extends BroadcastReceiver {
     private AppointmentDao dao;
     private HAWDatabase database;
     private List<Appointment> appointments;
+    private SharedPreferences sharedPref;
 
-    private String title = "", text = "";
+    private String title = "", betreff = "", nachricht = "";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         database = Room.databaseBuilder(context.getApplicationContext(), HAWDatabase.class, "haw").build();
         dao = database.appointmentDao();
 
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         new CheckAppointmentTask().execute(context);
-
     }
 
     private class CheckAppointmentTask extends AsyncTask<Context, Integer, Void> {
@@ -45,31 +51,46 @@ public class AlarmReceiver extends BroadcastReceiver {
             Calendar tomorrow = Calendar.getInstance();
             tomorrow.add(Calendar.DAY_OF_MONTH, 1);
 
-            Log.d(TAG,"Load tomorrows appointments");
+            Log.d(TAG, "Load tomorrows appointments: " + new SimpleDateFormat("dd.MM.yyyy").format(tomorrow.getTime()));
             appointments = dao.getAppointmentByDate(new SimpleDateFormat("dd.MM.yyyy").format(tomorrow.getTime()));
 
-            if(appointments.size() == 0){
+            if (appointments.size() == 0) {
                 Log.d(TAG, "No appointments found");
                 return null;
             }
 
             Log.d(TAG, "Create Notifications");
             title = "HAWMobile Termine";
-            text = "Erinnerung für den " + appointments.get(0).date + "\r\n";
-            for (int i=0; i<appointments.size(); i++) {
-                text += "\r\n" + appointments.get(i).appointment;
+            betreff = "Erinnerung für den " + appointments.get(0).date + "\r\n";
+
+            for (int i = 0; i < appointments.size(); i++) {
+                nachricht += "\r\n" + appointments.get(i).appointment;
             }
 
             NotificationManager mNotificationManager = (NotificationManager) context[0].getSystemService(Context.NOTIFICATION_SERVICE);
 
-            Notification notif = new NotificationCompat.Builder(context[0].getApplicationContext(),"channel_0")
+            boolean prefVibrate = sharedPref.getBoolean("pref_switch_vibrate", false);
+            long vibrationTime = prefVibrate ? 100 : 0;
+
+            // Create an Intent for the activity you want to start
+            Intent resultIntent = new Intent(context[0], AppointmentActivity.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context[0]);
+            stackBuilder.addNextIntentWithParentStack(resultIntent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Notification notif = new NotificationCompat.Builder(context[0].getApplicationContext(), "channel_0")
                     .setSmallIcon(R.drawable.announcement_icon)
+                    .setContentIntent(resultPendingIntent)
                     .setContentTitle(title)
-                    .setContentText(text)
-                    .setVibrate(new long[]{100,100,100,100})
+                    .setContentText(betreff)
+                    .setVibrate(new long[]{vibrationTime, vibrationTime, vibrationTime, vibrationTime})
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(betreff + nachricht))
                     .build();
 
-            mNotificationManager.notify(1,notif);
+
+            mNotificationManager.notify(1, notif);
 
             return null;
         }

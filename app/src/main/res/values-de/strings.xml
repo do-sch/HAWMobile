@@ -4,6 +4,7 @@
     <string name="map">Lageplan</string>
     <string name="news">Neuigkeiten</string>
     <string name="faculty">Fakultät</string>
+    <string name="haw_mobile">HAW Mobile</string>
 
 
     <string name="title_activity_login">Anmelden</string>
@@ -85,5 +86,15 @@
     <string name="color">Farbe</string>
     <string name="edit">Bearbeiten</string>
     <string name="setsave">Speichern</string>
+
+    <!-- News -->
+    <string name="hour">Stunde</string>
+    <string name="minute">Minute</string>
+    <string name="vibrate">Vibrieren</string>
+    <string name="notification">Benachrichtigung</string>
+    <string name="notification_timer">Benachrichtigungs Uhrzeit</string>
+    <string name="vibration_summary">Bei Benachrichtigungen vibrieren</string>
+    <string name="vibration_alert">Vibrationsalarm</string>
+    <string name="notification_summary">Benachrichtigungen für Termine</string>
 
 </resources>

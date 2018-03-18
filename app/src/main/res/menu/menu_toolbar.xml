@@ -5,5 +5,9 @@
     <item
         android:id="@+id/app_bar_settings"
         android:title="Einstellungen"
+        app:actionLayout="@layout/switch_item"></item>
+    <item
+        android:id="@+id/app_bar_appointments"
+        android:title="Termine"
         app:actionLayout="@layout/switch_item" />
 </menu>

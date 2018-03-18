@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="faculty">
+        <item>Informatik</item>
+        <item>Betriebswirtschaft</item>
+        <item>Elektrotechnik u. Wirtschaftsingenieurwesen</item>
+        <item>Maschinenbau</item>
+        <item>Soziale Arbeit</item>
+        <item>Interdisziplinäre Studien</item>
+    </string-array>
+    <string-array name="faculty_value">
+        <item>IF</item>
+        <item>BW</item>
+        <item>EW</item>
+        <item>MA</item>
+        <item>SA</item>
+        <item>IS</item>
+    </string-array>
+</resources>

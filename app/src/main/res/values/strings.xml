@@ -145,9 +145,8 @@
     <string name="hourFive">16.10\n-\n18:20</string>
     <string name="hourSix">18.35\n-\n19.20</string>
 
-
-
-
-
+    <!-- News -->
+    <string name="hour">Hour</string>
+    <string name="minute">Minute</string>
 
 </resources>
