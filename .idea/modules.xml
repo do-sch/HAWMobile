@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://C:\Users\X\IdeaProjects\HAWMobile3\HAWMobile.iml" filepath="C:\Users\X\IdeaProjects\HAWMobile3\HAWMobile.iml" />
-      <module fileurl="file://$PROJECT_DIR$/HAWMobile3.iml" filepath="$PROJECT_DIR$/HAWMobile3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HAWMobile.iml" filepath="$PROJECT_DIR$/HAWMobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

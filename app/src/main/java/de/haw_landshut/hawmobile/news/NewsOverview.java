@@ -23,10 +23,7 @@ import android.view.*;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import de.haw_landshut.hawmobile.Credentials;
-import de.haw_landshut.hawmobile.MainActivity;
-import de.haw_landshut.hawmobile.R;
-import de.haw_landshut.hawmobile.SettingsActivity;
+import de.haw_landshut.hawmobile.*;
 import de.haw_landshut.hawmobile.base.Appointment;
 import de.haw_landshut.hawmobile.base.AppointmentDao;
 import de.haw_landshut.hawmobile.base.HAWDatabase;
@@ -306,7 +303,6 @@ public class NewsOverview extends Fragment {
      * for News (Schwarzes Brett)
      */
 
-
     private void getWebsiteContent() {
         new getIt().execute();
     }
@@ -319,7 +315,7 @@ public class NewsOverview extends Fragment {
             try {
                 HashMap<String, String> cookies = new HashMap<>();
                 HashMap<String, String> formData = new HashMap<>();
-                Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb.html")
+                Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
                         .method(Connection.Method.GET)
                         .execute();
                 cookies.putAll(loginForm.cookies());
