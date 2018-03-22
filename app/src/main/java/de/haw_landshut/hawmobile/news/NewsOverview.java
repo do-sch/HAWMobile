@@ -20,6 +20,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.*;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -110,27 +111,37 @@ public class NewsOverview extends Fragment {
         //Termine ende
         String prefFaculty = sharedPref.getString("pref_faculty", "IF");
 
+        setFaculty(prefFaculty);
+    }
+    void setFaculty(String prefFaculty){
         switch (prefFaculty){
             case "BW":
                 faculty = "betriebswirtschaft";
+                getActivity().setTitle("Neuigkeiten BW");
                 break;
             case "EW":
                 faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
+                getActivity().setTitle("Neuigkeiten EW");
                 break;
             case "IF":
                 faculty = "informatik";
+                getActivity().setTitle("Neuigkeiten IF");
                 break;
             case "IS":
                 faculty = "interdisziplinaere-studien";
+                getActivity().setTitle("Neuigkeiten IS");
                 break;
             case "MA":
                 faculty = "maschinenbau";
+                getActivity().setTitle("Neuigkeiten MA");
                 break;
             case "SA":
                 faculty = "soziale-arbeit";
+                getActivity().setTitle("Neuigkeiten SA");
                 break;
             default :
                 faculty = "informatik";
+                getActivity().setTitle("Neuigkeiten IF");
                 break;
         }
     }
@@ -142,29 +153,7 @@ public class NewsOverview extends Fragment {
             int prefNotificationTime = sharedPref.getInt("pref_notification_time", 600);
             String prefFaculty = sharedPref.getString("pref_faculty", "IF");
 
-            switch (prefFaculty){
-                case "BW":
-                    faculty = "betriebswirtschaft";
-                    break;
-                case "EW":
-                    faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
-                    break;
-                case "IF":
-                    faculty = "informatik";
-                    break;
-                case "IS":
-                    faculty = "interdisziplinaere-studien";
-                    break;
-                case "MA":
-                    faculty = "maschinenbau";
-                    break;
-                case "SA":
-                    faculty = "soziale-arbeit";
-                    break;
-                default :
-                    faculty = "informatik";
-                    break;
-            }
+            setFaculty(prefFaculty);
 
             new getIt().execute();
 
@@ -352,7 +341,6 @@ public class NewsOverview extends Fragment {
                 getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                 ArrayAdapter<Spanned> adapter = new ArrayAdapter<>(getView().getContext(), android.R.layout.simple_list_item_1, spanned);
                 listView.setAdapter(adapter);
-                listView.setPadding(30, 0, 30, 0);
             }
         }
 
