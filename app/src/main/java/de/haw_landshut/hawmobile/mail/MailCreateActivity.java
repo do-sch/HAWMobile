@@ -163,12 +163,12 @@ public class MailCreateActivity extends AppCompatActivity {
             chipView.setHasAvatarIcon(false);
             chipView.setLabel(getFileName(newUri));
             chipView.setOnDeleteClicked(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+                @Override
+                public void onClick(View view) {
                     attachments.remove(newUri);
                     chips.removeView(chipView);
-            }
-        });
+                }
+            });
             chips.addView(chipView);
         }
     }
@@ -217,31 +217,31 @@ public class MailCreateActivity extends AppCompatActivity {
         if (!messageText.getText().toString().isEmpty() || !toAddress.getText().toString().isEmpty()){
 
 
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-                builder.setTitle(R.string.warning_abbort_title)
-                        .setMessage(R.string.warning_abbort_text)
-                        .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                MailCreateActivity.super.onBackPressed();
-                            }
-                        })
+            builder.setTitle(R.string.warning_abbort_title)
+                    .setMessage(R.string.warning_abbort_text)
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            MailCreateActivity.super.onBackPressed();
+                        }
+                    })
 //                        .setNeutralButton(R.string.add_to_drafts, new DialogInterface.OnClickListener() {
 //                            @Override
 //                            public void onClick(DialogInterface dialogInterface, int i) {
 //
 //                            }
 //                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        });
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
 
-                final AlertDialog dialog = builder.create();
-                dialog.show();
+            final AlertDialog dialog = builder.create();
+            dialog.show();
 
 
         } else
@@ -262,7 +262,6 @@ public class MailCreateActivity extends AppCompatActivity {
 
         @Override
         protected Context doInBackground(Context... contexts) {
-            //TODO: Email versenden
             final Context context = contexts[0];
 
             try {
