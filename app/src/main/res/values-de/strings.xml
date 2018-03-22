@@ -144,5 +144,12 @@
     <string name="vibration_summary">Bei Benachrichtigungen vibrieren</string>
     <string name="vibration_alert">Vibrationsalarm</string>
     <string name="notification_summary">Benachrichtigungen für Termine</string>
+    <string name="news_if">Neuigkeiten IF</string>
+    <string name="news_bw">Neuigkeiten BW</string>
+    <string name="news_ew">Neuigkeiten EW</string>
+    <string name="news_ma">Neuigkeiten MA</string>
+    <string name="news_sa">Neuigkeiten SA</string>
+    <string name="news_ids">Neuigkeiten IDS</string>
+    <string name="event">Termin</string>
 
 </resources>
