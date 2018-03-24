@@ -10,11 +10,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.*;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -86,6 +88,9 @@ public class NewsOverview extends Fragment {
         super.onCreate(savedInstanceState);
         this.setHasOptionsMenu(true);
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         HAWDatabase database = ((MainActivity) getActivity()).getDatabase();
         dao = database.appointmentDao();
 
@@ -144,7 +149,7 @@ public class NewsOverview extends Fragment {
 
             setFaculty(prefFaculty);
 
-            new getIt().execute();
+            new getNews().execute();
 
             while(getActivity() == null){
                 try {
@@ -251,39 +256,84 @@ public class NewsOverview extends Fragment {
      */
 
     private void getWebsiteContent() {
-        new getIt().execute();
+        new getNews().execute();
     }
 
-    public class getIt extends AsyncTask<Void, Void, Void> {
+    public class getNews extends AsyncTask<Void, Void, Void> {
         List<Spanned> spanned = new ArrayList<>();
-
+        HashMap<String, String> cookies;
+        HashMap<String, String> formData;
+        int position;
+        int count=0;
         @Override
         protected Void doInBackground(Void... voids) {
+            count++;
+            Log.d("count: ",""+count);
             try {
-                HashMap<String, String> formData = new HashMap<>();
-                Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
-                        .method(Connection.Method.GET)
-                        .execute();
-                HashMap<String, String> cookies = new HashMap<>(loginForm.cookies());
-                formData.put("utf8", "e2 9c 93");
-                formData.put("user", Credentials.getUsername());
-                formData.put("pass", Credentials.getPassword());
-                formData.put("logintype", "login");
-                formData.put("redirect_url", "nc/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html");
-                formData.put("tx_felogin_pi1[noredirect]", "0");
-                formData.put("submit", "");
 
-                Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
-                        .cookies(cookies)
-                        .data(formData)
-                        .method(Connection.Method.POST)
-                        .execute();
+                if(count<2) {
+                    formData = new HashMap<>();
 
-                Document doc = document.parse();
-                Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
-                for (Element e : elements) {
-                    spanned.add(fromHtml(String.valueOf("<br>" + e)));
+                    Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
+                            .method(Connection.Method.GET)
+                            .execute();
+                    cookies = new HashMap<>(loginForm.cookies());
+                    formData.put("utf8", "e2 9c 93");
+                    formData.put("user", Credentials.getUsername());
+                    formData.put("pass", Credentials.getPassword());
+                    formData.put("logintype", "login");
+                    formData.put("redirect_url", "nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html");
+                    formData.put("tx_felogin_pi1[noredirect]", "0");
+                    formData.put("submit", "");
+
+
+                    Log.d("count","incount_1");
+                    Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
+                            .cookies(cookies)
+                            .data(formData)
+                            .method(Connection.Method.POST)
+                            .execute();
+                    Document doc = document.parse();
+                    Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
+                    for (Element e : elements) {
+                        spanned.add(fromHtml(String.valueOf("<br>" + e)));
+                    }
+                    position = spanned.size();
+                    formData.clear();
+                    cookies.clear();
+                    doc = null;
                 }
+                else{
+                    formData = new HashMap<>();
+
+                    Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
+                            .method(Connection.Method.GET)
+                            .execute();
+                    cookies = new HashMap<>(loginForm.cookies());
+                    formData.put("utf8", "e2 9c 93");
+                    formData.put("user", Credentials.getUsername());
+                    formData.put("pass", Credentials.getPassword());
+                    formData.put("logintype", "login");
+                    formData.put("redirect_url", "nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/"+count+".html");
+                    formData.put("tx_felogin_pi1[noredirect]", "0");
+                    formData.put("submit", "");
+                    Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/"+count+".html")
+                            .cookies(cookies)
+                            .data(formData)
+                            .method(Connection.Method.POST)
+                            .execute();
+                    Document doc = document.parse();
+                    Log.d("titel:",doc.location());
+                    Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
+                    for (Element e : elements) {
+                        spanned.add(fromHtml(String.valueOf("<br>" + e)));
+                    }
+                    position = spanned.size();
+                    onPostExecute(null);
+                    Log.d("position:",position+"");
+                    listView.setSelection(position-14);
+                }
+
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -298,6 +348,27 @@ public class NewsOverview extends Fragment {
                 getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                 ArrayAdapter<Spanned> adapter = new ArrayAdapter<>(getView().getContext(), android.R.layout.simple_list_item_1, spanned);
                 listView.setAdapter(adapter);
+
+                listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+                    }
+                    Boolean flag_loading=false;
+                    @Override
+                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                        if(firstVisibleItem+visibleItemCount == totalItemCount && totalItemCount!=0)
+                        {
+                            if(!flag_loading)
+                            {
+                                flag_loading = true;
+                                doInBackground();
+                                listView.deferNotifyDataSetChanged();
+                            }
+                        }
+
+                    }
+                });
             }
         }
 
@@ -312,6 +383,8 @@ public class NewsOverview extends Fragment {
             return result;
         }
     }
+
+
 
     private class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
         private final String TAG = "LoadAppointmentsTask";
