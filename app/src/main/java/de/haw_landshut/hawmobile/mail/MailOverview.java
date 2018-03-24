@@ -55,7 +55,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
 
     static MailOverview instance;
 
-    private int lastMessageNum = 1;
+    private int lastMessageNum = -1;
     private String currentFolderName;
     private boolean selectionMode = false;
 
@@ -232,7 +232,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 }
                 //Lädt mehr E-Mails wenn am Ende des RecyclerViews
                 if (dy > 0 && mProgressBar.getVisibility() == View.GONE) {
-                    if (layoutManager.getChildCount() + layoutManager.findLastVisibleItemPosition() >= layoutManager.getItemCount()) {
+                    if (layoutManager.findLastVisibleItemPosition() == layoutManager.getItemCount()-1) {
                         mProgressBar.setVisibility(View.VISIBLE);
 
                         new FetchMessagesBefore().execute(currentFolderName);
@@ -730,7 +730,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                     eMailFolders = new ArrayList<>();
                     for (final Folder f : store.getDefaultFolder().list()) {
                         final IMAPFolder imapFolder = ((IMAPFolder) f);
-                        final EMailFolder eMailFolder = new EMailFolder(imapFolder.getName(), imapFolder.getUIDValidity(), imapFolder.getUIDNext());
+                        final EMailFolder eMailFolder = new EMailFolder(imapFolder.getName(), imapFolder.getUIDValidity(), imapFolder.getUIDNext(), imapFolder.getMessageCount());
                         eMailFolders.add(eMailFolder);
                     }
                     eMailDao.insertAllFolders(eMailFolders);
@@ -943,10 +943,15 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 if(!folder.isOpen())
                     folder.open(Folder.READ_ONLY);
 
+                if (lastMessageNum == -1) {
+                    lastMessageNum = getEMailDao().getFolderMessageCount(foldername) - MESSAGESAVECOUNT;
+                }
+
                 final int lastMessage = lastMessageNum;
                 lastMessageNum -= MESSAGESAVECOUNT;
                 if(lastMessageNum < 1)
                     lastMessageNum = 1;
+
 
                 //keine weiteren EMails
                 if(lastMessage == lastMessageNum)

@@ -16,15 +16,18 @@ public class EMailFolder {
 
     private long nextuid;
 
+    private int messageCount;
+
     public EMailFolder(){
 
     }
 
     @Ignore
-    public EMailFolder(final String name, final long uidvalidaty, final long nextuid){
+    public EMailFolder(final String name, final long uidvalidaty, final long nextuid, final int messageCount){
         this.name = name;
         this.uidvalidaty = uidvalidaty;
         this.nextuid = nextuid;
+        this.messageCount = messageCount;
     }
 
     public String getName() {
@@ -49,5 +52,13 @@ public class EMailFolder {
 
     public void setNextuid(long nextuid) {
         this.nextuid = nextuid;
+    }
+
+    public int getMessageCount() {
+        return messageCount;
+    }
+
+    public void setMessageCount(int messageCount) {
+        this.messageCount = messageCount;
     }
 }

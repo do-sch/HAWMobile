@@ -28,6 +28,9 @@ public interface EMailDao {
     @Query("SELECT nextuid FROM emailfolder WHERE name=:foldername")
     long getFolderNextuid(String foldername);
 
+    @Query("SELECT messageCount FROM emailfolder WHERE name=:foldername")
+    int getFolderMessageCount(String foldername);
+
     @Query("DELETE FROM email WHERE foldername=:foldername AND uid NOT IN (SELECT uid FROM email WHERE foldername=:foldername ORDER BY uid DESC LIMIT :savecount)")
     void deleteLowestUIDMailsFromFolder(String foldername, int savecount);
 
