@@ -15,6 +15,9 @@ public class Credentials {
         AccountManager accountManager = AccountManager.get(context);
         Account[] accounts = accountManager.getAccountsByType("de.haw_landshut.hawmobile.ACCOUNT");
 
+        if (accounts.length == 0)
+            return;
+
         final Account a = accounts[0];
         final String username = a.name;
         final String password = accountManager.getPassword(a);

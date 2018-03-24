@@ -28,6 +28,7 @@ import android.view.*;
 import android.widget.*;
 import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
+import de.haw_landshut.hawmobile.Credentials;
 import de.haw_landshut.hawmobile.MainActivity;
 import de.haw_landshut.hawmobile.OnBackPressedListener;
 import de.haw_landshut.hawmobile.R;
@@ -498,7 +499,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
     }
 
     public void firstStart(){
-//        new Update().execute(currentFolderName);
+        new Update().execute(currentFolderName);
     }
 
     private void deselectEverything(){
@@ -745,8 +746,8 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                         eMailFolders.add(eMailFolder);
                     }
                     eMailDao.insertAllFolders(eMailFolders);
+                    Log.d("Update", eMailFolders.size() + " Folders added");
                 }
-                Log.d("Update", eMailFolders.toString());
 
                 final int messageCount = folder.getMessageCount();
                 eMailDao.updateFolderStuff(currentFolderName, folder.getUIDNext(), folder.getUIDValidity());

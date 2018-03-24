@@ -39,6 +39,9 @@ public class MailService extends Job {
         if (Credentials.getUsername() == null)
             Credentials.loadCredentialsFromAccountManager(getContext());
 
+        if (Credentials.getUsername() == null)
+            return Result.FAILURE;
+
         final PendingIntent pi = PendingIntent.getActivity(getContext(), 0, new Intent(getContext(), MainActivity.class), 0);
 
         final HAWDatabase hawDatabase = Room.databaseBuilder(getContext(), HAWDatabase.class, "haw").build();

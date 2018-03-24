@@ -313,6 +313,8 @@ public class Protocol {
         try{
             if(store == null || !store.isConnected()) {
                 Protocol.store = Session.getDefaultInstance(props).getStore("imap");
+                Log.d("Protocol", "Username = " + Credentials.getUsername());
+                Log.d("Protocol", "Password = "+Credentials.getPassword());
                 Protocol.store.connect(Credentials.getUsername(), Credentials.getPassword());
                 Log.i("Protocol", "logged in as user " + Credentials.getUsername());
             }
