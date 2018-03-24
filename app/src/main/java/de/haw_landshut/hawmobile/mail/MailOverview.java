@@ -640,6 +640,10 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
         @Override
         protected List<EMail> doInBackground(String... name) {
 
+            final EMailDao eMailDao = getEMailDao();
+            if (eMailDao.getAllEmailFolders().isEmpty())
+                new Update().execute("INBOX");
+
 //            if(eMailFolders == null || eMailFolders.isEmpty())
 //                eMailFolders = eMailDao.getAllEmailFolders();
             return getEMailDao().getAllEmailsFromFolder(name[0]);
@@ -688,6 +692,8 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
 
     private class Update extends AsyncTask<String, Void, List<EMail>>{
         boolean foldersChanged = false;
+
+
 
         @Override
         protected void onPreExecute() {
