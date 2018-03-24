@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,6 @@ import de.haw_landshut.hawmobile.base.EMail;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.ViewHolder> {
@@ -125,10 +123,15 @@ public class MailEntryAdapter extends RecyclerView.Adapter<MailEntryAdapter.View
         final EMail m = messages.get(position);
         holder.setMail(m);
         holder.subjectView.setText(m.getSubject());
-        holder.senderView.setText(m.getSenderMails());
         holder.dateView.setText(df.format(m.getDate()));
         holder.contentView.setText(m.getShortText());
         holder.viewForeground.setSelected(selectedItems.get(position));
+
+        String senderName = m.getSenderName();
+        if (senderName == null)
+            holder.senderView.setText(m.getSenderMail());
+        else
+            holder.senderView.setText(senderName);
 
         if(!m.isSeen()){
             holder.subjectView.setTypeface(Typeface.DEFAULT_BOLD);

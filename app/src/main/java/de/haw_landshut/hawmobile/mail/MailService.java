@@ -88,7 +88,7 @@ public class MailService extends Job {
 
 
                                 final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getContext())
-                                        .setContentTitle(mail.getSenderMails())
+                                        .setContentTitle(mail.getSenderMail())
                                         .setContentText(mail.getSubject())
                                         .setAutoCancel(true)
                                         .setContentIntent(pi)

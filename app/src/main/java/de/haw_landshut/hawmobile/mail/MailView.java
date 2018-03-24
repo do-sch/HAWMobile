@@ -2,7 +2,6 @@ package de.haw_landshut.hawmobile.mail;
 
 import android.Manifest;
 import android.app.DownloadManager;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -29,7 +28,6 @@ import com.pchmn.materialchips.ChipView;
 import com.sun.mail.imap.IMAPFolder;
 import de.haw_landshut.hawmobile.R;
 import de.haw_landshut.hawmobile.base.EMail;
-import de.haw_landshut.hawmobile.base.EMailDao;
 
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -57,7 +55,7 @@ public class MailView extends AppCompatActivity {
         final String text = mail.getText();
         final String encoding = mail.getEncoding();
         this.subject = mail.getSubject();
-        this.sender = mail.getSenderMails();
+        this.sender = mail.getSenderMail();
         adapterPosition = intent.getIntExtra(MailEntryAdapter.ViewHolder.MESSAGE_ADAPTER_POSITION, -1);
 
         final ActionBar actionBar = getSupportActionBar();

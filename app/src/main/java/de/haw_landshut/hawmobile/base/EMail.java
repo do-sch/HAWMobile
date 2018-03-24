@@ -33,7 +33,8 @@ public class EMail implements Serializable{
             this.setSubject(message.getSubject());
             this.setFoldername(foldername);
             this.setDate(message.getReceivedDate());
-            this.setSenderMails(getFromAddresses(message.getFrom()));
+            this.setSenderMail(getFromAddress(message.getFrom()));
+            this.setSenderName(getFromName(message.getFrom()));
             this.setBcc(addresses2strings(message.getRecipients(Message.RecipientType.BCC)));
             this.setCc(addresses2strings(message.getRecipients(Message.RecipientType.CC)));
             this.setFoldername(foldername);
@@ -52,7 +53,7 @@ public class EMail implements Serializable{
 
     private String encoding;
 
-    private String subject, senderMails;
+    private String subject, senderMail, senderName;
 
     private String[] cc, bcc;
 
@@ -90,8 +91,8 @@ public class EMail implements Serializable{
         this.subject = subject;
     }
 
-    public String getSenderMails() {
-        return senderMails;
+    public String getSenderMail() {
+        return senderMail;
     }
 
     public String[] getCc() {
@@ -110,8 +111,16 @@ public class EMail implements Serializable{
         this.bcc = bcc;
     }
 
-    public void setSenderMails(String senderMails) {
-        this.senderMails = senderMails;
+    public void setSenderMail(String senderMail) {
+        this.senderMail = senderMail;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
     }
 
     public String getFoldername() {
@@ -193,16 +202,21 @@ public class EMail implements Serializable{
         return strings;
     }
 
-    private static String getFromAddresses(Address[] addresses){
+    private static String getFromAddress(Address[] addresses){
 
         for(Address address : addresses){
             InternetAddress internetAddress = ((InternetAddress) address);
-            final String name = internetAddress.getPersonal();
-            if (name == null)
-                return internetAddress.getAddress();
-            return name;
+            return internetAddress.getAddress();
         }
 
+        return null;
+    }
+
+    private static String getFromName(Address[] addresses){
+        for (Address address : addresses) {
+            final InternetAddress internetAddress = ((InternetAddress) address);
+            return internetAddress.getPersonal();
+        }
         return null;
     }
 
