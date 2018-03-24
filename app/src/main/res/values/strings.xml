@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HAWMobile</string>
+    <string name="app_name" translatable="false">HAWMobile</string>
     <string name="mail">E-Mail</string>
     <string name="schedule">Schedule</string>
     <string name="map">Map</string>

@@ -19,6 +19,9 @@
     <ListView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:clickable="true"
+            android:autoLink="all"
+            android:contextClickable="true"
             android:id="@+id/NewsListView"/>
 
 

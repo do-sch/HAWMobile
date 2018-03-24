@@ -100,35 +100,37 @@ public class NewsOverview extends Fragment {
         setFaculty(prefFaculty);
     }
     void setFaculty(String prefFaculty){
-        switch (prefFaculty){
-            case "BW":
-                faculty = "betriebswirtschaft";
-                getActivity().setTitle(R.string.news_bw);
-                break;
-            case "EW":
-                faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
-                getActivity().setTitle(R.string.news_ew);
-                break;
-            case "IF":
-                faculty = "informatik";
-                getActivity().setTitle(R.string.news_if);
-                break;
-            case "IS":
-                faculty = "interdisziplinaere-studien";
-                getActivity().setTitle(R.string.news_ids);
-                break;
-            case "MA":
-                faculty = "maschinenbau";
-                getActivity().setTitle(R.string.news_ma);
-                break;
-            case "SA":
-                faculty = "soziale-arbeit";
-                getActivity().setTitle(R.string.news_sa);
-                break;
-            default :
-                faculty = "informatik";
-                getActivity().setTitle(R.string.news_if);
-                break;
+        if(getActivity()!=null){
+            switch (prefFaculty) {
+                case "BW":
+                    faculty = "betriebswirtschaft";
+                    getActivity().setTitle(R.string.news_bw);
+                    break;
+                case "EW":
+                    faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
+                    getActivity().setTitle(R.string.news_ew);
+                    break;
+                case "IF":
+                    faculty = "informatik";
+                    getActivity().setTitle(R.string.news_if);
+                    break;
+                case "IS":
+                    faculty = "interdisziplinaere-studien";
+                    getActivity().setTitle(R.string.news_ids);
+                    break;
+                case "MA":
+                    faculty = "maschinenbau";
+                    getActivity().setTitle(R.string.news_ma);
+                    break;
+                case "SA":
+                    faculty = "soziale-arbeit";
+                    getActivity().setTitle(R.string.news_sa);
+                    break;
+                default:
+                    faculty = "informatik";
+                    getActivity().setTitle(R.string.news_if);
+                    break;
+            }
         }
     }
 
