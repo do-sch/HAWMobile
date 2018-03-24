@@ -642,7 +642,12 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
 
             final EMailDao eMailDao = getEMailDao();
             if (eMailDao.getAllEmailFolders().isEmpty())
-                new Update().execute("INBOX");
+                MailOverview.this.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new Update().execute("INBOX");
+                    }
+                });
 
 //            if(eMailFolders == null || eMailFolders.isEmpty())
 //                eMailFolders = eMailDao.getAllEmailFolders();
