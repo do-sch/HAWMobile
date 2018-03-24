@@ -133,6 +133,7 @@ public class NewsOverview extends Fragment {
     }
 
     private SharedPreferences.OnSharedPreferenceChangeListener prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        private final String TAG = "PreferenceListener";
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             boolean prefNotificationEnabled = sharedPref.getBoolean("pref_switch_notifications", false);
@@ -145,6 +146,7 @@ public class NewsOverview extends Fragment {
 
             while(getActivity() == null){
                 try {
+                    Log.d(TAG,"Wait for activity...");
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -174,31 +176,6 @@ public class NewsOverview extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        //Termine
-/*        //TODO settings / preferences changed listener
-        //SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        //sharedPref.registerOnSharedPreferenceChangeListener(prefListener);
-        boolean prefNotificationEnabled = sharedPref.getBoolean("switch_notifications", false);
-
-        am = getActivity().getSystemService(AlarmManager.class);
-        if (prefNotificationEnabled) {
-            calendar = Calendar.getInstance();
-            //calendar.add(Calendar.DAY_OF_MONTH, 1); //DEBUG ohne Listener spammt der shit
-            calendar.set(Calendar.HOUR_OF_DAY, 6);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-
-            notifIntent = new Intent(getActivity(), AlarmReceiver.class);
-            pendingNotifIntent = PendingIntent.getBroadcast(getActivity(), 0, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingNotifIntent);
-        }
-//        else
-//        {
-        if (pendingNotifIntent != null)
-            am.cancel(pendingNotifIntent);
-//        }*/
-        //Termine Ende
     }
 
     @Override
@@ -337,8 +314,6 @@ public class NewsOverview extends Fragment {
     private class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
         private final String TAG = "LoadAppointmentsTask";
         private String[] downloadedAppointments;
-
-
 
         @Override
         protected Void doInBackground(Void... voids) {

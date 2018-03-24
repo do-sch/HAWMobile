@@ -145,15 +145,23 @@
     <string name="hourFive">16.10\n-\n18:20</string>
     <string name="hourSix">18.35\n-\n19.20</string>
 
+
     <!-- News -->
     <string name="hour">Hour</string>
     <string name="minute">Minute</string>
+    <string name="vibrate">vibrate</string>
+    <string name="vibration_summary">Vibrate on notifications</string>
+    <string name="vibration_alert">Vibration alert</string>
+    <string name="notification">Notification</string>
+    <string name="notification_timer">Notification Timer</string>
+    <string name="notification_summary">Receive notification for appointments</string>
     <string name="news_bw">News BW</string>
     <string name="news_ew">News EW</string>
     <string name="news_ids">News IDS</string>
     <string name="news_if">News IF</string>
     <string name="news_ma">News MA</string>
     <string name="news_sa">News SA</string>
-    <string name="event">Event</string>
+    <string name="appointment">Appointment</string>
+    <string name="appointments">Appointments</string>
 
 </resources>

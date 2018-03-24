@@ -5,8 +5,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,23 +12,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 
-import de.haw_landshut.hawmobile.Credentials;
 import de.haw_landshut.hawmobile.MainActivity;
 import de.haw_landshut.hawmobile.R;
-import de.haw_landshut.hawmobile.SettingsFragment;
 import de.haw_landshut.hawmobile.base.Appointment;
 import de.haw_landshut.hawmobile.base.AppointmentDao;
 import de.haw_landshut.hawmobile.base.HAWDatabase;
@@ -47,7 +35,7 @@ public class AppointmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment);
 
-        setTitle(R.string.event);
+        setTitle(R.string.appointments);
 
         database = MainActivity.getHawDatabase();
         if(database != null)

@@ -1,4 +1,4 @@
-package de.haw_landshut.hawmobile;
+package de.haw_landshut.hawmobile.news;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+
+import de.haw_landshut.hawmobile.R;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
     @Override

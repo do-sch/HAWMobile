@@ -1,8 +1,9 @@
-package de.haw_landshut.hawmobile;
+package de.haw_landshut.hawmobile.news;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+
+import de.haw_landshut.hawmobile.R;
 
 public class SettingsActivity extends AppCompatActivity {
     @Override
@@ -10,7 +11,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        setTitle("Einstellungen");
+        setTitle("@string/settings");
 
         // Display the fragment as the main content.
         getFragmentManager().beginTransaction()

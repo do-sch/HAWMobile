@@ -150,6 +150,7 @@
     <string name="news_ma">Neuigkeiten MA</string>
     <string name="news_sa">Neuigkeiten SA</string>
     <string name="news_ids">Neuigkeiten IDS</string>
-    <string name="event">Termin</string>
+    <string name="appointment">Termin</string>
+    <string name="appointments">Termine</string>
 
 </resources>

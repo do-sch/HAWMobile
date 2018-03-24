@@ -36,7 +36,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        database = Room.databaseBuilder(context.getApplicationContext(), HAWDatabase.class, "haw").build();
+        database = MainActivity.getHawDatabase();
+        //database = Room.databaseBuilder(context.getApplicationContext(), HAWDatabase.class, "haw").build();
         dao = database.appointmentDao();
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(context);

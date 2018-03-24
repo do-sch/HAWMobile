@@ -58,7 +58,7 @@
         <activity
             android:name=".mail.MailCreateActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".SettingsActivity" />
+        <activity android:name=".news.SettingsActivity" />
         <activity
             android:name=".mail.MailSettingsActivity"
             android:label="@string/settings" />

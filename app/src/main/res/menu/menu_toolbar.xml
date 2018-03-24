@@ -4,10 +4,10 @@
 
     <item
         android:id="@+id/app_bar_settings"
-        android:title="Einstellungen"
+        android:title="@string/settings"
         app:actionLayout="@layout/switch_item"></item>
     <item
         android:id="@+id/app_bar_appointments"
-        android:title="Termine"
+        android:title="@string/appointments"
         app:actionLayout="@layout/switch_item" />
 </menu>
