@@ -2,13 +2,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="@string/pref_header_general"
-        android:key="pref_key_general_settings">
+            android:title="@string/pref_header_general"
+            android:key="pref_key_general_settings">
 
         <EditTextPreference
                 android:key="pref_username"
                 android:title="@string/pref_title_display_name"
-                android:defaultValue="@string/pref_default_display_name"
                 android:selectAllOnFocus="true"
                 android:inputType="textCapWords"
                 android:capitalize="words"
@@ -18,13 +17,13 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/pref_header_notifications"
-        android:key="pref_key_notification_settings">
+            android:title="@string/pref_header_notifications"
+            android:key="pref_key_notification_settings">
 
         <SwitchPreference
-            android:key="notifications_new_message"
-            android:title="@string/pref_title_new_message_notifications"
-            android:defaultValue="true"/>
+                android:key="notifications_new_message"
+                android:title="@string/pref_title_new_message_notifications"
+                android:defaultValue="true"/>
 
         <RingtonePreference
                 android:dependency="notifications_new_message"
@@ -43,8 +42,8 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/pref_header_data_sync"
-        android:key="pref_key_syncronizazion_settings">
+            android:title="@string/pref_header_data_sync"
+            android:key="pref_key_syncronizazion_settings">
 
         <ListPreference
                 android:key="sync_frequency"

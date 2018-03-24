@@ -3,7 +3,7 @@
     <string name="mail">E-Mail</string>
     <string name="schedule">Schedule</string>
     <string name="map">Map</string>
-    <string name="news">Neuigkeiten</string>
+    <string name="news">News</string>
     <string name="faculty">Faculty</string>
 
     <string name="title_activity_login">Sign in</string>
@@ -148,5 +148,12 @@
     <!-- News -->
     <string name="hour">Hour</string>
     <string name="minute">Minute</string>
+    <string name="news_bw">News BW</string>
+    <string name="news_ew">News EW</string>
+    <string name="news_ids">News IDS</string>
+    <string name="news_if">News IF</string>
+    <string name="news_ma">News MA</string>
+    <string name="news_sa">News SA</string>
+    <string name="event">Event</string>
 
 </resources>

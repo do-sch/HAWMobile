@@ -8,6 +8,7 @@ import org.jsoup.helper.StringUtil;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeUtility;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -214,9 +215,12 @@ public class EMail implements Serializable{
             Multipart mp = ((Multipart) p.getContent());
             for(int i = 0; i < mp.getCount(); i++){
                 Part bp = mp.getBodyPart(i);
-                final String filename = bp.getFileName();
-                if (bp.getDisposition() != null && bp.getDisposition().equals(Part.ATTACHMENT) && !StringUtil.isBlank(filename)) {
-                    names.add(filename);
+                final String encodedFilename = bp.getFileName();
+                if (encodedFilename != null) {
+                    final String filename = MimeUtility.decodeText(encodedFilename);
+                    if (bp.getDisposition() != null && bp.getDisposition().equals(Part.ATTACHMENT) && !StringUtil.isBlank(filename)) {
+                        names.add(filename);
+                    }
                 }
             }
         }

@@ -2,6 +2,7 @@ package de.haw_landshut.hawmobile.mail;
 
 import android.Manifest;
 import android.app.DownloadManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -31,9 +32,7 @@ import de.haw_landshut.hawmobile.base.EMail;
 import de.haw_landshut.hawmobile.base.EMailDao;
 
 import javax.mail.*;
-import javax.mail.internet.ContentType;
-import javax.mail.internet.ParameterList;
-import javax.mail.internet.ParseException;
+import javax.mail.internet.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -249,9 +248,9 @@ public class MailView extends AppCompatActivity {
                 final Multipart mp = ((Multipart) m.getContent());
                 for (int i = mp.getCount() - 1; i >= 0; i--){
                     final BodyPart bp = mp.getBodyPart(i);
-                    if (bp.getFileName() != null && bp.getFileName().equals(filename)) {
+                    if (bp.getFileName() != null && MimeUtility.decodeText(bp.getFileName()).equals(filename)) {
 
-                        final String mimeType = bp.getContentType();
+                        final String mimeType = new ContentType(bp.getContentType()).getBaseType();
                         final String[] nameParts = filename.split("\\.");
                         final File file;
 
@@ -276,19 +275,20 @@ public class MailView extends AppCompatActivity {
                         if (permSave) {
                             int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
                             if (permissionCheck != PackageManager.PERMISSION_GRANTED)
-
                                 return null;
                         }
 
-                        System.out.println(file.getAbsolutePath());
 
-                        int read = 0;
-                        byte[] bytes = new byte[1024];
-                        try (FileOutputStream out = new FileOutputStream(file)) {
-                            while ((read = is.read(bytes)) != -1)
-                                out.write(bytes, 0 ,read);
+                        if (bp instanceof MimeBodyPart)
+                            ((MimeBodyPart) bp).saveFile(file);
+                        else {
+                            int read = 0;
+                            byte[] bytes = new byte[1024];
+                            try (FileOutputStream out = new FileOutputStream(file)) {
+                                while ((read = is.read(bytes)) != -1)
+                                    out.write(bytes, 0, read);
+                            }
                         }
-
 
                         if (permSave) {
                             DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
@@ -298,7 +298,7 @@ public class MailView extends AppCompatActivity {
                             final Intent intent = new Intent(Intent.ACTION_VIEW);
                             intent.setDataAndType(uri, mimeType);
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            startActivity(intent);
+                            startActivity(intent);//TODO: ActivityNotFoundException abfangen, wenn keine Anwendung installiert, die die Datei öffnen kann
                         }
                     }
                 }

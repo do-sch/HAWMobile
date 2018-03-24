@@ -2,8 +2,6 @@ package de.haw_landshut.hawmobile.news;
 
 
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -12,10 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.preference.ListPreference;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -44,7 +39,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -62,12 +56,6 @@ import java.util.List;
 public class NewsOverview extends Fragment {
     //Termine Variablen
     private AppointmentDao dao;
-    private HAWDatabase database;
-    private List<Appointment> appointments;
-
-    private Intent notifIntent;
-    private PendingIntent pendingNotifIntent;
-    private Calendar calendar;
 
     private SharedPreferences sharedPref;
     //Termine Ende
@@ -88,7 +76,8 @@ public class NewsOverview extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static NewsOverview newInstance() {
-        NewsOverview fragment = new NewsOverview();
+        NewsOverview fragment;
+        fragment = new NewsOverview();
         return fragment;
     }
 
@@ -97,9 +86,7 @@ public class NewsOverview extends Fragment {
         super.onCreate(savedInstanceState);
         this.setHasOptionsMenu(true);
 
-        getActivity().setTitle("Neuigkeiten");
-
-        database = ((MainActivity) getActivity()).getDatabase();
+        HAWDatabase database = ((MainActivity) getActivity()).getDatabase();
         dao = database.appointmentDao();
 
         //Termine
@@ -110,27 +97,37 @@ public class NewsOverview extends Fragment {
         //Termine ende
         String prefFaculty = sharedPref.getString("pref_faculty", "IF");
 
+        setFaculty(prefFaculty);
+    }
+    void setFaculty(String prefFaculty){
         switch (prefFaculty){
             case "BW":
                 faculty = "betriebswirtschaft";
+                getActivity().setTitle(R.string.news_bw);
                 break;
             case "EW":
                 faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
+                getActivity().setTitle(R.string.news_ew);
                 break;
             case "IF":
                 faculty = "informatik";
+                getActivity().setTitle(R.string.news_if);
                 break;
             case "IS":
                 faculty = "interdisziplinaere-studien";
+                getActivity().setTitle(R.string.news_ids);
                 break;
             case "MA":
                 faculty = "maschinenbau";
+                getActivity().setTitle(R.string.news_ma);
                 break;
             case "SA":
                 faculty = "soziale-arbeit";
+                getActivity().setTitle(R.string.news_sa);
                 break;
             default :
                 faculty = "informatik";
+                getActivity().setTitle(R.string.news_if);
                 break;
         }
     }
@@ -142,29 +139,7 @@ public class NewsOverview extends Fragment {
             int prefNotificationTime = sharedPref.getInt("pref_notification_time", 600);
             String prefFaculty = sharedPref.getString("pref_faculty", "IF");
 
-            switch (prefFaculty){
-                case "BW":
-                    faculty = "betriebswirtschaft";
-                    break;
-                case "EW":
-                    faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
-                    break;
-                case "IF":
-                    faculty = "informatik";
-                    break;
-                case "IS":
-                    faculty = "interdisziplinaere-studien";
-                    break;
-                case "MA":
-                    faculty = "maschinenbau";
-                    break;
-                case "SA":
-                    faculty = "soziale-arbeit";
-                    break;
-                default :
-                    faculty = "informatik";
-                    break;
-            }
+            setFaculty(prefFaculty);
 
             new getIt().execute();
 
@@ -177,11 +152,11 @@ public class NewsOverview extends Fragment {
             }
 
             AlarmManager am = getActivity().getSystemService(AlarmManager.class);
-            notifIntent = new Intent(getActivity(), AlarmReceiver.class);
-            pendingNotifIntent = PendingIntent.getBroadcast(getActivity(), 0, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent notifIntent = new Intent(getActivity(), AlarmReceiver.class);
+            PendingIntent pendingNotifIntent = PendingIntent.getBroadcast(getActivity(), 0, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             if (prefNotificationEnabled) {
-                calendar = Calendar.getInstance();
+                Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, prefNotificationTime / 100);
                 calendar.set(Calendar.MINUTE, prefNotificationTime % 100);
                 calendar.set(Calendar.SECOND, 0);
@@ -259,13 +234,6 @@ public class NewsOverview extends Fragment {
         return view;
 
     }
-//wer braucht des?
-////    // TODO: Rename method, update argument and hook method into UI event
-////    public void onButtonPressed(Uri uri) {
-////        if (mListener != null) {
-////            mListener.onFragmentInteraction(uri);
-////        }
-////    }
 
     @Override
     public void onAttach(Context context) {
@@ -313,12 +281,11 @@ public class NewsOverview extends Fragment {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                HashMap<String, String> cookies = new HashMap<>();
                 HashMap<String, String> formData = new HashMap<>();
                 Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
                         .method(Connection.Method.GET)
                         .execute();
-                cookies.putAll(loginForm.cookies());
+                HashMap<String, String> cookies = new HashMap<>(loginForm.cookies());
                 formData.put("utf8", "e2 9c 93");
                 formData.put("user", Credentials.getUsername());
                 formData.put("pass", Credentials.getPassword());
@@ -352,7 +319,6 @@ public class NewsOverview extends Fragment {
                 getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                 ArrayAdapter<Spanned> adapter = new ArrayAdapter<>(getView().getContext(), android.R.layout.simple_list_item_1, spanned);
                 listView.setAdapter(adapter);
-                listView.setPadding(30, 0, 30, 0);
             }
         }
 
@@ -386,7 +352,7 @@ public class NewsOverview extends Fragment {
                 }
 
             dao.deleteAllAppointments(); //Debug
-            appointments = dao.getAllAppointments();
+            List<Appointment> appointments = dao.getAllAppointments();
 
             if (appointments.size() == 0) {
                 Log.d(TAG, "Database is empty.");
@@ -397,9 +363,9 @@ public class NewsOverview extends Fragment {
                     downloadedAppointments = result.trim().split("\n");
 
                     String tmp[];
-                    for (int i = 0; i < downloadedAppointments.length; i++) {
-                        Log.d(TAG, downloadedAppointments[i]);
-                        tmp = downloadedAppointments[i].trim().split(" - ");
+                    for (String downloadedAppointment : downloadedAppointments) {
+                        Log.d(TAG, downloadedAppointment);
+                        tmp = downloadedAppointment.trim().split(" - ");
                         dao.insertAppointment(new Appointment(tmp[0].trim(), tmp[1].trim()));
                     }
                 }
@@ -423,11 +389,11 @@ public class NewsOverview extends Fragment {
             String path = "https://drive.google.com/uc?export=download&id=12tWQQN6Zd51Hni1NmJm0KyHQukVTrg_r";
             String fileName = "Termine.txt";
             String result = "";
-            File file = null;
-            URL url = null;
-            InputStream input = null;
-            OutputStream output = null;
-            HttpURLConnection connection = null;
+            File file;
+            URL url;
+            InputStream input;
+            OutputStream output;
+            HttpURLConnection connection;
 
             if (getActivity() == null)
                 return null;
@@ -473,7 +439,6 @@ public class NewsOverview extends Fragment {
                 System.exit(1);
             }
 
-            file.delete();
 
             return result;
         }
