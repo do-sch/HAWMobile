@@ -309,21 +309,41 @@ public class Protocol {
         }
     }
 
-    public static Store getStore(){
+    private static boolean locked = false;
+    private static final Object monitor = new Object();
+    public static synchronized Store getStore(){
+        synchronized (monitor) {
+            while (locked)
+                try {
+                    System.out.println("Thread " + Thread.currentThread().getName() + " is waiting for monitor");
+                    monitor.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            locked = true;
+            System.out.println("Thread " + Thread.currentThread().getName() + " got Lock for monitor");
+        }
+
         try{
             if(store == null || !store.isConnected()) {
                 Protocol.store = Session.getDefaultInstance(props).getStore("imap");
-                Log.d("Protocol", "Username = " + Credentials.getUsername());
-                Log.d("Protocol", "Password = "+Credentials.getPassword());
                 Protocol.store.connect(Credentials.getUsername(), Credentials.getPassword());
-                Log.i("Protocol", "logged in as user " + Credentials.getUsername());
             }
-                return store;
+
+            return store;
         } catch (MessagingException e){
             e.printStackTrace();
             Log.e("Protocol", "Connection Problems");
         }
         return null;
+    }
+
+    public static void returnLock(){
+        synchronized (monitor) {
+            locked = false;
+            monitor.notify();
+            System.out.println("Thread " + Thread.currentThread().getName() + "returns Lock for monitor");
+        }
     }
 
     public static Session getSession(){

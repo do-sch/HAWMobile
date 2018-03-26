@@ -46,8 +46,8 @@ public interface EMailDao {
     @Query("UPDATE email SET seen=:seen WHERE foldername=:foldername AND uid=:uid")
     void setEMailSeen(long uid, String foldername, boolean seen);
 
-    @Query("UPDATE emailfolder SET nextuid=:nextuid, uidvalidaty=:uidvalidaty WHERE name=:foldername")
-    void updateFolderStuff(String foldername, long nextuid, long uidvalidaty);
+    @Query("UPDATE emailfolder SET nextuid=:nextuid, uidvalidaty=:uidvalidaty, messageCount=:messageCount WHERE name=:foldername")
+    void updateFolderStuff(String foldername, long nextuid, long uidvalidaty, int messageCount);
 
     @Query("DELETE FROM email WHERE foldername=:foldername")
     void deleteAllEMailsFromFolder(String foldername);

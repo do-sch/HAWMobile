@@ -750,7 +750,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 }
 
                 final int messageCount = folder.getMessageCount();
-                eMailDao.updateFolderStuff(currentFolderName, folder.getUIDNext(), folder.getUIDValidity());
+                eMailDao.updateFolderStuff(currentFolderName, folder.getUIDNext(), folder.getUIDValidity(), folder.getMessageCount());
                 if(messageCount == 0) {
                     eMailDao.deleteAllEMailsFromFolder(currentFolderName);
                     return new ArrayList<>();
@@ -782,6 +782,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 eMailDao.deleteLowestUIDMailsFromFolder(currentFolderName, MESSAGESAVECOUNT);
 
                 folder.close(false);
+                Protocol.returnLock();
 
                 return eMailDao.getAllEmailsFromFolder(currentFolderName);
 
@@ -817,7 +818,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
             final EMailDao eMailDao = getEMailDao();
             try{
 
-                final Store store = Protocol.getStore();
+                final Store store = getStore();
                 if (store == null)
                     return null;
 
@@ -837,6 +838,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 }
 
                 folder.close(true);
+                Protocol.returnLock();
 
                 for (final long uid : uids){
 
@@ -920,6 +922,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                     m.setFlag(Flags.Flag.DELETED, true);
 
                 currentFolder.close(true);
+                Protocol.returnLock();
 
                 return mailPositions;
 
@@ -977,6 +980,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 }
 
                 folder.close(false);
+                Protocol.returnLock();
 
                 return new Integer[]{oldMailAdapterSize, messages.length};
 
@@ -1019,6 +1023,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 getEMailDao().setEMailSeen(eMail.getUid(), currentFolderName, true);
 
                 folder.close(true);
+                Protocol.returnLock();
 
             } catch (MessagingException e){
                 e.printStackTrace();

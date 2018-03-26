@@ -60,6 +60,7 @@ public class MailService extends Job {
             final long newNextuid = imapFolder.getUIDNext();
             final long oldUidvalidaty = dao.getFolderUIDValidaty(MailOverview.INBOX);
             final long newUidvalidaty = imapFolder.getUIDValidity();
+            final int messageCount = imapFolder.getMessageCount();
 
             if (oldUidvalidaty != newUidvalidaty) {
                 //TODO: alles neu fetchen
@@ -121,7 +122,7 @@ public class MailService extends Job {
                     }
                 }
 
-                dao.updateFolderStuff(MailOverview.INBOX, newNextuid, newUidvalidaty);
+                dao.updateFolderStuff(MailOverview.INBOX, newNextuid, newUidvalidaty, messageCount);
 
                 //aktuallisiert MailOverview, wenn offen
 
@@ -130,6 +131,8 @@ public class MailService extends Job {
             imapFolder.close(true);
 
             store.close();
+
+            Protocol.returnLock();
 
         } catch (MessagingException e){
             e.printStackTrace();
