@@ -28,6 +28,8 @@
                 android:nextFocusForward="@id/et_raum"
                 android:inputType="text"
                 android:imeOptions="actionNext"
+                android:completionThreshold="3"
+                android:dropDownHeight="wrap_content"
 
         />
         <AutoCompleteTextView
@@ -38,6 +40,9 @@
                 android:nextFocusForward="@id/et_prof"
                 android:inputType="text"
                 android:imeOptions="actionNext"
+                android:completionThreshold="3"
+                android:dropDownHeight="wrap_content"
+
         />
         <CheckBox
                 android:text="@string/weekly"

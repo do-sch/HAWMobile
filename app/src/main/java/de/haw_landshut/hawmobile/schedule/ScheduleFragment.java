@@ -50,6 +50,7 @@ public class ScheduleFragment extends Fragment {
     private static final int ENTRYCOUNT = 60;
     private static final int BASICCOLOR = 16777215;
     private View.OnClickListener ocl;
+    private View.OnLongClickListener olcl;
     public static BottomSheetBehavior mBottomSheetBehavior1;
     View bottomSheet;
     public static TextView currentDate,currentWeek;
@@ -111,6 +112,7 @@ public class ScheduleFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         ocl = new OnClickLabel();
+        olcl=new OnLongClickLabel();
         context=this.getContext();
         preference=getActivity().getPreferences(Context.MODE_PRIVATE);
         this.setHasOptionsMenu(true);
@@ -171,6 +173,7 @@ public class ScheduleFragment extends Fragment {
         });
 
 
+
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -208,7 +211,7 @@ public class ScheduleFragment extends Fragment {
                     et_raum.setEnabled(false);
                     et_fach.setAdapter(null);
                     et_prof.setAdapter(null);
-                    currentTV.setText(et_fach.getText());
+                    currentTV.setText(testStringLength(et_fach.getText().toString()));
                     currentTV.setBackgroundColor(colormaker);
 
 
@@ -340,6 +343,7 @@ public class ScheduleFragment extends Fragment {
 
 
 
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -403,6 +407,7 @@ public class ScheduleFragment extends Fragment {
                     for (int x = 1; x < tr.getChildCount(); x++) {
                         TextView tv = ((TextView) tr.getChildAt(x));
                         tv.setOnClickListener(ocl);
+                        tv.setOnLongClickListener(olcl);
                         elements[y-1][x-1] = tv;
 
                     }
@@ -418,7 +423,7 @@ public class ScheduleFragment extends Fragment {
                     }
                     final TextView current = elements[(j % (elements[0].length))][(j / (elements.length))];
                     if (current != null) {
-                        current.setText(timetable.get(i).getFach());
+                        current.setText(testStringLength(timetable.get(i).getFach()));
                         current.setBackgroundColor(timetable.get(i).getColor());
 
                     }
@@ -426,6 +431,29 @@ public class ScheduleFragment extends Fragment {
                 }
             }
         }
+    }
+
+    private String testStringLength(String s){
+        String finalString="";
+        if(s.length()>15){
+            String[] pasteparts=s.split(" ");
+            for (String p:pasteparts
+                    ) {
+                if(p.equals("Praktikum")){
+                    finalString=finalString+"Prak.";
+                }
+                else{
+                    finalString=finalString+p.charAt(0)+".";
+
+                }
+
+            }
+
+        }
+        else{
+            finalString=s;
+        }
+        return finalString;
     }
 
 }
