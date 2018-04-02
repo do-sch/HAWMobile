@@ -5,13 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.nfc.Tag;
-import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.support.design.widget.BottomSheetBehavior;
-import android.util.Log;
 import android.view.*;
 
 import android.widget.*;
@@ -27,14 +23,12 @@ import de.haw_landshut.hawmobile.base.CustomTimetable;
 import de.haw_landshut.hawmobile.base.FaecherData;
 import de.haw_landshut.hawmobile.base.ProfData;
 import de.haw_landshut.hawmobile.base.ScheduleDao;
-import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,7 +44,6 @@ public class ScheduleFragment extends Fragment {
     private static final int ENTRYCOUNT = 60;
     private static final int BASICCOLOR = 16777215;
     private View.OnClickListener ocl;
-    private View.OnLongClickListener olcl;
     public static BottomSheetBehavior mBottomSheetBehavior1;
     View bottomSheet;
     public static TextView currentDate,currentWeek;
@@ -62,18 +55,23 @@ public class ScheduleFragment extends Fragment {
     public static ScheduleDao scheduleDao = MainActivity.getHawDatabase().scheduleDao();
     private TextView[][] elements;
     protected static boolean isEven;
-    private boolean checkDouble;
     public static int colormaker;
     private  Context context;
     private  String[] subjects;
     private String[] profs;
+    public static boolean checkDouble;
+    public static String[] copyable;
+    public static int copyablecolor;
+    public static boolean weeklyCopy;
+    public static boolean copyActive = false;
 
 
-
-    Button edit;
-    Button save;
+    public static Button edit;
+    public static Button save;
     Button cancel;
     Button color;
+    Button clear;
+    Button copy;
     protected static CheckBox wöchentl;
 
 
@@ -112,7 +110,7 @@ public class ScheduleFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         ocl = new OnClickLabel();
-        olcl=new OnLongClickLabel();
+        //olcl=new OnLongClickLabel();
         context=this.getContext();
         preference=getActivity().getPreferences(Context.MODE_PRIVATE);
         this.setHasOptionsMenu(true);
@@ -128,6 +126,8 @@ public class ScheduleFragment extends Fragment {
         save = view.findViewById(R.id.btn_save);
         cancel = view.findViewById(R.id.btn_cancel);
         color = view.findViewById(R.id.colorPicker);
+        clear = view.findViewById(R.id.clear);
+        copy = view.findViewById(R.id.copy);
         wöchentl = view.findViewById(R.id.wöchentlCheckbox);
         et_fach = view.findViewById(R.id.et_fach);
         et_prof = view.findViewById(R.id.et_prof);
@@ -179,6 +179,8 @@ public class ScheduleFragment extends Fragment {
             public void onClick(View view) {
                     cancel.setVisibility(View.VISIBLE);
                     edit.setVisibility(View.GONE);
+                    copy.setVisibility(View.GONE);
+                    clear.setVisibility(View.GONE);
                     save.setVisibility(View.VISIBLE);
                     color.setVisibility(View.VISIBLE);
                     wöchentl.setVisibility(View.VISIBLE);
@@ -197,6 +199,33 @@ public class ScheduleFragment extends Fragment {
                 }
         });
 
+        clear.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                et_fach.setText("");
+                et_raum.setText("");
+                et_prof.setText("");
+                colormaker=BASICCOLOR;
+                save.callOnClick();
+                ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+            }
+        });
+
+        copy.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                copyActive=true;
+                copyable=new String[3];
+                copyable[0]=et_fach.getText().toString();
+                copyable[1]=et_prof.getText().toString();
+                copyable[2]=et_raum.getText().toString();
+                copyablecolor=colormaker;
+                weeklyCopy=wöchentl.isChecked();
+                ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        });
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -206,6 +235,8 @@ public class ScheduleFragment extends Fragment {
                     edit.setVisibility(View.VISIBLE);
                     color.setVisibility(View.GONE);
                     wöchentl.setVisibility(View.GONE);
+                    clear.setVisibility(View.VISIBLE);
+                    copy.setVisibility(View.VISIBLE);
                     et_fach.setEnabled(false);
                     et_prof.setEnabled(false);
                     et_raum.setEnabled(false);
@@ -265,6 +296,8 @@ public class ScheduleFragment extends Fragment {
                 cancel.setVisibility(View.GONE);
                 color.setVisibility(View.GONE);
                 wöchentl.setVisibility(View.GONE);
+                clear.setVisibility(View.VISIBLE);
+                copy.setVisibility(View.VISIBLE);
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
@@ -367,6 +400,17 @@ public class ScheduleFragment extends Fragment {
         }
     }
 
+    private class DeleteWholeTable extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ScheduleFragment.scheduleDao.deleteWholeCustomTimetable();
+            ScheduleFragment.timetable=ScheduleFragment.scheduleDao.getTimetable();
+            return null;
+        }
+    }
+
+
+
     private class BeginnInsertion extends AsyncTask<Void,Void,Void>{
         @Override
         protected Void doInBackground(Void... views) {
@@ -407,7 +451,6 @@ public class ScheduleFragment extends Fragment {
                     for (int x = 1; x < tr.getChildCount(); x++) {
                         TextView tv = ((TextView) tr.getChildAt(x));
                         tv.setOnClickListener(ocl);
-                        tv.setOnLongClickListener(olcl);
                         elements[y-1][x-1] = tv;
 
                     }
