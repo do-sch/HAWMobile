@@ -6,21 +6,21 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.*;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.parser.PdfTextExtractor;
-import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 
 import de.haw_landshut.hawmobile.*;
 import de.haw_landshut.hawmobile.base.Appointment;
@@ -42,14 +42,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -69,6 +68,7 @@ public class NewsOverview extends Fragment {
 
     private String faculty;
     private ListView listView;
+    private View footerView;
     private OnFragmentInteractionListener mListener;
 
     public NewsOverview() {
@@ -93,6 +93,10 @@ public class NewsOverview extends Fragment {
         super.onCreate(savedInstanceState);
         this.setHasOptionsMenu(true);
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        getWebsiteContent();
+
         HAWDatabase database = ((MainActivity) getActivity()).getDatabase();
         dao = database.appointmentDao();
 
@@ -100,49 +104,49 @@ public class NewsOverview extends Fragment {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sharedPref.registerOnSharedPreferenceChangeListener(prefListener);
 
-        new LoadAppointmentsTask(getActivity()).execute();
+        new LoadAppointmentsTask().execute();
         //Termine ende
         String prefFaculty = sharedPref.getString("pref_faculty", "IF");
 
         setFaculty(prefFaculty);
     }
-
-    void setFaculty(String prefFaculty) {
-        switch (prefFaculty) {
-            case "BW":
-                faculty = "betriebswirtschaft";
-                getActivity().setTitle(R.string.news_bw);
-                break;
-            case "EW":
-                faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
-                getActivity().setTitle(R.string.news_ew);
-                break;
-            case "IF":
-                faculty = "informatik";
-                getActivity().setTitle(R.string.news_if);
-                break;
-            case "IS":
-                faculty = "interdisziplinaere-studien";
-                getActivity().setTitle(R.string.news_ids);
-                break;
-            case "MA":
-                faculty = "maschinenbau";
-                getActivity().setTitle(R.string.news_ma);
-                break;
-            case "SA":
-                faculty = "soziale-arbeit";
-                getActivity().setTitle(R.string.news_sa);
-                break;
-            default:
-                faculty = "informatik";
-                getActivity().setTitle(R.string.news_if);
-                break;
+    void setFaculty(String prefFaculty){
+        if(getActivity()!=null){
+            switch (prefFaculty) {
+                case "BW":
+                    faculty = "betriebswirtschaft";
+                    getActivity().setTitle(R.string.news_bw);
+                    break;
+                case "EW":
+                    faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
+                    getActivity().setTitle(R.string.news_ew);
+                    break;
+                case "IF":
+                    faculty = "informatik";
+                    getActivity().setTitle(R.string.news_if);
+                    break;
+                case "IS":
+                    faculty = "interdisziplinaere-studien";
+                    getActivity().setTitle(R.string.news_ids);
+                    break;
+                case "MA":
+                    faculty = "maschinenbau";
+                    getActivity().setTitle(R.string.news_ma);
+                    break;
+                case "SA":
+                    faculty = "soziale-arbeit";
+                    getActivity().setTitle(R.string.news_sa);
+                    break;
+                default:
+                    faculty = "informatik";
+                    getActivity().setTitle(R.string.news_if);
+                    break;
+            }
         }
     }
 
     private SharedPreferences.OnSharedPreferenceChangeListener prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         private final String TAG = "PreferenceListener";
-
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             boolean prefNotificationEnabled = sharedPref.getBoolean("pref_switch_notifications", false);
@@ -151,11 +155,11 @@ public class NewsOverview extends Fragment {
 
             setFaculty(prefFaculty);
 
-            new getIt().execute();
+            new getNews().execute();
 
-            while (getActivity() == null) {
+            while(getActivity() == null){
                 try {
-                    Log.d(TAG, "Wait for activity...");
+                    Log.d(TAG,"Wait for activity...");
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -174,7 +178,7 @@ public class NewsOverview extends Fragment {
 
                 am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingNotifIntent);
 
-                new LoadAppointmentsTask(getActivity()).execute();
+                new LoadAppointmentsTask().execute();
             } else {
                 if (pendingNotifIntent != null)
                     am.cancel(pendingNotifIntent);
@@ -216,7 +220,8 @@ public class NewsOverview extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_overview, container, false);
         listView = view.findViewById(R.id.NewsListView);
-        getWebsiteContent();
+
+
         return view;
 
     }
@@ -258,40 +263,75 @@ public class NewsOverview extends Fragment {
      */
 
     private void getWebsiteContent() {
-        new getIt().execute();
+        new getNews().execute();
     }
 
-    public class getIt extends AsyncTask<Void, Void, Void> {
+    public class getNews extends AsyncTask<Void, Void, Void> {
         List<Spanned> spanned = new ArrayList<>();
-
+        HashMap<String, String> cookies;
+        HashMap<String, String> formData;
+        ArrayAdapter<Spanned> adapter;
+        Boolean max_page=false;
+        int count=0;
         @Override
         protected Void doInBackground(Void... voids) {
+            count++;
+            Log.d("page-count: ",count+"");
             try {
-                HashMap<String, String> formData = new HashMap<>();
-                Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
-                        .method(Connection.Method.GET)
-                        .execute();
-                HashMap<String, String> cookies = new HashMap<>(loginForm.cookies());
-                formData.put("utf8", "e2 9c 93");
-                formData.put("user", Credentials.getUsername());
-                formData.put("pass", Credentials.getPassword());
-                formData.put("logintype", "login");
-                formData.put("redirect_url", "nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html");
-                formData.put("tx_felogin_pi1[noredirect]", "0");
-                formData.put("submit", "");
+                if(count<2 && !max_page) { // TODO: Check if these website with this count is available, else stop
+                    formData = new HashMap<>();
+                    Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
+                            .method(Connection.Method.GET)
+                            .execute();
+                    cookies = new HashMap<>(loginForm.cookies());
+                    formData.put("utf8", "e2 9c 93");
+                    formData.put("user", Credentials.getUsername());
+                    formData.put("pass", Credentials.getPassword());
+                    formData.put("logintype", "login");
+                    formData.put("redirect_url", "nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html");
+                    formData.put("tx_felogin_pi1[noredirect]", "0");
+                    formData.put("submit", "");
 
-                Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
-                        .cookies(cookies)
-                        .data(formData)
-                        .method(Connection.Method.POST)
-                        .execute();
-
-                Document doc = document.parse();
-                Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
-                for (Element e : elements) {
-                    spanned.add(fromHtml(String.valueOf("<br>" + e)));
+                    Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
+                            .cookies(cookies)
+                            .data(formData)
+                            .method(Connection.Method.POST)
+                            .execute();
+                    Document doc = document.parse();
+                    Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
+                    for (Element e : elements) {
+                        spanned.add(fromHtml(String.valueOf("<br>" + e)));
+                    }
+                    formData.clear();
+                    cookies.clear();
                 }
-
+                else{
+                    spanned = new ArrayList<>();
+                    formData = new HashMap<>();
+                    Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
+                            .method(Connection.Method.GET)
+                            .execute();
+                    cookies = new HashMap<>(loginForm.cookies());
+                    formData.put("utf8", "e2 9c 93");
+                    formData.put("user", Credentials.getUsername());
+                    formData.put("pass", Credentials.getPassword());
+                    formData.put("logintype", "login");
+                    formData.put("redirect_url", "nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/"+count+".html");
+                    formData.put("tx_felogin_pi1[noredirect]", "0");
+                    formData.put("submit", "");
+                    Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/"+count+".html")
+                            .cookies(cookies)
+                            .data(formData)
+                            .method(Connection.Method.POST)
+                            .execute();
+                    Document doc = document.parse();
+                    Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
+                    for (Element e : elements) {
+                        spanned.add(fromHtml(String.valueOf("<br>" + e)));
+                    }
+                    if(spanned.isEmpty())max_page=true;
+                    onPostExecute(null);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -300,11 +340,44 @@ public class NewsOverview extends Fragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            if(!max_page){
+            listView.smoothScrollBy(0,0);
             super.onPostExecute(aVoid);
-            if (getView() != null) {
-                getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-                ArrayAdapter<Spanned> adapter = new ArrayAdapter<>(getView().getContext(), android.R.layout.simple_list_item_1, spanned);
-                listView.setAdapter(adapter);
+            getActivity().findViewById(R.id.progressBarBottom).setVisibility(View.INVISIBLE);
+            if(getView() != null) {
+                if (count < 2) {
+                    getActivity().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                    adapter = new ArrayAdapter<>(getView().getContext(), android.R.layout.simple_list_item_1, spanned);
+                    listView.setAdapter(adapter);
+
+                } else {
+                    adapter.addAll(spanned);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+                listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+                    Boolean isLoading = false;
+
+                    @Override
+                    public void onScrollStateChanged(AbsListView view, int scrollState) {}
+
+                    @Override
+                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                        getActivity().findViewById(R.id.progressBarBottom).setVisibility(View.INVISIBLE);
+                        if (!max_page) {
+                            if (listView.getLastVisiblePosition() == totalItemCount - 2)
+                                getActivity().findViewById(R.id.progressBarBottom).setVisibility(View.VISIBLE);
+                            adapter.notifyDataSetChanged();
+                            if (view.getLastVisiblePosition() == totalItemCount - 1 && listView.getCount() >= 10 && !isLoading) {
+                                isLoading = true;
+                                doInBackground();
+                                listView.smoothScrollBy(0, 0);
+                                getActivity().findViewById(R.id.progressBarBottom).setVisibility(View.INVISIBLE);
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
+                });
             }
         }
 
@@ -320,7 +393,9 @@ public class NewsOverview extends Fragment {
         }
     }
 
-    /*private class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
+
+
+    private class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
         private final String TAG = "LoadAppointmentsTask";
         private String[] downloadedAppointments;
 
@@ -426,226 +501,5 @@ public class NewsOverview extends Fragment {
 
             return result;
         }
-    }*/
-
-/*    public static int dateAsInt(String date){
-        int result = -1;
-
-        if(date != null) {
-            Pattern pattern = Pattern.compile("(\\d\\d)\\.(\\d\\d)\\.(\\d\\d\\d\\d)");
-            Matcher matcher = pattern.matcher(date);
-            if (matcher.find())
-                result = Integer.parseInt(matcher.group(3) + matcher.group(2) + matcher.group(1));
-        }
-
-        return result;
     }
-
-    public static String dateAsString(Integer date){
-        if(date > 9999999 && date < 100000000)
-            return date.toString().substring(6,8) +"."+ date.toString().substring(4,6) +"."+ date.toString().substring(0,4);
-
-        return null;
-    }
-
-    private class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
-        private final String TAG = "LoadAppointmentsTask";
-        String parsedText;
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            List<Appointment> appointments = new ArrayList<>();
-
-            //load appointments from Database
-            Log.d(TAG, "Connect to database...");
-            for (int i = 0; i < 5; i++) {
-                if (dao == null) {
-                    Log.d(TAG, "Could not connect to dao. Retry...");
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Log.d(TAG, "Get data from database...");
-                    //dao.deleteAllAppointments();    //Debug
-                    appointments = dao.getAllAppointments();
-                    break;
-                }
-            }
-
-            if (appointments.size() == 0) {         //load appointments from Internet
-                Log.d(TAG, "Database is empty.");
-                Log.d(TAG, "Get data from internet...");
-
-                if (downloadAppointments())
-                    appointments = dao.getAllAppointments();
-            }
-
-
-            if (appointments.size() == 0) {         //loading failed
-                Log.d(TAG, "No appointments found.");
-                return null;
-            } else {                                //loading success
-                Log.d(TAG, "Appointments loaded.");
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-        }
-
-        private File downloadAppointmentPDF(String path) {
-            final String TAG = "downloadA.PDF()";
-            URL url;
-            File file;
-            String fileName = "Termine.pdf";
-            InputStream input;
-            OutputStream output;
-            HttpURLConnection connection;
-
-            if (getActivity() == null)
-                return null;
-
-            try {
-                file = File.createTempFile(fileName, null, getActivity().getCacheDir());
-                //file = File.createTempFile(fileName, null, getCacheDir());
-
-                url = new URL(path);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
-
-                if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                    Log.d(TAG, "Connection failed!");
-                    return null;
-                }
-                Log.d(TAG, "Connected!");
-
-                input = connection.getInputStream();
-                output = new FileOutputStream(file, false);
-
-                byte data[] = new byte[4096];
-                while (input.read(data) != -1) {
-                    output.write(data);
-                }
-
-                output.close();
-                input.close();
-                connection.disconnect();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-            return file;
-        }
-
-        private boolean extractAppointments(File file) {
-            final String TAG = "extractAppointments()";
-
-            if (file == null) {
-                Log.d(TAG, "file is null!");
-                return false;
-            }
-
-            try {
-                parsedText = "";
-                PdfReader reader = new PdfReader(file.getAbsolutePath());
-                int n = reader.getNumberOfPages();
-                for (int i = 0; i < n; i++) {
-                    parsedText = parsedText + PdfTextExtractor.getTextFromPage(reader, i + 1, new SimpleTextExtractionStrategy()).trim() + "\n"; //Extracting the content from the different pages
-                }
-                Pattern pattern;
-                Matcher matcher;
-
-                //Lösche Kopf und Fußzeilen
-                pattern = Pattern.compile("(von\\s*bis((.|\\R)*Semesterende))");
-                matcher = pattern.matcher(parsedText);
-                while (matcher.find())
-                    parsedText = matcher.group(1);
-
-                //Bereite Daten vor
-                String year = new SimpleDateFormat("dd.MM.yyyy").format(Calendar.getInstance().getTime()).substring(6);
-                parsedText = parsedText.replaceAll("August", "01.08."+year);
-                parsedText = parsedText.replaceAll("September", "30.09."+year);
-                parsedText = parsedText.replaceAll("\\bab\\b|\\*", "");
-
-                pattern = Pattern.compile("(\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d)");
-                matcher = pattern.matcher(parsedText);
-                while (matcher.find())
-                    parsedText = parsedText.replace(matcher.group(1), "<Date>" + matcher.group(1));
-
-                //Extrahiere Daten
-                pattern = Pattern.compile("[\\s-]*((<Date>)+\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d)[\\s-]*(((<Date>)+\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d)[\\s-]*)?(((<Date>)+\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d)[\\s-]*)?([^<]*)");
-                matcher = pattern.matcher(parsedText);
-
-                System.out.println(parsedText);
-                Log.d(TAG, "parse Appointments...");
-                while (matcher.find()) {
-                    int date1 = dateAsInt((matcher.group(1)+"").replaceAll("<Date>",""));
-                    int date2 = dateAsInt((matcher.group(4)+"").replaceAll("<Date>",""));
-                    int date3 = dateAsInt((matcher.group(7)+"").replaceAll("<Date>",""));
-                    String appointment = matcher.group(9).replaceAll("\\R","");
-
-                    if(date1!=-1 && appointment!=null) {
-                        if (date2 != -1 && date3 == -1)
-                            dao.insertAppointment(new Appointment(date1, date2, appointment));
-
-                        else if (date2 == -1 && date3 == -1)
-                            dao.insertAppointment(new Appointment(date1, date1, appointment));
-
-                        else if (date2 != -1 && date3 != -1)
-                            dao.insertAppointment(new Appointment(date1, date3, appointment));
-
-                        Log.d(TAG,"Date 1: "+date1);
-                        Log.d(TAG,"Date 2: "+date2);
-                        Log.d(TAG,"Date 3: "+date3);
-                        Log.d(TAG,"Text: "+appointment);
-                    }
-                }
-                Log.d(TAG, "parse Appointments... done!");
-
-                reader.close();
-            } catch (Exception e) {
-                System.out.println(e);
-                return false;
-            }
-            return true;
-        }
-
-        private String getAppointmentURL() {
-            final String TAG = "getAppointmentURL()";
-
-            String result;
-            int year, dayOfYear;
-            Calendar calendar = Calendar.getInstance();
-            Pattern pattern = Pattern.compile("(\\d\\d)\\.(\\d\\d)\\.(\\d\\d\\d\\d)");
-            Matcher matcher = pattern.matcher(new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime()));
-
-            if(!matcher.find()){
-                Log.d(TAG, "No matching date found");
-                return null;
-            }
-
-            year = Integer.parseInt(matcher.group(3));
-            dayOfYear = Integer.parseInt(matcher.group(2)+matcher.group(1));
-
-            if(dayOfYear < 1001 && dayOfYear >= 315)
-                result = "https://www.haw-landshut.de/fileadmin/Hochschule_Landshut_NEU/Ungeschuetzt/SSZ/Infos_Studierende_Studieninteressierte/Termine_SS_"+year+".pdf";
-            else if(dayOfYear < 315)
-                result = "https://www.haw-landshut.de/fileadmin/Hochschule_Landshut_NEU/Ungeschuetzt/SSZ/Infos_Studierende_Studieninteressierte/Termine_WS_"+(year-2001)+"-"+(year-2000)+".pdf";
-            else
-                result = "https://www.haw-landshut.de/fileadmin/Hochschule_Landshut_NEU/Ungeschuetzt/SSZ/Infos_Studierende_Studieninteressierte/Termine_WS_"+(year-2000)+"-"+(year-1999)+".pdf";
-
-            Log.d(TAG, "URL: "+result);
-            return result;
-        }
-
-        private boolean downloadAppointments() {
-            return extractAppointments(downloadAppointmentPDF(getAppointmentURL()));
-        }
-    }*/
 }
