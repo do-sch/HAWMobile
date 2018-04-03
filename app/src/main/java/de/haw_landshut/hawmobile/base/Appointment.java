@@ -11,11 +11,13 @@ import android.arch.persistence.room.PrimaryKey;
 public class Appointment {
     @PrimaryKey(autoGenerate = true)
     public int id;
-    public String date;
+    public int start;
+    public int end;
     public String appointment;
 
-    public Appointment(String date, String appointment){
-        this.date = date;
+    public Appointment(int start, int end, String appointment){
+        this.start = start;
+        this.end = end;
         this.appointment = appointment;
     }
 

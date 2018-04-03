@@ -22,9 +22,15 @@ public interface AppointmentDao {
     @Query("SELECT * FROM appointment")
     public List<Appointment> getAllAppointments();
 
-    @Query("SELECT * FROM appointment WHERE date = :date")
-    public List<Appointment> getAppointmentByDate(String date);
+    @Query("SELECT * FROM appointment WHERE start >= :date AND `end` <= :date")
+    public List<Appointment> getAppointmentByDate(int date);
+
+    @Query("SELECT * FROM appointment WHERE start = :date")
+    public List<Appointment> getAppointmentByStartDate(int date);
 
     @Query("DELETE FROM appointment")
     public void deleteAllAppointments();
+
+    @Query("SELECT * FROM appointment ORDER BY start DESC LIMIT 1")
+    public Appointment getLastAppointment();
 }

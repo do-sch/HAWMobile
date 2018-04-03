@@ -56,7 +56,7 @@ public class AppointmentActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             for (Appointment ap: dao.getAllAppointments()
                  ) {
-                appointments.add(ap.date + "<br>" + ap.appointment);
+                appointments.add(LoadAppointmentsTask.dateAsString(ap.start) + "<br>" + ap.appointment);
             }
             return null;
         }
