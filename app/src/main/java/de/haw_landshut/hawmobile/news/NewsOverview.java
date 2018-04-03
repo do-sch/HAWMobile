@@ -104,7 +104,7 @@ public class NewsOverview extends Fragment {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sharedPref.registerOnSharedPreferenceChangeListener(prefListener);
 
-        new LoadAppointmentsTask().execute();
+        new LoadAppointmentsTask(getContext()).execute();
         //Termine ende
         String prefFaculty = sharedPref.getString("pref_faculty", "IF");
 
@@ -178,7 +178,7 @@ public class NewsOverview extends Fragment {
 
                 am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingNotifIntent);
 
-                new LoadAppointmentsTask().execute();
+                new LoadAppointmentsTask(getContext()).execute();
             } else {
                 if (pendingNotifIntent != null)
                     am.cancel(pendingNotifIntent);
@@ -389,116 +389,6 @@ public class NewsOverview extends Fragment {
             } else {
                 result = Html.fromHtml(html);
             }
-            return result;
-        }
-    }
-
-
-
-    private class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
-        private final String TAG = "LoadAppointmentsTask";
-        private String[] downloadedAppointments;
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            Log.d(TAG, "Get data from database.");
-
-            while (dao == null)
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            dao.deleteAllAppointments(); //Debug
-            List<Appointment> appointments = dao.getAllAppointments();
-
-            if (appointments.size() == 0) {
-                Log.d(TAG, "Database is empty.");
-                Log.d(TAG, "Get data from internet.");
-
-                String result = downloadAppointments();
-                if (result != null) {
-                    downloadedAppointments = result.trim().split("\n");
-
-                    String tmp[];
-                    for (String downloadedAppointment : downloadedAppointments) {
-                        Log.d(TAG, downloadedAppointment);
-                        tmp = downloadedAppointment.trim().split(" - ");
-                        dao.insertAppointment(new Appointment(tmp[0].trim(), tmp[1].trim()));
-                    }
-                }
-                appointments = dao.getAllAppointments();
-            }
-            if (appointments.size() == 0) {
-                Log.d(TAG, "No appointments found.");
-                return null;
-            } else {
-                Log.d(TAG, "Appointments loaded");
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-        }
-
-        private String downloadAppointments() {
-            String path = "https://drive.google.com/uc?export=download&id=12tWQQN6Zd51Hni1NmJm0KyHQukVTrg_r";
-            String fileName = "Termine.txt";
-            String result = "";
-            File file;
-            URL url;
-            InputStream input;
-            OutputStream output;
-            HttpURLConnection connection;
-
-            if (getActivity() == null)
-                return null;
-
-            try {
-                file = File.createTempFile(fileName, null, getActivity().getCacheDir());
-
-                url = new URL(path);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
-
-                if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                    Log.d(TAG, "Connection failed");
-                    return null;
-                }
-
-                input = connection.getInputStream();
-                output = new FileOutputStream(file, false);
-
-                byte data[] = new byte[4096];
-                while (input.read(data) != -1) {
-                    output.write(data);
-                }
-
-                output.close();
-                input.close();
-                connection.disconnect();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
-                String line;
-
-                while ((line = br.readLine()) != null) {
-                    //Log.d(TAG, line);
-                    result += line + "\n";
-                }
-            } catch (IOException e) {
-                System.out.println("Fehler Datei list.txt Datei nicht vorhanden.");
-                System.exit(1);
-            }
-
-
             return result;
         }
     }

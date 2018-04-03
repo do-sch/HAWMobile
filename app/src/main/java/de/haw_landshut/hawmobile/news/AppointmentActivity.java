@@ -27,7 +27,8 @@ public class AppointmentActivity extends AppCompatActivity {
     private ListView listView;
 
     private AppointmentDao dao;
-    private HAWDatabase database;
+    private HAWDatabase
+            database;
     private List<String> appointments = new ArrayList<>();
 
     @Override
