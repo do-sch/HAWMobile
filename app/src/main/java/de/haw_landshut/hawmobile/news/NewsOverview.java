@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,11 +42,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -64,6 +68,7 @@ public class NewsOverview extends Fragment {
 
     private String faculty;
     private ListView listView;
+    private View footerView;
     private OnFragmentInteractionListener mListener;
 
     public NewsOverview() {
@@ -90,6 +95,7 @@ public class NewsOverview extends Fragment {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+        getWebsiteContent();
 
         HAWDatabase database = ((MainActivity) getActivity()).getDatabase();
         dao = database.appointmentDao();
@@ -214,7 +220,8 @@ public class NewsOverview extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_overview, container, false);
         listView = view.findViewById(R.id.NewsListView);
-        getWebsiteContent();
+
+
         return view;
 
     }
@@ -263,17 +270,16 @@ public class NewsOverview extends Fragment {
         List<Spanned> spanned = new ArrayList<>();
         HashMap<String, String> cookies;
         HashMap<String, String> formData;
-        int position;
+        ArrayAdapter<Spanned> adapter;
+        Boolean max_page=false;
         int count=0;
         @Override
         protected Void doInBackground(Void... voids) {
             count++;
-            Log.d("count: ",""+count);
+            Log.d("page-count: ",count+"");
             try {
-
-                if(count<2) {
+                if(count<2 && !max_page) { // TODO: Check if these website with this count is available, else stop
                     formData = new HashMap<>();
-
                     Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
                             .method(Connection.Method.GET)
                             .execute();
@@ -286,8 +292,6 @@ public class NewsOverview extends Fragment {
                     formData.put("tx_felogin_pi1[noredirect]", "0");
                     formData.put("submit", "");
 
-
-                    Log.d("count","incount_1");
                     Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
                             .cookies(cookies)
                             .data(formData)
@@ -298,14 +302,12 @@ public class NewsOverview extends Fragment {
                     for (Element e : elements) {
                         spanned.add(fromHtml(String.valueOf("<br>" + e)));
                     }
-                    position = spanned.size();
                     formData.clear();
                     cookies.clear();
-                    doc = null;
                 }
                 else{
+                    spanned = new ArrayList<>();
                     formData = new HashMap<>();
-
                     Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
                             .method(Connection.Method.GET)
                             .execute();
@@ -323,18 +325,13 @@ public class NewsOverview extends Fragment {
                             .method(Connection.Method.POST)
                             .execute();
                     Document doc = document.parse();
-                    Log.d("titel:",doc.location());
                     Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
                     for (Element e : elements) {
                         spanned.add(fromHtml(String.valueOf("<br>" + e)));
                     }
-                    position = spanned.size();
+                    if(spanned.isEmpty())max_page=true;
                     onPostExecute(null);
-                    Log.d("position:",position+"");
-                    listView.setSelection(position-14);
                 }
-
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -343,30 +340,42 @@ public class NewsOverview extends Fragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            if(!max_page){
+            listView.smoothScrollBy(0,0);
             super.onPostExecute(aVoid);
+            getActivity().findViewById(R.id.progressBarBottom).setVisibility(View.INVISIBLE);
             if(getView() != null) {
-                getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-                ArrayAdapter<Spanned> adapter = new ArrayAdapter<>(getView().getContext(), android.R.layout.simple_list_item_1, spanned);
-                listView.setAdapter(adapter);
+                if (count < 2) {
+                    getActivity().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                    adapter = new ArrayAdapter<>(getView().getContext(), android.R.layout.simple_list_item_1, spanned);
+                    listView.setAdapter(adapter);
 
+                } else {
+                    adapter.addAll(spanned);
+                    adapter.notifyDataSetChanged();
+                }
+            }
                 listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-                    @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
+                    Boolean isLoading = false;
 
-                    }
-                    Boolean flag_loading=false;
+                    @Override
+                    public void onScrollStateChanged(AbsListView view, int scrollState) {}
+
                     @Override
                     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                        if(firstVisibleItem+visibleItemCount == totalItemCount && totalItemCount!=0)
-                        {
-                            if(!flag_loading)
-                            {
-                                flag_loading = true;
+                        getActivity().findViewById(R.id.progressBarBottom).setVisibility(View.INVISIBLE);
+                        if (!max_page) {
+                            if (listView.getLastVisiblePosition() == totalItemCount - 2)
+                                getActivity().findViewById(R.id.progressBarBottom).setVisibility(View.VISIBLE);
+                            adapter.notifyDataSetChanged();
+                            if (view.getLastVisiblePosition() == totalItemCount - 1 && listView.getCount() >= 10 && !isLoading) {
+                                isLoading = true;
                                 doInBackground();
-                                listView.deferNotifyDataSetChanged();
+                                listView.smoothScrollBy(0, 0);
+                                getActivity().findViewById(R.id.progressBarBottom).setVisibility(View.INVISIBLE);
+                                adapter.notifyDataSetChanged();
                             }
                         }
-
                     }
                 });
             }
