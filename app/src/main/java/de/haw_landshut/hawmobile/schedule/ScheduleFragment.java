@@ -41,45 +41,155 @@ import java.util.List;
 public class ScheduleFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final int ENTRYCOUNT = 60;
-    private static final int BASICCOLOR = 16777215;
+
+    //Constant numbers
+    private final int ENTRYCOUNT = 60; //Number of hours per 2 weeks
+    private final int BASICCOLOR = 16777215; //default background color
+
+    //Textviews
+    private AutoCompleteTextView et_fach;  //subject in bottomsheet
+    private AutoCompleteTextView et_prof;  //subject in bottomsheet
+    private EditText et_raum;              //room in bottomsheet
+    private TextView currentDate,currentWeek; //aktuelles Datum, aktuelle Wochenzahl
+    private TextView currentTV;             //current Textview
+
+    //Others
     private View.OnClickListener ocl;
     public static BottomSheetBehavior mBottomSheetBehavior1;
-    View bottomSheet;
-    public static TextView currentDate,currentWeek;
-    public static TextView currentTV;
-    public static AutoCompleteTextView et_fach;
-    public static AutoCompleteTextView et_prof;
-    public static EditText et_raum;
-    public static List<CustomTimetable> timetable;
-    public static ScheduleDao scheduleDao = MainActivity.getHawDatabase().scheduleDao();
+    private View bottomSheet;
+    private List<CustomTimetable> timetable;
+    protected static ScheduleDao scheduleDao = MainActivity.getHawDatabase().scheduleDao();
     private TextView[][] elements;
-    protected static boolean isEven;
-    public static int colormaker;
-    private  Context context;
+    private boolean isEven;
     private  String[] subjects;
     private String[] profs;
-    public static boolean checkDouble;
-    public static String[] copyable;
-    public static int copyablecolor;
-    public static boolean weeklyCopy;
-    public static boolean copyActive = false;
-
-
-    public static Button edit;
-    public static Button save;
+    private int colormaker;
+    private  Context context;
+    private boolean checkDouble;
+    //Buttons
+    Button edit;
+    Button save;
     Button cancel;
     Button color;
     Button clear;
     Button copy;
-    protected static CheckBox wöchentl;
+    CheckBox wöchentl;
+    //Copy
+    private String[] copyable = new String[3];
+    private int copyablecolor;
+    private boolean weeklyCopy;
+    private boolean copyActive = false;
+
+    //Getter and Setter
+
+
+    public boolean isCheckDouble() {
+        return checkDouble;
+    }
+
+    public void setCheckDouble(boolean checkDouble) {
+        this.checkDouble = checkDouble;
+    }
+
+    public boolean isEven() {
+        return isEven;
+    }
+
+    public void setTimetable(List<CustomTimetable> timetable) {
+        this.timetable = timetable;
+    }
+
+    public List<CustomTimetable> getTimetable() {
+        return timetable;
+    }
+    public void setCopyActive(boolean active){
+        this.copyActive=active;
+    }
+
+    public void setCopyAction(boolean active, String fach, String prof, String raum, boolean week, int color){
+        this.copyablecolor=color;
+        this.copyActive=active;
+        this.weeklyCopy=week;
+        this.copyable[0]=fach;
+        this.copyable[1]=prof;
+        this.copyable[2]=raum;
+    }
+
+    public String[] getCopyable() {
+        return copyable;
+    }
+
+    public int getCopyablecolor() {
+        return copyablecolor;
+    }
+
+    public boolean isWeeklyCopy() {
+        return weeklyCopy;
+    }
+
+    public boolean isCopyActive() {
+        return copyActive;
+    }
+
+    public String getEt_fach_text() {
+        return et_fach.getText().toString();
+    }
+
+    public void setEt_fach_text(String s) {
+        this.et_fach.setText(s);
+    }
+
+    public String getEt_prof_text() {
+        return et_prof.getText().toString();
+    }
+
+    public void setEt_prof_text(String s) {
+        this.et_prof.setText(s);
+    }
+
+    public String getEt_raum_text() {
+        return et_raum.getText().toString();
+    }
+
+    public void setEt_raum_text(String s) {
+        this.et_raum.setText(s);
+    }
+
+    public TextView getCurrentTV() {
+        return currentTV;
+    }
+
+    public void setCurrentTV(TextView currentTV) {
+        this.currentTV = currentTV;
+    }
+
+    public int getColormaker() {
+        return colormaker;
+    }
+
+    public void setColormaker(int colormaker) {
+        this.colormaker = colormaker;
+    }
+
+    //HelpMethods
+    public int getCurrentTvNumber(){
+        return Integer.parseInt(currentTV.getTag().toString());
+    }
+
+    public void callOnClick(Button s){
+        s.callOnClick();
+    }
+    public void setEnabledTextViews(boolean b){
+        et_fach.setEnabled(b);
+        et_prof.setEnabled(b);
+        et_raum.setEnabled(b);
+    }
 
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private SharedPreferences preference;
-
     private OnFragmentInteractionListener mListener;
 
 
@@ -109,8 +219,7 @@ public class ScheduleFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ocl = new OnClickLabel();
-        //olcl=new OnLongClickLabel();
+        ocl = new OnClickLabel(this);
         context=this.getContext();
         preference=getActivity().getPreferences(Context.MODE_PRIVATE);
         this.setHasOptionsMenu(true);
@@ -136,25 +245,7 @@ public class ScheduleFragment extends Fragment {
         mBottomSheetBehavior1 = BottomSheetBehavior.from(bottomSheet);
 
 
-        //sets the current date and week
-        currentDate = view.findViewById(R.id.schedule_textView_currentDate);
-        GregorianCalendar now = new GregorianCalendar();
-        DateFormat df= DateFormat.getDateInstance(DateFormat.SHORT);
-        currentDate.setText(df.format(now.getTime()));
-
-        currentWeek=view.findViewById(R.id.calendar_week_switch);
-
-        Calendar c = Calendar.getInstance();
-        c.setTime(new Date());
-        int num_week = c.get(Calendar.WEEK_OF_YEAR);
-        if(num_week%2==0){
-            currentWeek.setText(R.string.even);
-            isEven=true;
-        }
-        else{
-            currentWeek.setText(R.string.odd);
-            isEven=false;
-        }
+        timeInitializer(view);
 
         currentWeek.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -184,16 +275,12 @@ public class ScheduleFragment extends Fragment {
                     save.setVisibility(View.VISIBLE);
                     color.setVisibility(View.VISIBLE);
                     wöchentl.setVisibility(View.VISIBLE);
-                    et_fach.setEnabled(true);
+                    setEnabledTextViews(true);
                     ArrayAdapter<String> subjectAdapter=new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,subjects);
                     et_fach.setAdapter(subjectAdapter);
 
-                    et_prof.setEnabled(true);
                     ArrayAdapter<String> profAdapter=new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,profs);
                     et_prof.setAdapter(profAdapter);
-
-                    et_raum.setEnabled(true);
-                    checkDouble=wöchentl.isChecked();
 
 
                 }
@@ -202,11 +289,28 @@ public class ScheduleFragment extends Fragment {
         clear.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                et_fach.setText("");
-                et_raum.setText("");
-                et_prof.setText("");
-                colormaker=BASICCOLOR;
-                save.callOnClick();
+                int currentHour=getCurrentTvNumber();
+                setEt_fach_text("");
+                setEt_prof_text("");
+                setEt_raum_text("");
+                setColormaker(BASICCOLOR);
+                if(wöchentl.isChecked()){
+                    CustomTimetable table = new CustomTimetable(currentHour,"","","",BASICCOLOR);
+                    new UpdateTimetable().execute(table);
+                    currentHour = (currentHour+(ENTRYCOUNT/2))%ENTRYCOUNT;
+                    table=new CustomTimetable(currentHour,"","","",BASICCOLOR);
+                    new UpdateTimetable().execute(table);
+                }else{
+                    if(isEven){
+                        CustomTimetable table = new CustomTimetable(currentHour,"","","",BASICCOLOR);
+                        new UpdateTimetable().execute(table);
+                    }else{
+                        currentHour = (currentHour+(ENTRYCOUNT/2))%ENTRYCOUNT;
+                        CustomTimetable table=new CustomTimetable(currentHour,"","","",BASICCOLOR);
+                        new UpdateTimetable().execute(table);
+                    }
+                }
+                currentTV.setText("");
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
             }
@@ -215,13 +319,7 @@ public class ScheduleFragment extends Fragment {
         copy.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                copyActive=true;
-                copyable=new String[3];
-                copyable[0]=et_fach.getText().toString();
-                copyable[1]=et_prof.getText().toString();
-                copyable[2]=et_raum.getText().toString();
-                copyablecolor=colormaker;
-                weeklyCopy=wöchentl.isChecked();
+                setCopyAction(true,getEt_fach_text(),getEt_prof_text(),getEt_raum_text(),wöchentl.isChecked(),getColormaker());
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
@@ -237,47 +335,55 @@ public class ScheduleFragment extends Fragment {
                     wöchentl.setVisibility(View.GONE);
                     clear.setVisibility(View.VISIBLE);
                     copy.setVisibility(View.VISIBLE);
-                    et_fach.setEnabled(false);
-                    et_prof.setEnabled(false);
-                    et_raum.setEnabled(false);
+                    setEnabledTextViews(false);
                     et_fach.setAdapter(null);
                     et_prof.setAdapter(null);
-                    currentTV.setText(testStringLength(et_fach.getText().toString()));
-                    currentTV.setBackgroundColor(colormaker);
+                    currentTV.setText(testStringLength(getEt_fach_text()));
+                    currentTV.setBackgroundColor(getColormaker());
 
 
-                    int currentHour = Integer.parseInt(currentTV.getTag().toString());
+                    int currentHour = getCurrentTvNumber();
                     CustomTimetable table;
+
+
                     if(wöchentl.isChecked()){
-                        table = new CustomTimetable(currentHour,et_prof.getText().toString(),et_fach.getText().toString(),et_raum.getText().toString(),colormaker);
+                        table = new CustomTimetable(currentHour,getEt_prof_text(),getEt_fach_text(),getEt_raum_text(),getColormaker());
                         new UpdateTimetable().execute(table);
-                        currentHour = currentHour+(ENTRYCOUNT/2);
-                        table=new CustomTimetable(currentHour,et_prof.getText().toString(),et_fach.getText().toString(),et_raum.getText().toString(),colormaker);
+                        currentHour = (currentHour+(ENTRYCOUNT/2))%ENTRYCOUNT;
+                        table=new CustomTimetable(currentHour,getEt_prof_text(),getEt_fach_text(),getEt_raum_text(),getColormaker());
                         new UpdateTimetable().execute(table);
                     }
                     else {
-                        if(checkDouble){
+                        if(isCheckDouble()){
                             if(isEven){
-                                currentHour = currentHour + (ENTRYCOUNT/2);
+                                table=new CustomTimetable(currentHour,getEt_prof_text(),getEt_fach_text(),getEt_raum_text(),getColormaker());
+                                new UpdateTimetable().execute(table);
+                                currentHour = (currentHour+(ENTRYCOUNT/2))%ENTRYCOUNT;
                                 table=new CustomTimetable(currentHour,"","","",BASICCOLOR);
                                 new UpdateTimetable().execute(table);
-                            }
-                            else{
+                            }else{
                                 table=new CustomTimetable(currentHour,"","","",BASICCOLOR);
                                 new UpdateTimetable().execute(table);
+                                currentHour = (currentHour+(ENTRYCOUNT/2))%ENTRYCOUNT;
+                                table=new CustomTimetable(currentHour,getEt_prof_text(),getEt_fach_text(),getEt_raum_text(),getColormaker());
+                                new UpdateTimetable().execute(table);
                             }
+
                         }
                         else{
-                            if (!isEven) {
-                                currentHour = currentHour + (ENTRYCOUNT / 2);
+                            if(isEven){
+                                table=new CustomTimetable(currentHour,getEt_prof_text(),getEt_fach_text(),getEt_raum_text(),getColormaker());
+                                new UpdateTimetable().execute(table);
+                            }else{
+                                currentHour = (currentHour+(ENTRYCOUNT/2))%ENTRYCOUNT;
+                                table=new CustomTimetable(currentHour,getEt_prof_text(),getEt_fach_text(),getEt_raum_text(),getColormaker());
+                                new UpdateTimetable().execute(table);
                             }
-                            table = new CustomTimetable(currentHour, et_prof.getText().toString(), et_fach.getText().toString(), et_raum.getText().toString(),colormaker);
-                            new UpdateTimetable().execute(table);
+
                         }
-
-
                     }
-                colormaker=BASICCOLOR;
+                currentTV.setText(testStringLength(getEt_fach_text()));
+                setColormaker(BASICCOLOR);
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
@@ -285,12 +391,10 @@ public class ScheduleFragment extends Fragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                et_fach.setText("");
-                et_fach.setEnabled(false);
-                et_prof.setText("");
-                et_prof.setEnabled(false);
-                et_raum.setText("");
-                et_raum.setEnabled(false);
+                setEt_raum_text("");
+                setEt_prof_text("");
+                setEt_fach_text("");
+                setEnabledTextViews(false);
                 save.setVisibility(View.GONE);
                 edit.setVisibility(View.VISIBLE);
                 cancel.setVisibility(View.GONE);
@@ -318,7 +422,7 @@ public class ScheduleFragment extends Fragment {
                         .setPositiveButton(R.string.ok, new ColorPickerClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i, Integer[] integers) {
-                                colormaker=i;
+                                setColormaker(i);
 
                             }
                         })
@@ -395,7 +499,8 @@ public class ScheduleFragment extends Fragment {
         @Override
         protected Void doInBackground(CustomTimetable... customTimetables){
             ScheduleFragment.scheduleDao.updateTimetable(customTimetables[0]);
-            ScheduleFragment.timetable = ScheduleFragment.scheduleDao.getTimetable();
+            setTimetable(ScheduleFragment.scheduleDao.getTimetable());
+            new BeginnInsertion();
             return null;
         }
     }
@@ -404,7 +509,7 @@ public class ScheduleFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... voids) {
             ScheduleFragment.scheduleDao.deleteWholeCustomTimetable();
-            ScheduleFragment.timetable=ScheduleFragment.scheduleDao.getTimetable();
+            setTimetable(ScheduleFragment.scheduleDao.getTimetable());
             return null;
         }
     }
@@ -428,7 +533,7 @@ public class ScheduleFragment extends Fragment {
                 }
                 preference.edit().putBoolean("Emptytimetable inserted",true).apply();
             }
-            ScheduleFragment.timetable = ScheduleFragment.scheduleDao.getTimetable();
+            setTimetable(ScheduleFragment.scheduleDao.getTimetable());
 
 
             subjects=ScheduleFragment.scheduleDao.getFaecherByStudiengang(Credentials.getFakultaet());
@@ -476,9 +581,34 @@ public class ScheduleFragment extends Fragment {
         }
     }
 
+    /*
+    Initializes the current date
+    sets class variable isEven depending on the current number of the week
+     */
+    private void timeInitializer(View view){
+        currentDate = view.findViewById(R.id.schedule_textView_currentDate);
+        GregorianCalendar now = new GregorianCalendar();
+        DateFormat df= DateFormat.getDateInstance(DateFormat.SHORT);
+        currentDate.setText(df.format(now.getTime()));
+
+        currentWeek=view.findViewById(R.id.calendar_week_switch);
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        int num_week = c.get(Calendar.WEEK_OF_YEAR);
+        if(num_week%2==0){
+            currentWeek.setText(R.string.even);
+            isEven=true;
+        }
+        else{
+            currentWeek.setText(R.string.odd);
+            isEven=false;
+        }
+
+    }
+
     private String testStringLength(String s){
         String finalString="";
-        if(s.length()>15){
+        if(s.length()>11){
             String[] pasteparts=s.split(" ");
             for (String p:pasteparts
                     ) {
@@ -486,7 +616,13 @@ public class ScheduleFragment extends Fragment {
                     finalString=finalString+"Prak.";
                 }
                 else{
-                    finalString=finalString+p.charAt(0)+".";
+                    if(p.length()>5){
+                        finalString=finalString+p.substring(0,5)+".";
+                }
+                    else{
+                        finalString=finalString+p+" ";
+                    }
+
 
                 }
 

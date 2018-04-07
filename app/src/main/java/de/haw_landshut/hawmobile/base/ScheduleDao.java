@@ -11,10 +11,10 @@ public interface ScheduleDao {
     @Query("SELECT * FROM ProfData")
     List<ProfData> getAllProfs();
 
-    @Query("SELECT fach FROM FaecherData WHERE studiengang=:fakultaet")
+    @Query("SELECT DISTINCT fach FROM FaecherData WHERE studiengang=:fakultaet")
     String[] getFaecherByStudiengang(Fakultaet fakultaet);
 
-    @Query("SELECT lastName FROM ProfData")
+    @Query("SELECT DISTINCT lastName FROM ProfData")
     String[] getProflastName();
 
 

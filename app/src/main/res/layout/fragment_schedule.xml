@@ -31,7 +31,7 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="20dp">
+            android:paddingTop="25dp">
 
             <HorizontalScrollView
                     android:layout_width="match_parent"

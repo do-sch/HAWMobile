@@ -30,10 +30,11 @@
                 android:imeOptions="actionNext"
                 android:completionThreshold="3"
                 android:dropDownHeight="wrap_content"
+                android:dropDownVerticalOffset="-20dp"
 
         />
         <AutoCompleteTextView
-                android:hint="@string/subject"
+                android:hint="@string/setsubject"
                 android:layout_width="300dp"
                 android:layout_height="match_parent" android:id="@+id/et_fach"
                 android:layout_alignParentTop="true" android:layout_alignParentStart="true"
@@ -42,6 +43,7 @@
                 android:imeOptions="actionNext"
                 android:completionThreshold="3"
                 android:dropDownHeight="wrap_content"
+                android:dropDownVerticalOffset="-20dp"
 
         />
         <CheckBox
