@@ -27,7 +27,8 @@ public class AppointmentActivity extends AppCompatActivity {
     private ListView listView;
 
     private AppointmentDao dao;
-    private HAWDatabase database;
+    private HAWDatabase
+            database;
     private List<String> appointments = new ArrayList<>();
 
     @Override
@@ -56,7 +57,7 @@ public class AppointmentActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             for (Appointment ap: dao.getAllAppointments()
                  ) {
-                appointments.add(ap.date + "<br>" + ap.appointment);
+                appointments.add(LoadAppointmentsTask.dateAsString(ap.start) + "<br>" + ap.appointment);
             }
             return null;
         }

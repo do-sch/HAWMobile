@@ -2,27 +2,41 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:listSelector="@android:color/transparent"
-             tools:context="de.haw_landshut.hawmobile.news.NewsOverview">
+             tools:context="de.haw_landshut.hawmobile.news.NewsOverview" >
 
-    <RelativeLayout
+    <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:linksClickable="true"
+            android:paddingBottom="30dp"
+            android:id="@+id/NewsListView" />
+
+    <LinearLayout
             android:id="@+id/loadingPanel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center">
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:gravity="center_vertical|center_horizontal">
+
 
         <ProgressBar
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:indeterminate="true"/>
-    </RelativeLayout>
-    <ListView
+                android:layout_height="wrap_content"
+                android:id="@+id/progressBarMid"/>
+    </LinearLayout>
+
+    <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:clickable="true"
-            android:autoLink="all"
-            android:contextClickable="true"
-            android:id="@+id/NewsListView"/>
+            android:layout_height="wrap_content"
+            android:id="@+id/loadingPanelBottom"
+            android:layout_gravity="bottom|center"
+            android:gravity="bottom|center">
 
-
+        <ProgressBar
+                android:layout_width="31dp"
+                android:layout_height="31dp"
+                android:visibility="invisible"
+                android:id="@+id/progressBarBottom"
+                />
+    </LinearLayout>
 </FrameLayout>
