@@ -84,7 +84,7 @@ public class NewsOverview extends Fragment {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        getWebsiteContent();
+
 
         HAWDatabase database = ((MainActivity) getActivity()).getDatabase();
         dao = database.appointmentDao();
@@ -98,6 +98,7 @@ public class NewsOverview extends Fragment {
         String prefFaculty = sharedPref.getString("pref_faculty", "IF");
 
         setFaculty(prefFaculty);
+        getWebsiteContent();
     }
 
     void setFaculty(String prefFaculty) {
@@ -153,7 +154,6 @@ public class NewsOverview extends Fragment {
 
             setFaculty(prefFaculty);
 
-            new getNews().execute();
 
             while (getActivity() == null) {
                 try {
@@ -181,7 +181,7 @@ public class NewsOverview extends Fragment {
                 if (pendingNotifIntent != null)
                     am.cancel(pendingNotifIntent);
             }
-            getView().invalidate();
+            getWebsiteContent();
         }
 
     };
@@ -222,10 +222,8 @@ public class NewsOverview extends Fragment {
         recyclerView = view.findViewById(R.id.NewsRecyclerView);
         assert recyclerView != null;
         layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-//        getActivity().findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-//        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), RecyclerView.VERTICAL));
         return view;
 
     }
