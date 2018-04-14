@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -31,7 +30,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,9 +54,9 @@ public class NewsOverview extends Fragment {
 
     private String faculty;
     private RecyclerView recyclerView;
-    SpannedAdapter spannedAdapter;
-    List<Spanned> spanned = new ArrayList<>();
-    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+    private SpannedAdapter spannedAdapter;
+    private List<Spanned> spanned = new ArrayList<>();
+    private LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
     private int page_count = 0;
     private OnFragmentInteractionListener mListener;
 
@@ -309,8 +307,6 @@ public class NewsOverview extends Fragment {
                             .execute();
                     Document doc = document.parse();
                     Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
-                    Log.d("1st element: ",elements.get(0)+"");
-                    Log.d("1st element: ",elements.get(1)+"");
                     if (elements.isEmpty())
                         max_page = true;
                     else
@@ -431,12 +427,6 @@ public class NewsOverview extends Fragment {
         private NewsOverview.OnLoadMoreListener mOnLoadMoreListener;
         private boolean isLoading;
         private int visibleThreshold = 5;
-        private int lastVisibleItem, totalItemCount;
-
-        public void setOnLoadMoreListener(NewsOverview.OnLoadMoreListener mOnLoadMoreListener) {
-            this.mOnLoadMoreListener = mOnLoadMoreListener;
-        }
-
         private List<Spanned> spannedArrayList;
         private Context context;
 
@@ -521,9 +511,9 @@ public class NewsOverview extends Fragment {
     class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
 
-        public LoadingViewHolder(View itemView) {
+        LoadingViewHolder(View itemView) {
             super(itemView);
-            progressBar = (ProgressBar) itemView.findViewById(R.id.progressBarBottom);
+            progressBar = itemView.findViewById(R.id.progressBarBottom);
         }
     }
 }
