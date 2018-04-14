@@ -307,13 +307,12 @@ public class NewsOverview extends Fragment {
                             .execute();
                     Document doc = document.parse();
                     Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
-                    if (elements.isEmpty())
-                        max_page = true;
+                    if (!elements.isEmpty())
+                       for (Element e : elements) {
+                        spanned.add(fromHtml(String.valueOf(e)));
+                    }
                     else
-                        for (Element e : elements) {
-                        e.text();
-                            spanned.add(fromHtml(String.valueOf(e)));
-                        }
+                    max_page = true;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -329,7 +328,7 @@ public class NewsOverview extends Fragment {
                 getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                 spannedAdapter = new SpannedAdapter(spanned, getContext());
                 recyclerView.setAdapter(spannedAdapter);
-            }
+
                 spannedAdapter.setmOnLoadMoreListener(new OnLoadMoreListener() {
                     @Override
                     public void onLoadMore() {page_count++;
@@ -392,7 +391,7 @@ public class NewsOverview extends Fragment {
                         }, 5000);
                     }
                 });
-
+            }
 
             }
 
