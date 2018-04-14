@@ -6,49 +6,37 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.*;
-import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import de.haw_landshut.hawmobile.*;
-import de.haw_landshut.hawmobile.base.Appointment;
 import de.haw_landshut.hawmobile.base.AppointmentDao;
 import de.haw_landshut.hawmobile.base.HAWDatabase;
-
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -67,8 +55,11 @@ public class NewsOverview extends Fragment {
     //Termine Ende
 
     private String faculty;
-    private ListView listView;
-    private View footerView;
+    private RecyclerView recyclerView;
+    SpannedAdapter spannedAdapter;
+    List<Spanned> spanned = new ArrayList<>();
+    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+    private int page_count = 0;
     private OnFragmentInteractionListener mListener;
 
     public NewsOverview() {
@@ -110,36 +101,44 @@ public class NewsOverview extends Fragment {
 
         setFaculty(prefFaculty);
     }
-    void setFaculty(String prefFaculty){
-        if(getActivity()!=null){
+
+    void setFaculty(String prefFaculty) {
+        if (getActivity() != null) {
             switch (prefFaculty) {
                 case "BW":
                     faculty = "betriebswirtschaft";
                     getActivity().setTitle(R.string.news_bw);
+                    page_count = 0;
                     break;
                 case "EW":
                     faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
                     getActivity().setTitle(R.string.news_ew);
+                    page_count = 0;
                     break;
                 case "IF":
                     faculty = "informatik";
                     getActivity().setTitle(R.string.news_if);
+                    page_count = 0;
                     break;
                 case "IS":
                     faculty = "interdisziplinaere-studien";
                     getActivity().setTitle(R.string.news_ids);
+                    page_count = 0;
                     break;
                 case "MA":
                     faculty = "maschinenbau";
                     getActivity().setTitle(R.string.news_ma);
+                    page_count = 0;
                     break;
                 case "SA":
                     faculty = "soziale-arbeit";
                     getActivity().setTitle(R.string.news_sa);
+                    page_count = 0;
                     break;
                 default:
                     faculty = "informatik";
                     getActivity().setTitle(R.string.news_if);
+                    page_count = 0;
                     break;
             }
         }
@@ -147,6 +146,7 @@ public class NewsOverview extends Fragment {
 
     private SharedPreferences.OnSharedPreferenceChangeListener prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         private final String TAG = "PreferenceListener";
+
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             boolean prefNotificationEnabled = sharedPref.getBoolean("pref_switch_notifications", false);
@@ -157,9 +157,9 @@ public class NewsOverview extends Fragment {
 
             new getNews().execute();
 
-            while(getActivity() == null){
+            while (getActivity() == null) {
                 try {
-                    Log.d(TAG,"Wait for activity...");
+                    Log.d(TAG, "Wait for activity...");
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -183,7 +183,9 @@ public class NewsOverview extends Fragment {
                 if (pendingNotifIntent != null)
                     am.cancel(pendingNotifIntent);
             }
+            getView().invalidate();
         }
+
     };
 
     @Override
@@ -219,12 +221,17 @@ public class NewsOverview extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_overview, container, false);
-        listView = view.findViewById(R.id.NewsListView);
-
-
+        recyclerView = view.findViewById(R.id.NewsRecyclerView);
+        assert recyclerView != null;
+        layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+//        getActivity().findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), RecyclerView.VERTICAL));
         return view;
 
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -261,29 +268,29 @@ public class NewsOverview extends Fragment {
     /**
      * for News (Schwarzes Brett)
      */
-
     private void getWebsiteContent() {
         new getNews().execute();
     }
 
+    public interface OnLoadMoreListener {
+
+        void onLoadMore();
+    }
+
+
     public class getNews extends AsyncTask<Void, Void, Void> {
-        List<Spanned> spanned = new ArrayList<>();
         HashMap<String, String> cookies;
         HashMap<String, String> formData;
-        ArrayAdapter<Spanned> adapter;
-        Boolean max_page=false;
-        int count=0;
+        Boolean max_page = false;
+        private boolean loading;
+
         @Override
         protected Void doInBackground(Void... voids) {
-            count++;
-            Log.d("page-count: ",count+"");
+            page_count++;
+            Log.d("startpage-count: ", page_count + "");
             try {
-                if(count<2 && !max_page) { // TODO: Check if these website with this count is available, else stop
+                if (page_count < 2 && !max_page) {
                     formData = new HashMap<>();
-                    Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
-                            .method(Connection.Method.GET)
-                            .execute();
-                    cookies = new HashMap<>(loginForm.cookies());
                     formData.put("utf8", "e2 9c 93");
                     formData.put("user", Credentials.getUsername());
                     formData.put("pass", Credentials.getPassword());
@@ -291,46 +298,26 @@ public class NewsOverview extends Fragment {
                     formData.put("redirect_url", "nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html");
                     formData.put("tx_felogin_pi1[noredirect]", "0");
                     formData.put("submit", "");
-
-                    Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
-                            .cookies(cookies)
-                            .data(formData)
-                            .method(Connection.Method.POST)
-                            .execute();
-                    Document doc = document.parse();
-                    Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
-                    for (Element e : elements) {
-                        spanned.add(fromHtml(String.valueOf("<br>" + e)));
-                    }
-                    formData.clear();
-                    cookies.clear();
-                }
-                else{
-                    spanned = new ArrayList<>();
-                    formData = new HashMap<>();
                     Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
                             .method(Connection.Method.GET)
                             .execute();
                     cookies = new HashMap<>(loginForm.cookies());
-                    formData.put("utf8", "e2 9c 93");
-                    formData.put("user", Credentials.getUsername());
-                    formData.put("pass", Credentials.getPassword());
-                    formData.put("logintype", "login");
-                    formData.put("redirect_url", "nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/"+count+".html");
-                    formData.put("tx_felogin_pi1[noredirect]", "0");
-                    formData.put("submit", "");
-                    Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/"+count+".html")
+                    Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
                             .cookies(cookies)
                             .data(formData)
                             .method(Connection.Method.POST)
                             .execute();
                     Document doc = document.parse();
                     Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
-                    for (Element e : elements) {
-                        spanned.add(fromHtml(String.valueOf("<br>" + e)));
-                    }
-                    if(spanned.isEmpty())max_page=true;
-                    onPostExecute(null);
+                    Log.d("1st element: ",elements.get(0)+"");
+                    Log.d("1st element: ",elements.get(1)+"");
+                    if (elements.isEmpty())
+                        max_page = true;
+                    else
+                        for (Element e : elements) {
+                        e.text();
+                            spanned.add(fromHtml(String.valueOf(e)));
+                        }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -340,45 +327,80 @@ public class NewsOverview extends Fragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if(!max_page){
-            listView.smoothScrollBy(0,0);
             super.onPostExecute(aVoid);
-            getActivity().findViewById(R.id.progressBarBottom).setVisibility(View.INVISIBLE);
-            if(getView() != null) {
-                if (count < 2) {
-                    getActivity().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-                    adapter = new ArrayAdapter<>(getView().getContext(), android.R.layout.simple_list_item_1, spanned);
-                    listView.setAdapter(adapter);
-
-                } else {
-                    adapter.addAll(spanned);
-                    adapter.notifyDataSetChanged();
-                }
+            if(page_count < 2){
+            if (getActivity() != null) {
+                getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                spannedAdapter = new SpannedAdapter(spanned, getContext());
+                recyclerView.setAdapter(spannedAdapter);
             }
-                listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-                    Boolean isLoading = false;
-
+                spannedAdapter.setmOnLoadMoreListener(new OnLoadMoreListener() {
                     @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {}
+                    public void onLoadMore() {page_count++;
 
-                    @Override
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                        getActivity().findViewById(R.id.progressBarBottom).setVisibility(View.INVISIBLE);
-                        if (!max_page) {
-                            if (listView.getLastVisiblePosition() == totalItemCount - 2)
-                                getActivity().findViewById(R.id.progressBarBottom).setVisibility(View.VISIBLE);
-                            adapter.notifyDataSetChanged();
-                            if (view.getLastVisiblePosition() == totalItemCount - 1 && listView.getCount() >= 10 && !isLoading) {
-                                isLoading = true;
-                                doInBackground();
-                                listView.smoothScrollBy(0, 0);
-                                getActivity().findViewById(R.id.progressBarBottom).setVisibility(View.INVISIBLE);
-                                adapter.notifyDataSetChanged();
+                        spanned.add(null);
+                        spannedAdapter.notifyItemInserted(spanned.size() - 1);
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                Log.d("Advanced_page_count: ", page_count + "");
+                                spanned.remove(spanned.size() - 1);
+                                spannedAdapter.notifyItemRemoved(spanned.size());
+//                                if(!formData.isEmpty()) {
+//                                    formData.remove("redirect_url");
+//                                    formData.put("redirect_url", "nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/" + page_count + ".html");
+//                                }
+//                                else {
+//
+                                try {
+                                    Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
+                                            .method(Connection.Method.GET)
+                                            .execute();
+                                    cookies = new HashMap<>(loginForm.cookies());
+                                    formData = new HashMap<>();
+                                    formData.put("utf8", "e2 9c 93");
+                                    formData.put("user", Credentials.getUsername());
+                                    formData.put("pass", Credentials.getPassword());
+                                    formData.put("logintype", "login");
+                                    formData.put("redirect_url", "nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/" + page_count + ".html");
+                                    formData.put("tx_felogin_pi1[noredirect]", "0");
+                                    formData.put("submit", "");
+//                                }
+                                    Connection.Response document = null;
+
+                                    document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/" + page_count + ".html")
+                                            .cookies(cookies)
+                                            .data(formData)
+                                            .method(Connection.Method.POST)
+                                            .execute();
+
+                                    Document doc = document.parse();
+
+                                    Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
+                                    if (elements.isEmpty()) {
+                                        max_page = true;
+                                    } else {
+                                        for (Element e : elements) {
+                                            spanned.add(fromHtml(String.valueOf("<br>" + e)));
+                                        }
+
+                                        spannedAdapter.notifyDataSetChanged();
+                                        spannedAdapter.setLoaded();
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
+                        }, 5000);
                     }
                 });
+
+
             }
+
+
         }
 
         @SuppressWarnings("deprecation")
@@ -390,6 +412,118 @@ public class NewsOverview extends Fragment {
                 result = Html.fromHtml(html);
             }
             return result;
+        }
+    }
+
+    public class SpannedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+        class MyViewHolder extends RecyclerView.ViewHolder {
+            private TextView textView;
+
+            MyViewHolder(View itemView) {
+                super(itemView);
+                textView = itemView.findViewById(R.id.OneElement);
+            }
+        }
+
+        private final int VIEW_TYPE_ITEM = 0;
+        private final int VIEW_TYPE_LOADING = 1;
+        private NewsOverview.OnLoadMoreListener mOnLoadMoreListener;
+        private boolean isLoading;
+        private int visibleThreshold = 5;
+        private int lastVisibleItem, totalItemCount;
+
+        public void setOnLoadMoreListener(NewsOverview.OnLoadMoreListener mOnLoadMoreListener) {
+            this.mOnLoadMoreListener = mOnLoadMoreListener;
+        }
+
+        private List<Spanned> spannedArrayList;
+        private Context context;
+
+        public SpannedAdapter(List<Spanned> spannedArrayList, Context context) {
+            final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    int totalItemCount, lastVisibleItem;
+                    super.onScrolled(recyclerView, dx, dy);
+                    totalItemCount = linearLayoutManager.getItemCount();
+                    lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                    if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                        if (mOnLoadMoreListener != null)
+                            mOnLoadMoreListener.onLoadMore();
+                        isLoading = true;
+                    }
+                }
+
+
+            });
+            this.spannedArrayList = spannedArrayList;
+            this.context = context;
+        }
+
+        public void setmOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
+            this.mOnLoadMoreListener = mOnLoadMoreListener;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return spanned.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
+        }
+
+        private Context getContext() {
+            return context;
+        }
+
+        @Override
+        public int getItemCount() {
+            return spanned == null ? 0 : spanned.size();
+        }
+
+        public void setLoaded() {
+            isLoading = false;
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (viewType == VIEW_TYPE_ITEM) {
+                View view = LayoutInflater.from(getContext()).inflate(R.layout.news_row, parent, false);
+                return new MyViewHolder(view);
+            } else if (viewType == VIEW_TYPE_LOADING) {
+                View view = LayoutInflater.from(NewsOverview.this.getContext()).inflate(R.layout.news_bottom_loading, parent, false);
+                return new LoadingViewHolder(view);
+            }
+            Context context = parent.getContext();
+
+            View view = LayoutInflater.from(context).inflate(R.layout.news_row, parent, false);
+            return new de.haw_landshut.hawmobile.news.NewsOverview.SpannedAdapter.MyViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            if (holder instanceof MyViewHolder) {
+                Spanned span = spanned.get(position);
+                MyViewHolder myViewHolder = (MyViewHolder) holder;
+                myViewHolder.textView.setText(span);
+            } else if (holder instanceof LoadingViewHolder) {
+                LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
+                loadingViewHolder.progressBar.setIndeterminate(true);
+            }
+        }
+
+        @Override
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+        }
+
+    }
+
+    class LoadingViewHolder extends RecyclerView.ViewHolder {
+        public ProgressBar progressBar;
+
+        public LoadingViewHolder(View itemView) {
+            super(itemView);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.progressBarBottom);
         }
     }
 }
