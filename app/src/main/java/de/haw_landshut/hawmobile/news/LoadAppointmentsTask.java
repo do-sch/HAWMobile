@@ -54,7 +54,9 @@ class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
                 }
             } else {
                 Log.d(TAG, "Get data from database...");
+
                 dao.deleteAllAppointments();    //Debug
+
                 appointment = dao.getLastAppointment();
                 break;
             }
@@ -189,7 +191,6 @@ class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
             pattern = Pattern.compile("[\\s-]*((<Date>)+\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d)[\\s-]*(((<Date>)+\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d)[\\s-]*)?(((<Date>)+\\d\\d\\.\\d\\d\\.\\d\\d\\d\\d)[\\s-]*)?([^<]*)");
             matcher = pattern.matcher(parsedText);
 
-            System.out.println(parsedText);
             Log.d(TAG, "parse Appointments...");
             while (matcher.find()) {
                 int date1 = dateAsInt((matcher.group(1)+"").replaceAll("<Date>",""));
@@ -213,6 +214,10 @@ class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
                     Log.d(TAG,"Text: "+appointment);
                 }
             }
+            //Debug
+            int today = LoadAppointmentsTask.dateAsInt(SimpleDateFormat.getDateInstance().format(Calendar.getInstance().getTime()));
+            dao.insertAppointment(new Appointment(today,today,"Test"));
+            //End Debug
             Log.d(TAG, "parse Appointments... done!");
 
             reader.close();

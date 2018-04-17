@@ -165,5 +165,6 @@
     <string name="news_sa">News SA</string>
     <string name="appointment">Appointment</string>
     <string name="appointments">Appointments</string>
+    <string name="till">" till "</string>
 
 </resources>

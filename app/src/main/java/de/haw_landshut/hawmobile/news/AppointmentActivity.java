@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,9 +29,8 @@ public class AppointmentActivity extends AppCompatActivity {
     private ListView listView;
 
     private AppointmentDao dao;
-    private HAWDatabase
-            database;
-    private List<String> appointments = new ArrayList<>();
+    private HAWDatabase database;
+    private ArrayList<Appointment> appointments = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,7 @@ public class AppointmentActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             for (Appointment ap: dao.getAllAppointments()
                  ) {
-                appointments.add(LoadAppointmentsTask.dateAsString(ap.start) + "<br>" + ap.appointment);
+                appointments.add(ap);
             }
             return null;
         }
@@ -69,15 +70,14 @@ public class AppointmentActivity extends AppCompatActivity {
             findViewById(R.id.appointment_loading_panel).setVisibility(View.GONE);
             final AppointmentArrayAdapter adapter = new AppointmentArrayAdapter(listView.getContext(), appointments);
             listView.setAdapter(adapter);
-            listView.setPadding(30, 30, 30, 30);
         }
     }
 
-    public class AppointmentArrayAdapter extends ArrayAdapter<String> {
+    public class AppointmentArrayAdapter extends ArrayAdapter<Appointment> {
         private final Context context;
-        private final List<String> values;
+        private final ArrayList<Appointment> values;
 
-        public AppointmentArrayAdapter(Context context, List<String> values) {
+        public AppointmentArrayAdapter(Context context, ArrayList<Appointment> values) {
             super(context, R.layout.appointment_layout, values);
             this.context = context;
             this.values = values;
@@ -89,19 +89,26 @@ public class AppointmentActivity extends AppCompatActivity {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             View rowView = inflater.inflate(R.layout.appointment_layout, parent, false);
-            TextView textView = (TextView) rowView.findViewById(R.id.date);
-            TextView textView2 = (TextView) rowView.findViewById(R.id.appointment);
+            TextView date1 = rowView.findViewById(R.id.date);
+            TextView date2 = rowView.findViewById(R.id.date2);
+            TextView dateFromTill = rowView.findViewById(R.id.date_from_till);
+            TextView appointment = rowView.findViewById(R.id.appointment);
+            ImageView alertIcon = rowView.findViewById(R.id.date_alert_icon);
 
-            String s[] = values.get(position).split("<br>");
+            int today = LoadAppointmentsTask.dateAsInt(SimpleDateFormat.getDateInstance().format(Calendar.getInstance().getTime()));
+            if(today >= values.get(position).start && today <= values.get(position).end)
+                alertIcon.setVisibility(View.VISIBLE);
+            else
+                alertIcon.setVisibility(View.INVISIBLE);
 
-            Calendar calendar = Calendar.getInstance();
-            String today = new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime());
-            if(s[0].equals(today)) {
-                rowView.setBackgroundColor(Color.LTGRAY);
-            }
+            date1.setText(LoadAppointmentsTask.dateAsString(values.get(position).start));
 
-            textView.setText(s[0]);
-            textView2.setText(s[1].replaceAll("</br>", "\r\n"));
+            if(values.get(position).start != values.get(position).end)
+                date2.setText(LoadAppointmentsTask.dateAsString(values.get(position).end));
+            else
+                dateFromTill.setVisibility(View.INVISIBLE);
+
+            appointment.setText(values.get(position).appointment);
 
             return rowView;
         }
