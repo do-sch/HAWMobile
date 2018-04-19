@@ -52,8 +52,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             Calendar tomorrow = Calendar.getInstance();
             tomorrow.add(Calendar.DAY_OF_MONTH, 1);
 
-            Log.d(TAG, "Load tomorrows appointments: " + new SimpleDateFormat("dd.MM.yyyy").format(tomorrow.getTime()));
-            appointments = dao.getAppointmentByDate(new SimpleDateFormat("dd.MM.yyyy").format(tomorrow.getTime()));
+            Log.d(TAG, "Load tomorrows appointments: " + SimpleDateFormat.getDateInstance().format(tomorrow.getTime()));
+            appointments = dao.getAppointmentByStartDate(LoadAppointmentsTask.dateAsInt(SimpleDateFormat.getDateInstance().format(tomorrow.getTime())));
 
             if (appointments.size() == 0) {
                 Log.d(TAG, "No appointments found");
@@ -62,11 +62,13 @@ public class AlarmReceiver extends BroadcastReceiver {
 
             Log.d(TAG, "Create Notifications");
             title = "HAWMobile Termine";
-            betreff = "Erinnerung für den " + appointments.get(0).date + "\r\n";
+            betreff = "Erinnerung für den " + LoadAppointmentsTask.dateAsString(appointments.get(0).start) + "\r\n";
 
+            StringBuilder tmp = new StringBuilder("");
             for (int i = 0; i < appointments.size(); i++) {
-                nachricht += "\r\n" + appointments.get(i).appointment;
+                tmp.append("\r\n").append(appointments.get(i).appointment);
             }
+            nachricht = tmp.toString();
 
             NotificationManager mNotificationManager = (NotificationManager) context[0].getSystemService(Context.NOTIFICATION_SERVICE);
 

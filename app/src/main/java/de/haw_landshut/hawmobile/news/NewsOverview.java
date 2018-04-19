@@ -10,37 +10,27 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.*;
-import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import de.haw_landshut.hawmobile.*;
-import de.haw_landshut.hawmobile.base.Appointment;
 import de.haw_landshut.hawmobile.base.AppointmentDao;
 import de.haw_landshut.hawmobile.base.HAWDatabase;
-
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -63,7 +53,11 @@ public class NewsOverview extends Fragment {
     //Termine Ende
 
     private String faculty;
-    private ListView listView;
+    private RecyclerView recyclerView;
+    private SpannedAdapter spannedAdapter;
+    private List<Spanned> spanned = new ArrayList<>();
+    private LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+    private int page_count = 0;
     private OnFragmentInteractionListener mListener;
 
     public NewsOverview() {
@@ -91,6 +85,7 @@ public class NewsOverview extends Fragment {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+
         HAWDatabase database = ((MainActivity) getActivity()).getDatabase();
         dao = database.appointmentDao();
 
@@ -98,42 +93,51 @@ public class NewsOverview extends Fragment {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sharedPref.registerOnSharedPreferenceChangeListener(prefListener);
 
-        new LoadAppointmentsTask().execute();
+        new LoadAppointmentsTask(getContext()).execute();
         //Termine ende
         String prefFaculty = sharedPref.getString("pref_faculty", "IF");
 
         setFaculty(prefFaculty);
+        getWebsiteContent();
     }
-    void setFaculty(String prefFaculty){
-        if(getActivity()!=null){
+
+    void setFaculty(String prefFaculty) {
+        if (getActivity() != null) {
             switch (prefFaculty) {
                 case "BW":
                     faculty = "betriebswirtschaft";
                     getActivity().setTitle(R.string.news_bw);
+                    page_count = 0;
                     break;
                 case "EW":
                     faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
                     getActivity().setTitle(R.string.news_ew);
+                    page_count = 0;
                     break;
                 case "IF":
                     faculty = "informatik";
                     getActivity().setTitle(R.string.news_if);
+                    page_count = 0;
                     break;
                 case "IS":
                     faculty = "interdisziplinaere-studien";
                     getActivity().setTitle(R.string.news_ids);
+                    page_count = 0;
                     break;
                 case "MA":
                     faculty = "maschinenbau";
                     getActivity().setTitle(R.string.news_ma);
+                    page_count = 0;
                     break;
                 case "SA":
                     faculty = "soziale-arbeit";
                     getActivity().setTitle(R.string.news_sa);
+                    page_count = 0;
                     break;
                 default:
                     faculty = "informatik";
                     getActivity().setTitle(R.string.news_if);
+                    page_count = 0;
                     break;
             }
         }
@@ -141,6 +145,7 @@ public class NewsOverview extends Fragment {
 
     private SharedPreferences.OnSharedPreferenceChangeListener prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         private final String TAG = "PreferenceListener";
+
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             boolean prefNotificationEnabled = sharedPref.getBoolean("pref_switch_notifications", false);
@@ -149,11 +154,10 @@ public class NewsOverview extends Fragment {
 
             setFaculty(prefFaculty);
 
-            new getNews().execute();
 
-            while(getActivity() == null){
+            while (getActivity() == null) {
                 try {
-                    Log.d(TAG,"Wait for activity...");
+                    Log.d(TAG, "Wait for activity...");
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -172,12 +176,14 @@ public class NewsOverview extends Fragment {
 
                 am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingNotifIntent);
 
-                new LoadAppointmentsTask().execute();
+                new LoadAppointmentsTask(getContext()).execute();
             } else {
                 if (pendingNotifIntent != null)
                     am.cancel(pendingNotifIntent);
             }
+            getWebsiteContent();
         }
+
     };
 
     @Override
@@ -213,11 +219,15 @@ public class NewsOverview extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_overview, container, false);
-        listView = view.findViewById(R.id.NewsListView);
-        getWebsiteContent();
+        recyclerView = view.findViewById(R.id.NewsRecyclerView);
+        assert recyclerView != null;
+        layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         return view;
 
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -254,30 +264,29 @@ public class NewsOverview extends Fragment {
     /**
      * for News (Schwarzes Brett)
      */
-
     private void getWebsiteContent() {
         new getNews().execute();
     }
 
+    public interface OnLoadMoreListener {
+
+        void onLoadMore();
+    }
+
+
     public class getNews extends AsyncTask<Void, Void, Void> {
-        List<Spanned> spanned = new ArrayList<>();
         HashMap<String, String> cookies;
         HashMap<String, String> formData;
-        int position;
-        int count=0;
+        Boolean max_page = false;
+        private boolean loading;
+
         @Override
         protected Void doInBackground(Void... voids) {
-            count++;
-            Log.d("count: ",""+count);
+            page_count++;
+            Log.d("startpage-count: ", page_count + "");
             try {
-
-                if(count<2) {
+                if (page_count < 2 && !max_page) {
                     formData = new HashMap<>();
-
-                    Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
-                            .method(Connection.Method.GET)
-                            .execute();
-                    cookies = new HashMap<>(loginForm.cookies());
                     formData.put("utf8", "e2 9c 93");
                     formData.put("user", Credentials.getUsername());
                     formData.put("pass", Credentials.getPassword());
@@ -285,56 +294,24 @@ public class NewsOverview extends Fragment {
                     formData.put("redirect_url", "nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html");
                     formData.put("tx_felogin_pi1[noredirect]", "0");
                     formData.put("submit", "");
-
-
-                    Log.d("count","incount_1");
-                    Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
-                            .cookies(cookies)
-                            .data(formData)
-                            .method(Connection.Method.POST)
-                            .execute();
-                    Document doc = document.parse();
-                    Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
-                    for (Element e : elements) {
-                        spanned.add(fromHtml(String.valueOf("<br>" + e)));
-                    }
-                    position = spanned.size();
-                    formData.clear();
-                    cookies.clear();
-                    doc = null;
-                }
-                else{
-                    formData = new HashMap<>();
-
                     Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
                             .method(Connection.Method.GET)
                             .execute();
                     cookies = new HashMap<>(loginForm.cookies());
-                    formData.put("utf8", "e2 9c 93");
-                    formData.put("user", Credentials.getUsername());
-                    formData.put("pass", Credentials.getPassword());
-                    formData.put("logintype", "login");
-                    formData.put("redirect_url", "nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/"+count+".html");
-                    formData.put("tx_felogin_pi1[noredirect]", "0");
-                    formData.put("submit", "");
-                    Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/"+faculty+"/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/"+count+".html")
+                    Connection.Response document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett.html")
                             .cookies(cookies)
                             .data(formData)
                             .method(Connection.Method.POST)
                             .execute();
                     Document doc = document.parse();
-                    Log.d("titel:",doc.location());
                     Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
-                    for (Element e : elements) {
-                        spanned.add(fromHtml(String.valueOf("<br>" + e)));
+                    if (!elements.isEmpty())
+                       for (Element e : elements) {
+                        spanned.add(fromHtml(String.valueOf(e)));
                     }
-                    position = spanned.size();
-                    onPostExecute(null);
-                    Log.d("position:",position+"");
-                    listView.setSelection(position-14);
+                    else
+                    max_page = true;
                 }
-
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -344,32 +321,79 @@ public class NewsOverview extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if(getView() != null) {
+            if(page_count < 2){
+            if (getActivity() != null) {
                 getView().findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-                ArrayAdapter<Spanned> adapter = new ArrayAdapter<>(getView().getContext(), android.R.layout.simple_list_item_1, spanned);
-                listView.setAdapter(adapter);
+                spannedAdapter = new SpannedAdapter(spanned, getContext());
+                recyclerView.setAdapter(spannedAdapter);
 
-                listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+                spannedAdapter.setmOnLoadMoreListener(new OnLoadMoreListener() {
                     @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
+                    public void onLoadMore() {page_count++;
 
-                    }
-                    Boolean flag_loading=false;
-                    @Override
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                        if(firstVisibleItem+visibleItemCount == totalItemCount && totalItemCount!=0)
-                        {
-                            if(!flag_loading)
-                            {
-                                flag_loading = true;
-                                doInBackground();
-                                listView.deferNotifyDataSetChanged();
+                        spanned.add(null);
+                        spannedAdapter.notifyItemInserted(spanned.size() - 1);
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                Log.d("Advanced_page_count: ", page_count + "");
+                                spanned.remove(spanned.size() - 1);
+                                spannedAdapter.notifyItemRemoved(spanned.size());
+//                                if(!formData.isEmpty()) {
+//                                    formData.remove("redirect_url");
+//                                    formData.put("redirect_url", "nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/" + page_count + ".html");
+//                                }
+//                                else {
+//
+                                try {
+                                    Connection.Response loginForm = Jsoup.connect("https://www.haw-landshut.de/hochschule/fakultaeten/informatik/infos-zum-laufenden-studienbetrieb.html")
+                                            .method(Connection.Method.GET)
+                                            .execute();
+                                    cookies = new HashMap<>(loginForm.cookies());
+                                    formData = new HashMap<>();
+                                    formData.put("utf8", "e2 9c 93");
+                                    formData.put("user", Credentials.getUsername());
+                                    formData.put("pass", Credentials.getPassword());
+                                    formData.put("logintype", "login");
+                                    formData.put("redirect_url", "nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/" + page_count + ".html");
+                                    formData.put("tx_felogin_pi1[noredirect]", "0");
+                                    formData.put("submit", "");
+//                                }
+                                    Connection.Response document = null;
+
+                                    document = Jsoup.connect("https://www.haw-landshut.de/nc/hochschule/fakultaeten/" + faculty + "/infos-zum-laufenden-studienbetrieb/schwarzes-brett/page/" + page_count + ".html")
+                                            .cookies(cookies)
+                                            .data(formData)
+                                            .method(Connection.Method.POST)
+                                            .execute();
+
+                                    Document doc = document.parse();
+
+                                    Elements elements = doc.getElementsByAttributeValue("class", "col-lg-9 col-sm-12");
+                                    if (elements.isEmpty()) {
+                                        max_page = true;
+                                    } else {
+                                        for (Element e : elements) {
+                                            spanned.add(fromHtml(String.valueOf("<br>" + e)));
+                                        }
+
+                                        spannedAdapter.notifyDataSetChanged();
+                                        spannedAdapter.setLoaded();
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-
+                        }, 5000);
                     }
                 });
             }
+
+            }
+
+
         }
 
         @SuppressWarnings("deprecation")
@@ -384,113 +408,109 @@ public class NewsOverview extends Fragment {
         }
     }
 
+    public class SpannedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+        class MyViewHolder extends RecyclerView.ViewHolder {
+            private TextView textView;
 
-    private class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
-        private final String TAG = "LoadAppointmentsTask";
-        private String[] downloadedAppointments;
+            MyViewHolder(View itemView) {
+                super(itemView);
+                textView = itemView.findViewById(R.id.OneElement);
+            }
+        }
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            Log.d(TAG, "Get data from database.");
+        private final int VIEW_TYPE_ITEM = 0;
+        private final int VIEW_TYPE_LOADING = 1;
+        private NewsOverview.OnLoadMoreListener mOnLoadMoreListener;
+        private boolean isLoading;
+        private int visibleThreshold = 5;
+        private List<Spanned> spannedArrayList;
+        private Context context;
 
-            while (dao == null)
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            dao.deleteAllAppointments(); //Debug
-            List<Appointment> appointments = dao.getAllAppointments();
-
-            if (appointments.size() == 0) {
-                Log.d(TAG, "Database is empty.");
-                Log.d(TAG, "Get data from internet.");
-
-                String result = downloadAppointments();
-                if (result != null) {
-                    downloadedAppointments = result.trim().split("\n");
-
-                    String tmp[];
-                    for (String downloadedAppointment : downloadedAppointments) {
-                        Log.d(TAG, downloadedAppointment);
-                        tmp = downloadedAppointment.trim().split(" - ");
-                        dao.insertAppointment(new Appointment(tmp[0].trim(), tmp[1].trim()));
+        public SpannedAdapter(List<Spanned> spannedArrayList, Context context) {
+            final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    int totalItemCount, lastVisibleItem;
+                    super.onScrolled(recyclerView, dx, dy);
+                    totalItemCount = linearLayoutManager.getItemCount();
+                    lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                    if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                        if (mOnLoadMoreListener != null)
+                            mOnLoadMoreListener.onLoadMore();
+                        isLoading = true;
                     }
                 }
-                appointments = dao.getAllAppointments();
+
+
+            });
+            this.spannedArrayList = spannedArrayList;
+            this.context = context;
+        }
+
+        public void setmOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
+            this.mOnLoadMoreListener = mOnLoadMoreListener;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return spanned.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
+        }
+
+        private Context getContext() {
+            return context;
+        }
+
+        @Override
+        public int getItemCount() {
+            return spanned == null ? 0 : spanned.size();
+        }
+
+        public void setLoaded() {
+            isLoading = false;
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (viewType == VIEW_TYPE_ITEM) {
+                View view = LayoutInflater.from(getContext()).inflate(R.layout.news_row, parent, false);
+                return new MyViewHolder(view);
+            } else if (viewType == VIEW_TYPE_LOADING) {
+                View view = LayoutInflater.from(NewsOverview.this.getContext()).inflate(R.layout.news_bottom_loading, parent, false);
+                return new LoadingViewHolder(view);
             }
-            if (appointments.size() == 0) {
-                Log.d(TAG, "No appointments found.");
-                return null;
-            } else {
-                Log.d(TAG, "Appointments loaded");
-                return null;
+            Context context = parent.getContext();
+
+            View view = LayoutInflater.from(context).inflate(R.layout.news_row, parent, false);
+            return new de.haw_landshut.hawmobile.news.NewsOverview.SpannedAdapter.MyViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            if (holder instanceof MyViewHolder) {
+                Spanned span = spanned.get(position);
+                MyViewHolder myViewHolder = (MyViewHolder) holder;
+                myViewHolder.textView.setText(span);
+            } else if (holder instanceof LoadingViewHolder) {
+                LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
+                loadingViewHolder.progressBar.setIndeterminate(true);
             }
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
         }
 
-        private String downloadAppointments() {
-            String path = "https://drive.google.com/uc?export=download&id=12tWQQN6Zd51Hni1NmJm0KyHQukVTrg_r";
-            String fileName = "Termine.txt";
-            String result = "";
-            File file;
-            URL url;
-            InputStream input;
-            OutputStream output;
-            HttpURLConnection connection;
+    }
 
-            if (getActivity() == null)
-                return null;
+    class LoadingViewHolder extends RecyclerView.ViewHolder {
+        public ProgressBar progressBar;
 
-            try {
-                file = File.createTempFile(fileName, null, getActivity().getCacheDir());
-
-                url = new URL(path);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
-
-                if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                    Log.d(TAG, "Connection failed");
-                    return null;
-                }
-
-                input = connection.getInputStream();
-                output = new FileOutputStream(file, false);
-
-                byte data[] = new byte[4096];
-                while (input.read(data) != -1) {
-                    output.write(data);
-                }
-
-                output.close();
-                input.close();
-                connection.disconnect();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
-                String line;
-
-                while ((line = br.readLine()) != null) {
-                    //Log.d(TAG, line);
-                    result += line + "\n";
-                }
-            } catch (IOException e) {
-                System.out.println("Fehler Datei list.txt Datei nicht vorhanden.");
-                System.exit(1);
-            }
-
-
-            return result;
+        LoadingViewHolder(View itemView) {
+            super(itemView);
+            progressBar = itemView.findViewById(R.id.progressBarBottom);
         }
     }
 }

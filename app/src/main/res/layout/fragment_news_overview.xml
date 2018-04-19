@@ -2,27 +2,28 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:listSelector="@android:color/transparent"
-             tools:context="de.haw_landshut.hawmobile.news.NewsOverview">
+             tools:context="de.haw_landshut.hawmobile.news.NewsOverview" >
 
-    <RelativeLayout
-            android:id="@+id/loadingPanel"
+    <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center">
+            android:id="@+id/NewsRecyclerView"
+            />
+
+    <LinearLayout
+            android:id="@+id/loadingPanel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
 
         <ProgressBar
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
+                android:progressBackgroundTint="@color/black"
                 android:layout_height="match_parent"
-                android:indeterminate="true"/>
-    </RelativeLayout>
-    <ListView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:clickable="true"
-            android:autoLink="all"
-            android:contextClickable="true"
-            android:id="@+id/NewsListView"/>
+                android:layout_gravity="center"
+                android:id="@+id/progressBarMid"
+                />
+    </LinearLayout>
 
 
 </FrameLayout>

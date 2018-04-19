@@ -126,6 +126,8 @@
     <string name="weekly">weekly</string>
     <string name="ok">Ok</string>
     <string name="set_cancel">Cancel</string>
+    <string name="clear">Clear</string>
+    <string name="copy">Copy</string>
 
     <string name="setsubject">Subject</string>
     <string name="room">Room</string>
@@ -163,5 +165,6 @@
     <string name="news_sa">News SA</string>
     <string name="appointment">Appointment</string>
     <string name="appointments">Appointments</string>
+    <string name="till">" till "</string>
 
 </resources>

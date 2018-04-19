@@ -28,16 +28,23 @@
                 android:nextFocusForward="@id/et_raum"
                 android:inputType="text"
                 android:imeOptions="actionNext"
+                android:completionThreshold="3"
+                android:dropDownHeight="wrap_content"
+                android:dropDownVerticalOffset="-20dp"
 
         />
         <AutoCompleteTextView
-                android:hint="@string/subject"
+                android:hint="@string/setsubject"
                 android:layout_width="300dp"
                 android:layout_height="match_parent" android:id="@+id/et_fach"
                 android:layout_alignParentTop="true" android:layout_alignParentStart="true"
                 android:nextFocusForward="@id/et_prof"
                 android:inputType="text"
                 android:imeOptions="actionNext"
+                android:completionThreshold="3"
+                android:dropDownHeight="wrap_content"
+                android:dropDownVerticalOffset="-20dp"
+
         />
         <CheckBox
                 android:text="@string/weekly"
@@ -52,6 +59,21 @@
                 android:visibility="gone"
                 android:layout_alignBaseline="@+id/btn_cancel" android:layout_alignBottom="@+id/btn_cancel"
                 android:layout_toStartOf="@+id/btn_cancel"/>
+        <Button
+                android:text="@string/copy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/copy"
+                android:layout_alignBaseline="@+id/clear" android:layout_alignBottom="@+id/clear"
+                android:layout_toStartOf="@+id/clear"/>
+        <Button
+                android:text="@string/clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/clear"
+                android:textSize="14sp"
+                android:layout_below="@+id/et_fach" android:layout_alignParentEnd="true"/>
+
+
         <Button
                 android:text="@string/edit"
                 android:layout_width="wrap_content"
