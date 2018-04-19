@@ -79,6 +79,7 @@ public class NewsOverview extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d("","OnCreate");
         super.onCreate(savedInstanceState);
         this.setHasOptionsMenu(true);
 
@@ -112,6 +113,7 @@ public class NewsOverview extends Fragment {
                 case "EW":
                     faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
                     getActivity().setTitle(R.string.news_ew);
+
                     page_count = 0;
                     break;
                 case "IF":
@@ -148,6 +150,7 @@ public class NewsOverview extends Fragment {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            Log.d("","SharedPrefencesChanged");
             boolean prefNotificationEnabled = sharedPref.getBoolean("pref_switch_notifications", false);
             int prefNotificationTime = sharedPref.getInt("pref_notification_time", 600);
             String prefFaculty = sharedPref.getString("pref_faculty", "IF");
@@ -189,6 +192,7 @@ public class NewsOverview extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+//        getActivity().recreate();
     }
 
     @Override
@@ -217,6 +221,7 @@ public class NewsOverview extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("","OnCreateView");
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_overview, container, false);
         recyclerView = view.findViewById(R.id.NewsRecyclerView);
@@ -231,6 +236,7 @@ public class NewsOverview extends Fragment {
 
     @Override
     public void onAttach(Context context) {
+        Log.d("","OnAttach");
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
@@ -242,6 +248,7 @@ public class NewsOverview extends Fragment {
 
     @Override
     public void onDetach() {
+        Log.d("","OnDetach");
         super.onDetach();
         mListener = null;
     }
@@ -287,6 +294,7 @@ public class NewsOverview extends Fragment {
             try {
                 if (page_count < 2 && !max_page) {
                     formData = new HashMap<>();
+                    spanned = new ArrayList<>();
                     formData.put("utf8", "e2 9c 93");
                     formData.put("user", Credentials.getUsername());
                     formData.put("pass", Credentials.getPassword());
@@ -311,6 +319,7 @@ public class NewsOverview extends Fragment {
                     }
                     else
                     max_page = true;
+                    Log.d("spanned_size:",spanned.size()+"");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
