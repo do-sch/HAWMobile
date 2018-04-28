@@ -62,7 +62,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
             Log.d(TAG, "Create Notifications");
             title = "HAWMobile Termine";
-            betreff = "Erinnerung für den " + LoadAppointmentsTask.dateAsString(appointments.get(0).start) + "\r\n";
+            betreff = "Erinnerung für den " + LoadAppointmentsTask.dateAsString(appointments.get(0).start);
 
             StringBuilder tmp = new StringBuilder("");
             for (int i = 0; i < appointments.size(); i++) {
