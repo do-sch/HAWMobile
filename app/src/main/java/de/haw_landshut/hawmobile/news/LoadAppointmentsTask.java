@@ -55,7 +55,7 @@ class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
             } else {
                 Log.d(TAG, "Get data from database...");
 
-                dao.deleteAllAppointments();    //Debug
+                //dao.deleteAllAppointments();    //Debug
 
                 appointment = dao.getLastAppointment();
                 break;
@@ -215,8 +215,11 @@ class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
                 }
             }
             //Debug
-            int today = LoadAppointmentsTask.dateAsInt(SimpleDateFormat.getDateInstance().format(Calendar.getInstance().getTime()));
-            dao.insertAppointment(new Appointment(today,today,"Test"));
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            int tomorrow = LoadAppointmentsTask.dateAsInt(SimpleDateFormat.getDateInstance().format(calendar.getTime()));
+            dao.insertAppointment(new Appointment(tomorrow,tomorrow,"Test"));
+            dao.insertAppointment(new Appointment(tomorrow,tomorrow,"Test2"));
             //End Debug
             Log.d(TAG, "parse Appointments... done!");
 

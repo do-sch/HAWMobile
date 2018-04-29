@@ -3,27 +3,22 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context="de.haw_landshut.hawmobile.news.NewsOverview" >
-
-    <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/NewsRecyclerView"
-            />
-
     <LinearLayout
             android:id="@+id/loadingPanel"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-
         <ProgressBar
                 android:layout_width="match_parent"
-                android:progressBackgroundTint="@color/black"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:id="@+id/progressBarMid"
                 />
     </LinearLayout>
 
+    <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/NewsRecyclerView"
+            />
 
 </FrameLayout>

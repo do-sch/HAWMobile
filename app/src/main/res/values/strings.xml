@@ -27,6 +27,7 @@
     </string-array>
     <string name="login_failed">The Login to HAW failed</string>
 
+    <string name="MAP">Lageplan</string>
     <string name="settings">Settings</string>
     <string name="search">Search</string>
     <string name="folder">Folder</string>

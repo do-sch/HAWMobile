@@ -13,6 +13,7 @@ import android.app.Fragment;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -59,6 +60,7 @@ public class NewsOverview extends Fragment {
     private LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
     private int page_count = 0;
     private OnFragmentInteractionListener mListener;
+    private LoadAppointmentsTask loadAppointmentsTask;
 
     public NewsOverview() {
         // Required empty public constructor
@@ -79,6 +81,7 @@ public class NewsOverview extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d("","OnCreate");
         super.onCreate(savedInstanceState);
         this.setHasOptionsMenu(true);
 
@@ -93,12 +96,18 @@ public class NewsOverview extends Fragment {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sharedPref.registerOnSharedPreferenceChangeListener(prefListener);
 
-        new LoadAppointmentsTask(getContext()).execute();
+        if(loadAppointmentsTask != null && loadAppointmentsTask.isCancelled())
+            loadAppointmentsTask = null;
+
+        if(loadAppointmentsTask == null) {
+            loadAppointmentsTask = new LoadAppointmentsTask(getContext());
+            loadAppointmentsTask.execute();
+        }
+
         //Termine ende
         String prefFaculty = sharedPref.getString("pref_faculty", "IF");
 
         setFaculty(prefFaculty);
-        getWebsiteContent();
     }
 
     void setFaculty(String prefFaculty) {
@@ -112,6 +121,7 @@ public class NewsOverview extends Fragment {
                 case "EW":
                     faculty = "elektrotechnik-und-wirtschaftsingenieurwesen";
                     getActivity().setTitle(R.string.news_ew);
+
                     page_count = 0;
                     break;
                 case "IF":
@@ -148,47 +158,54 @@ public class NewsOverview extends Fragment {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            boolean prefNotificationEnabled = sharedPref.getBoolean("pref_switch_notifications", false);
-            int prefNotificationTime = sharedPref.getInt("pref_notification_time", 600);
-            String prefFaculty = sharedPref.getString("pref_faculty", "IF");
+            Log.d("","SharedPrefencesChanged");
 
-            setFaculty(prefFaculty);
+            if(key.equals("pref_switch_notifications") || key.equals("pref_notification_time")){
+                Log.d("TAG","Listener: Notification changed");
+                boolean prefNotificationEnabled = sharedPref.getBoolean("pref_switch_notifications", false);
+                int prefNotificationTime = sharedPref.getInt("pref_notification_time", 600);
 
+                if(getActivity() == null)
+                    return;
 
-            while (getActivity() == null) {
-                try {
-                    Log.d(TAG, "Wait for activity...");
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                AlarmManager am = getActivity().getSystemService(AlarmManager.class);
+                Intent notifIntent = new Intent(getActivity(), AlarmReceiver.class);
+                PendingIntent pendingNotifIntent = PendingIntent.getBroadcast(getActivity(), 0, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                if (prefNotificationEnabled) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.HOUR_OF_DAY, prefNotificationTime / 100);
+                    calendar.set(Calendar.MINUTE, prefNotificationTime % 100);
+                    calendar.set(Calendar.SECOND, 0);
+
+                    am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingNotifIntent);
+
+                    if(loadAppointmentsTask != null && loadAppointmentsTask.isCancelled())
+                        loadAppointmentsTask = null;
+
+                    if(loadAppointmentsTask == null) {
+                        loadAppointmentsTask = new LoadAppointmentsTask(getContext());
+                        loadAppointmentsTask.execute();
+                    }
+                } else {
+                    if (pendingNotifIntent != null)
+                        am.cancel(pendingNotifIntent);
                 }
             }
-
-            AlarmManager am = getActivity().getSystemService(AlarmManager.class);
-            Intent notifIntent = new Intent(getActivity(), AlarmReceiver.class);
-            PendingIntent pendingNotifIntent = PendingIntent.getBroadcast(getActivity(), 0, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            if (prefNotificationEnabled) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, prefNotificationTime / 100);
-                calendar.set(Calendar.MINUTE, prefNotificationTime % 100);
-                calendar.set(Calendar.SECOND, 0);
-
-                am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingNotifIntent);
-
-                new LoadAppointmentsTask(getContext()).execute();
-            } else {
-                if (pendingNotifIntent != null)
-                    am.cancel(pendingNotifIntent);
+            else if(key.equals("pref_faculty")){
+                Log.d(TAG, "Listener: faculty changed");
+                String prefFaculty = sharedPref.getString("pref_faculty", "IF");
+                setFaculty(prefFaculty);
+                getWebsiteContent();
             }
-            getWebsiteContent();
         }
-
     };
 
     @Override
     public void onResume() {
         super.onResume();
+        getWebsiteContent();
+//        getActivity().recreate();
     }
 
     @Override
@@ -217,6 +234,7 @@ public class NewsOverview extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("","OnCreateView");
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_overview, container, false);
         recyclerView = view.findViewById(R.id.NewsRecyclerView);
@@ -231,6 +249,7 @@ public class NewsOverview extends Fragment {
 
     @Override
     public void onAttach(Context context) {
+        Log.d("","OnAttach");
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
@@ -242,6 +261,7 @@ public class NewsOverview extends Fragment {
 
     @Override
     public void onDetach() {
+        Log.d("","OnDetach");
         super.onDetach();
         mListener = null;
     }
@@ -287,6 +307,7 @@ public class NewsOverview extends Fragment {
             try {
                 if (page_count < 2 && !max_page) {
                     formData = new HashMap<>();
+                    spanned = new ArrayList<>();
                     formData.put("utf8", "e2 9c 93");
                     formData.put("user", Credentials.getUsername());
                     formData.put("pass", Credentials.getPassword());
@@ -311,6 +332,7 @@ public class NewsOverview extends Fragment {
                     }
                     else
                     max_page = true;
+                    Log.d("spanned_size:",spanned.size()+"");
                 }
             } catch (IOException e) {
                 e.printStackTrace();

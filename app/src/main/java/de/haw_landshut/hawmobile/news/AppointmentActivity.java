@@ -95,8 +95,10 @@ public class AppointmentActivity extends AppCompatActivity {
             TextView appointment = rowView.findViewById(R.id.appointment);
             ImageView alertIcon = rowView.findViewById(R.id.date_alert_icon);
 
-            int today = LoadAppointmentsTask.dateAsInt(SimpleDateFormat.getDateInstance().format(Calendar.getInstance().getTime()));
-            if(today >= values.get(position).start && today <= values.get(position).end)
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            int tomorrow = LoadAppointmentsTask.dateAsInt(SimpleDateFormat.getDateInstance().format(calendar.getTime()));
+            if(tomorrow >= values.get(position).start && tomorrow <= values.get(position).end)
                 alertIcon.setVisibility(View.VISIBLE);
             else
                 alertIcon.setVisibility(View.INVISIBLE);
