@@ -47,8 +47,8 @@ public class ScheduleFragment extends Fragment {
     private final int BASICCOLOR = 16777215; //default background color
 
     //Textviews
-    private AutoCompleteTextView et_fach;  //subject in bottomsheet
-    private AutoCompleteTextView et_prof;  //subject in bottomsheet
+    private UpOnlyAutoCompleteTextView et_fach;  //subject in bottomsheet
+    private UpOnlyAutoCompleteTextView et_prof;  //subject in bottomsheet
     private EditText et_raum;              //room in bottomsheet
     private TextView currentDate,currentWeek; //aktuelles Datum, aktuelle Wochenzahl
     private TextView currentTV;             //current Textview
@@ -278,9 +278,11 @@ public class ScheduleFragment extends Fragment {
                     setEnabledTextViews(true);
                     ArrayAdapter<String> subjectAdapter=new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,subjects);
                     et_fach.setAdapter(subjectAdapter);
+                    et_fach.enableAutoHeight();
 
                     ArrayAdapter<String> profAdapter=new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,profs);
                     et_prof.setAdapter(profAdapter);
+                    et_prof.enableAutoHeight();
 
 
                 }

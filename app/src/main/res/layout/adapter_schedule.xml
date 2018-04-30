@@ -5,6 +5,7 @@
               android:layout_height="match_parent">
     <RelativeLayout
             android:layout_width="match_parent"
+            android:id="@+id/adapter_layout_id"
             android:layout_height="wrap_content">
 
         <EditText
@@ -20,7 +21,7 @@
             android:imeOptions="actionDone"
 
         />
-        <AutoCompleteTextView
+        <de.haw_landshut.hawmobile.schedule.UpOnlyAutoCompleteTextView
                 android:hint="@string/prof"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content" android:id="@+id/et_prof"
@@ -29,21 +30,21 @@
                 android:inputType="text"
                 android:imeOptions="actionNext"
                 android:completionThreshold="3"
-                android:dropDownHeight="wrap_content"
-                android:dropDownVerticalOffset="-20dp"
+                android:dropDownHeight="100dp"
+                android:dropDownAnchor="@id/et_prof"
 
         />
-        <AutoCompleteTextView
+        <de.haw_landshut.hawmobile.schedule.UpOnlyAutoCompleteTextView
                 android:hint="@string/setsubject"
                 android:layout_width="300dp"
-                android:layout_height="match_parent" android:id="@+id/et_fach"
+                android:layout_height="wrap_content" android:id="@+id/et_fach"
                 android:layout_alignParentTop="true" android:layout_alignParentStart="true"
                 android:nextFocusForward="@id/et_prof"
                 android:inputType="text"
                 android:imeOptions="actionNext"
                 android:completionThreshold="3"
-                android:dropDownHeight="wrap_content"
-                android:dropDownVerticalOffset="-20dp"
+                android:dropDownHeight="100dp"
+                android:dropDownAnchor="@id/et_fach"
 
         />
         <CheckBox
