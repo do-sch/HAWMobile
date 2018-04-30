@@ -674,7 +674,10 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                     if (emf.getName().equals(INBOX))
                         inboxPos = i;
                     final int stringName = res.getIdentifier(emf.getName(), "string", getActivity().getPackageName());
-                    items.add(res.getString(stringName));
+                    if (stringName == 0)
+                        items.add(emf.getName());
+                    else
+                        items.add(res.getString(stringName));
                 }
 
                 final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.folder_item, items);
@@ -730,6 +733,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
 
                 if(store == null){
                     Log.w("Update", "store is null");
+                    Protocol.returnLock();
                     return null;
                 }
 
