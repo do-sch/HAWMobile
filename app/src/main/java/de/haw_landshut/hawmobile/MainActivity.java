@@ -41,12 +41,9 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
                         fragment = ScheduleFragment.newInstance();
                     break;
                 case R.id.action_map:
-                    /*
-                    if (currentFramgnet.getClass() != MapFragment.class)
-                        fragment = MapFragment.newInstance();
+                   Intent myIntent = new Intent(MainActivity.this, MapsActivity.class);
+                    startActivityForResult(myIntent, 0);
                     break;
-                     */
-                    return true;
                 case R.id.action_news:
                     if(currentFragment.getClass() != NewsOverview.class)
                         fragment = NewsOverview.newInstance();
