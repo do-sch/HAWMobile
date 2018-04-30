@@ -206,11 +206,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isUsernameValid(String username) {
-        return username.matches("(s-[a-zA-Z0-9]{6})|[A-Z][a-z]+\\.[A-Z][a-z]+[0-9]");
+        return username.matches("(s-[a-zA-Z0-9]{6})|[A-Z]?[a-z-]+\\.[A-Z]?[a-z-]+[0-9]");
     }
 
     private boolean isPasswordValid(String password) {
-        return true;
+        return !password.isEmpty();
     }
 
     /**
