@@ -343,6 +343,7 @@ public class ScheduleFragment extends Fragment {
                     setEnabledTextViews(false);
                     et_fach.setAdapter(null);
                     et_prof.setAdapter(null);
+                    et_raum.setAdapter(null);
                     currentTV.setText(testStringLength(getEt_fach_text()));
                     currentTV.setBackgroundColor(getColormaker());
 
@@ -1124,5 +1125,6 @@ public class ScheduleFragment extends Fragment {
         }
         return finalString;
     }
+
 
 }

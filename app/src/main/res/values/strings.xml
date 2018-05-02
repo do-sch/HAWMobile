@@ -129,6 +129,7 @@
     <string name="set_cancel">Cancel</string>
     <string name="clear">Clear</string>
     <string name="copy">Copy</string>
+    <string name="show">Show</string>
 
     <string name="setsubject">Subject</string>
     <string name="room">Room</string>

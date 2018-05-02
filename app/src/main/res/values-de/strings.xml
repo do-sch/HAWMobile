@@ -131,10 +131,11 @@
     <string name="prof">Prof</string>
     <string name="weekly">wöchentl.</string>
     <string name="color">Farbe</string>
-    <string name="edit">Bearbeiten</string>
+    <string name="edit">Ändern</string>
     <string name="setsave">Speichern</string>
     <string name="clear">Löschen</string>
     <string name="copy">Kopieren</string>
+    <string name="show">Anzeigen</string>
 
     <!-- News -->
     <string name="hour">Stunde</string>
