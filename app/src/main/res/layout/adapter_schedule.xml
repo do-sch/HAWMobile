@@ -8,17 +8,19 @@
             android:id="@+id/adapter_layout_id"
             android:layout_height="wrap_content">
 
-        <EditText
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/et_raum"
-            android:hint="@string/room" android:enabled="false"
-            android:layout_below="@+id/et_prof"
-            android:layout_alignParentStart="true"
-            android:textSize="14sp"
-            android:imeOptions="actionDone"
+        <de.haw_landshut.hawmobile.schedule.UpOnlyAutoCompleteTextView
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:ems="10"
+                android:id="@+id/et_raum"
+                android:hint="@string/room" android:enabled="false"
+                android:layout_below="@+id/et_prof"
+                android:layout_alignParentStart="true"
+                android:textSize="14sp"
+                android:imeOptions="actionDone"
+                android:dropDownHeight="100dp"
+                android:completionThreshold="1"
+                android:dropDownAnchor="@+id/et_fach"
 
         />
         <de.haw_landshut.hawmobile.schedule.UpOnlyAutoCompleteTextView
@@ -31,22 +33,22 @@
                 android:imeOptions="actionNext"
                 android:completionThreshold="3"
                 android:dropDownHeight="100dp"
-                android:dropDownAnchor="@id/et_prof"
-
-        />
-        <de.haw_landshut.hawmobile.schedule.UpOnlyAutoCompleteTextView
-                android:hint="@string/setsubject"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content" android:id="@+id/et_fach"
-                android:layout_alignParentTop="true" android:layout_alignParentStart="true"
-                android:nextFocusForward="@id/et_prof"
-                android:inputType="text"
-                android:imeOptions="actionNext"
-                android:completionThreshold="3"
-                android:dropDownHeight="100dp"
                 android:dropDownAnchor="@id/et_fach"
 
-        />
+        />      <de.haw_landshut.hawmobile.schedule.UpOnlyAutoCompleteTextView
+            android:hint="@string/setsubject"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content" android:id="@+id/et_fach"
+            android:layout_alignParentTop="true" android:layout_alignParentStart="true"
+            android:nextFocusForward="@id/et_prof"
+            android:inputType="text"
+            android:imeOptions="actionNext"
+            android:completionThreshold="3"
+            android:dropDownHeight="100dp"
+            android:dropDownAnchor="@id/et_fach"
+
+    />
+
         <CheckBox
                 android:text="@string/weekly"
                 android:layout_width="wrap_content"

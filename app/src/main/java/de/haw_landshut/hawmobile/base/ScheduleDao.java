@@ -24,11 +24,17 @@ public interface ScheduleDao {
     @Query("DELETE  FROM CustomTimetable")
     void deleteWholeCustomTimetable();
 
+    @Query("SELECT DISTINCT room FROM RaumData")
+    String[] getRooms();
+
     @Insert
     void insertAlleProfs(ProfData... profs);
 
     @Insert
     void insertAlleFaecher(FaecherData... faecher);
+
+    @Insert
+    void insertAllRooms(RaumData... rooms);
 
     @Insert
     void insertEmptyTimetable(CustomTimetable...customtimetables);
