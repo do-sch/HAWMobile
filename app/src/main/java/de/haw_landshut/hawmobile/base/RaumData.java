@@ -17,6 +17,7 @@ public class RaumData {
     @PrimaryKey(autoGenerate = true)
     private long roomkey;
 
+
     public String getRoom() {
         return room;
     }

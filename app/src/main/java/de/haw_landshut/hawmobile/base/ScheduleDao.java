@@ -27,6 +27,9 @@ public interface ScheduleDao {
     @Query("SELECT DISTINCT room FROM RaumData")
     String[] getRooms();
 
+    @Query("SELECT * FROM RaumData")
+    RaumData[] getRoomsAndCoords();
+
     @Insert
     void insertAlleProfs(ProfData... profs);
 

@@ -264,7 +264,12 @@ public class ScheduleFragment extends Fragment {
             }
         });
 
-
+        show.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                locationmarker.showLocation(getEt_raum_text());
+            }
+        });
 
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -344,6 +349,7 @@ public class ScheduleFragment extends Fragment {
                     wöchentl.setVisibility(View.GONE);
                     clear.setVisibility(View.VISIBLE);
                     copy.setVisibility(View.VISIBLE);
+                    show.setVisibility(View.VISIBLE);
                     setEnabledTextViews(false);
                     et_fach.setAdapter(null);
                     et_prof.setAdapter(null);
@@ -412,6 +418,7 @@ public class ScheduleFragment extends Fragment {
                 wöchentl.setVisibility(View.GONE);
                 clear.setVisibility(View.VISIBLE);
                 copy.setVisibility(View.VISIBLE);
+                show.setVisibility(View.VISIBLE);
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
