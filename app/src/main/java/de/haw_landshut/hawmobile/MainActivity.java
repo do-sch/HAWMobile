@@ -37,6 +37,14 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
 
     };
 
+    public boolean changeFragment(final Fragment fragment){
+        if (getFragmentManager().findFragmentById(R.id.content) != fragment) {
+            getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
+            return true;
+        }
+        return false;
+    }
+
     public boolean changeFragment(final int fragmentId){
         Fragment fragment = null;
         Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content);
