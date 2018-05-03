@@ -32,38 +32,42 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment fragment = null;
-            Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content);
-            switch (item.getItemId()) {
-                case R.id.action_mail:
-                    if (currentFragment.getClass() != MailOverview.class){
-                        fragment = MailOverview.newInstance();
-                    }
-                    break;
-                case R.id.action_schedule:
-                    if (currentFragment.getClass() != ScheduleFragment.class)
-                        fragment = ScheduleFragment.newInstance();
-                    break;
-                    
-                case R.id.action_map: 
-                   Intent myIntent = new Intent(MainActivity.this, MapsActivity.class);
-                    startActivityForResult(myIntent, 0);
-                    break;
-                    
-                case R.id.action_news:
-                    if(currentFragment.getClass() != NewsOverview.class)
-                        fragment = NewsOverview.newInstance();
-                    break;
-                default:
-                    return false;
-            }
-            if(fragment != null)
-                getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
-
-            return true;
+            return changeFragment(item.getItemId());
         }
 
     };
+
+    public boolean changeFragment(final int fragmentId){
+        Fragment fragment = null;
+        Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content);
+        switch (fragmentId) {
+            case R.id.action_mail:
+                if (currentFragment.getClass() != MailOverview.class){
+                    fragment = MailOverview.newInstance();
+                }
+                break;
+            case R.id.action_schedule:
+                if (currentFragment.getClass() != ScheduleFragment.class)
+                    fragment = ScheduleFragment.newInstance();
+                break;
+
+            case R.id.action_map:
+                Intent myIntent = new Intent(MainActivity.this, MapsActivity.class);
+                startActivityForResult(myIntent, 0);
+                break;
+
+            case R.id.action_news:
+                if(currentFragment.getClass() != NewsOverview.class)
+                    fragment = NewsOverview.newInstance();
+                break;
+            default:
+                return false;
+        }
+        if(fragment != null)
+            getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
+
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,8 +146,8 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
                 ((MailOverview) currentFragment).firstStart();
         }
     }
-
     public static final int LOGINREQUEST = 1;
+
     private void handleLogin(){
 
         //holt sich alle HAWMobile-Accounts auf dem Gerät
