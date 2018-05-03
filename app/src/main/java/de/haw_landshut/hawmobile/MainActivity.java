@@ -4,7 +4,9 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
+import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,6 +19,8 @@ import de.haw_landshut.hawmobile.base.HAWDatabase;
 import de.haw_landshut.hawmobile.mail.MailOverview;
 import de.haw_landshut.hawmobile.news.NewsOverview;
 import de.haw_landshut.hawmobile.schedule.ScheduleFragment;
+
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity implements MailOverview.OnFragmentInteractionListener, ScheduleFragment.OnFragmentInteractionListener, NewsOverview.OnFragmentInteractionListener {
 
@@ -163,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
 
     public static HAWDatabase getHawDatabase(Context context){
         if(hawDatabase == null || !hawDatabase.isOpen())
-            hawDatabase = Room.databaseBuilder(context, HAWDatabase.class, "haw").build();
+            hawDatabase = HAWDatabase.getInstance(context);
         return hawDatabase;
     }
 
