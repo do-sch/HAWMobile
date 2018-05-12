@@ -383,7 +383,10 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                         final String name = emf.getName();
                         if (!currentFolderName.equals(name)) {
                             final int stringName = getResources().getIdentifier(emf.getName(), "string", getActivity().getPackageName());
-                            menu.add(0, i, 0, getActivity().getString(stringName));
+                                if (stringName == 0)
+                                    menu.add(emf.getName());
+                                else
+                                    menu.add(0, i, 0, getActivity().getString(stringName));
                         }
                     }
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
