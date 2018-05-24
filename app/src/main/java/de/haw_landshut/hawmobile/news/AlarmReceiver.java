@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
-import android.arch.persistence.room.Room;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,30 +24,29 @@ import de.haw_landshut.hawmobile.base.AppointmentDao;
 import de.haw_landshut.hawmobile.base.HAWDatabase;
 
 public class AlarmReceiver extends BroadcastReceiver {
-    public final String TAG = "AlarmReceiver";
-
-    private AppointmentDao dao;
-    private HAWDatabase database;
-    private List<Appointment> appointments;
-    private SharedPreferences sharedPref;
-
-    private String title = "", betreff = "", nachricht = "";
-
     @Override
     public void onReceive(Context context, Intent intent) {
-        database = MainActivity.getHawDatabase();
-        //database = Room.databaseBuilder(context.getApplicationContext(), HAWDatabase.class, "haw").build();
-        dao = database.appointmentDao();
-
-        sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         new CheckAppointmentTask().execute(context);
     }
 
-    private class CheckAppointmentTask extends AsyncTask<Context, Integer, Void> {
-        private final String TAG = "CheckAppointmentTask";
+    private static class CheckAppointmentTask extends AsyncTask<Context, Integer, Void> {
+        private final String TAG = "AlarmReceiver";
+
+        private AppointmentDao dao;
+        private HAWDatabase database;
+        private List<Appointment> appointments;
+        private SharedPreferences sharedPref;
+
+        private String title = "", betreff = "", nachricht = "";
 
         @Override
         protected Void doInBackground(Context... context) {
+            database = MainActivity.getHawDatabase();
+            //database = Room.databaseBuilder(context.getApplicationContext(), HAWDatabase.class, "haw").build();
+            dao = database.appointmentDao();
+
+            sharedPref = PreferenceManager.getDefaultSharedPreferences(context[0]);
+
             Calendar tomorrow = Calendar.getInstance();
             tomorrow.add(Calendar.DAY_OF_MONTH, 1);
 
@@ -93,7 +91,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                     .build();
 
 
-            mNotificationManager.notify(1, notif);
+            if(mNotificationManager != null)
+                mNotificationManager.notify(1, notif);
 
             return null;
         }

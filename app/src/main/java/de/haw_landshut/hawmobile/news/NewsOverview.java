@@ -47,8 +47,6 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class NewsOverview extends Fragment {
-    //Termine Variablen
-    private AppointmentDao dao;
 
     private SharedPreferences sharedPref;
     //Termine Ende
@@ -90,7 +88,7 @@ public class NewsOverview extends Fragment {
 
 
         HAWDatabase database = ((MainActivity) getActivity()).getDatabase();
-        dao = database.appointmentDao();
+        AppointmentDao dao = database.appointmentDao();
 
         //Termine
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -180,7 +178,7 @@ public class NewsOverview extends Fragment {
 
                     am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingNotifIntent);
 
-                    if(loadAppointmentsTask != null && loadAppointmentsTask.isCancelled())
+                    if(loadAppointmentsTask != null && loadAppointmentsTask.getStatus()== AsyncTask.Status.FINISHED)
                         loadAppointmentsTask = null;
 
                     if(loadAppointmentsTask == null) {

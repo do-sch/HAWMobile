@@ -44,6 +44,8 @@ public class NotificationTimePreference extends DialogPreference {
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
+        String dailyAt = getContext().getString(R.string.news_daily_at);
+        String clock = getContext().getString(R.string.news_clock);
         if (positiveResult) {
             n1.clearFocus();
             n2.clearFocus();
@@ -51,9 +53,9 @@ public class NotificationTimePreference extends DialogPreference {
             if (callChangeListener(newValue)) {
                 setValue(newValue);
                 if(n2.getValue() < 10)
-                    setSummary("Täglich um " + n1.getValue() +":0"+ n2.getValue() + " Uhr");
+                    setSummary(dailyAt+" " + n1.getValue() +":0"+ n2.getValue() + " "+clock);
                 else
-                    setSummary("Täglich um " + n1.getValue() +":"+ n2.getValue() + " Uhr");
+                    setSummary(dailyAt+" " + n1.getValue() +":"+ n2.getValue() + " "+clock);
             }
         }
     }
