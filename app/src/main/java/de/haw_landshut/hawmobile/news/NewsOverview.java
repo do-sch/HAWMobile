@@ -9,7 +9,9 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+
+//import android.app.Fragment;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
@@ -47,6 +49,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class NewsOverview extends Fragment {
+    //Termine Variablen
+    private AppointmentDao dao;
 
     private SharedPreferences sharedPref;
     //Termine Ende
@@ -88,7 +92,7 @@ public class NewsOverview extends Fragment {
 
 
         HAWDatabase database = ((MainActivity) getActivity()).getDatabase();
-        AppointmentDao dao = database.appointmentDao();
+        dao = database.appointmentDao();
 
         //Termine
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -178,7 +182,7 @@ public class NewsOverview extends Fragment {
 
                     am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingNotifIntent);
 
-                    if(loadAppointmentsTask != null && loadAppointmentsTask.getStatus()== AsyncTask.Status.FINISHED)
+                    if(loadAppointmentsTask != null && loadAppointmentsTask.isCancelled())
                         loadAppointmentsTask = null;
 
                     if(loadAppointmentsTask == null) {
