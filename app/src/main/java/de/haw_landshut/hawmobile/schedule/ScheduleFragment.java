@@ -1,6 +1,8 @@
 package de.haw_landshut.hawmobile.schedule;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+
+//import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -15,7 +17,10 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
-import de.haw_landshut.hawmobile.*;
+import de.haw_landshut.hawmobile.Credentials;
+import de.haw_landshut.hawmobile.Fakultaet;
+import de.haw_landshut.hawmobile.MainActivity;
+import de.haw_landshut.hawmobile.R;
 import de.haw_landshut.hawmobile.base.*;
 
 import java.text.DateFormat;
@@ -53,6 +58,7 @@ public class ScheduleFragment extends Fragment {
     private View bottomSheet;
     private List<CustomTimetable> timetable;
     protected ScheduleDao scheduleDao = MainActivity.getHawDatabase(getContext()).scheduleDao();
+    private LocationMarker locationmarker;
     private TextView[][] elements;
     private boolean isEven;
     private  String[] subjects;
@@ -263,9 +269,7 @@ public class ScheduleFragment extends Fragment {
         show.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // final LocationMarker locationMarker=MapsFragment.newInstance();
-               // locationMarker.showLocation(getEt_raum_text());
-                //((MainActivity) getActivity()).changeFragment(locationMarker);
+                locationmarker.showLocation(getEt_raum_text());
             }
         });
 
