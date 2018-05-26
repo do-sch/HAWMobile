@@ -2,8 +2,8 @@ package de.haw_landshut.hawmobile;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
@@ -37,20 +37,20 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
 
     };
 
-    public boolean changeFragment(final Fragment fragment){
-        if (getFragmentManager().findFragmentById(R.id.content) != fragment) {
-            getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
+    public boolean changeFragment(final Fragment fragment) {
+        if (getSupportFragmentManager().findFragmentById(R.id.content) != fragment) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
             return true;
         }
         return false;
     }
 
-    public boolean changeFragment(final int fragmentId){
+    public boolean changeFragment(final int fragmentId) {
         Fragment fragment = null;
-        Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content);
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.content);
         switch (fragmentId) {
             case R.id.action_mail:
-                if (currentFragment.getClass() != MailOverview.class){
+                if (currentFragment.getClass() != MailOverview.class) {
                     fragment = MailOverview.newInstance();
                 }
                 break;
@@ -60,19 +60,25 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
                 break;
 
             case R.id.action_map:
-                Intent myIntent = new Intent(MainActivity.this, MapsActivity.class);
-                startActivityForResult(myIntent, 0);
+                // replacing map fragment Here
+//                MapsFragment mapsFragment =  MapsFragment.newInstance();
+//                getSupportFragmentManager().beginTransaction().replace(R.id.content, mapsFragment).commit();
+
+                if (currentFragment.getClass() != MapsFragment.class)
+                    fragment = MapsFragment.newInstance();
+//                Intent myIntent = new Intent(MainActivity.this, MapsActivity.class);
+//                startActivityForResult(myIntent, 0);
                 break;
 
             case R.id.action_news:
-                if(currentFragment.getClass() != NewsOverview.class)
+                if (currentFragment.getClass() != NewsOverview.class)
                     fragment = NewsOverview.newInstance();
                 break;
             default:
                 return false;
         }
-        if(fragment != null)
-            getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
+        if (fragment != null)
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
 
         return true;
     }
