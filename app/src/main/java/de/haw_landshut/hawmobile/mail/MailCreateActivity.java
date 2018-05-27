@@ -40,6 +40,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
+import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+
 public class MailCreateActivity extends AppCompatActivity {
 
     private static final int ATTACH_CHOOSE_FILE = 1;
@@ -144,7 +147,12 @@ public class MailCreateActivity extends AppCompatActivity {
 
     private void onAttachFile() {
         final Intent chooseFile, intent;
-        chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+
+        chooseFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        chooseFile.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        chooseFile.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+
+        chooseFile.addFlags(FLAG_GRANT_READ_URI_PERMISSION|FLAG_GRANT_WRITE_URI_PERMISSION);
         chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
         chooseFile.setType("*/*");
         intent = Intent.createChooser(chooseFile, getString(R.string.choose_file));

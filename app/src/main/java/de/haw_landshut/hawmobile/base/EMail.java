@@ -221,6 +221,7 @@ public class EMail implements Serializable{
     }
 
     private static String[] getAttachmentNames(Part p) throws MessagingException, IOException {
+//        p.writeTo(System.out);
         if (p.isMimeType("text/*"))
             return new String[0];
 
@@ -238,7 +239,7 @@ public class EMail implements Serializable{
                 }
             }
         }
-        return names.toArray(new String[names.size()]);
+        return names.toArray(new String[0]);
     }
 
     private String getText(Part p) throws MessagingException, IOException {

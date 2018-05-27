@@ -168,6 +168,8 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 if (delete) {
                     new MoveToFolder(DELETED).execute(position);
                 } else {
+                    if (mMailEntryAdapter == null)
+                        return;
                     mMailEntryAdapter.notifyItemChanged(position);
                 }
 
@@ -513,8 +515,10 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
 
     private void removeFromRecyclerView(final int id){
 
-        mMailEntryAdapter.removeMessage(id);
-        mMailEntryAdapter.notifyItemRemoved(id);
+        if (mMailEntryAdapter != null) {
+            mMailEntryAdapter.removeMessage(id);
+            mMailEntryAdapter.notifyItemRemoved(id);
+        }
     }
 
     private boolean hasNetworkConnection(){
@@ -891,6 +895,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
             final Store store = getStore();
 
             try {
+                if (!hasNetworkConnection()) return null;
                 final IMAPFolder currentFolder = ((IMAPFolder) store.getDefaultFolder().getFolder(currentFolderName));
                 if(!currentFolder.isOpen()) {
                     currentFolder.open(Folder.READ_WRITE);
@@ -1026,6 +1031,7 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
 
                 final Message m = folder.getMessageByUID(eMail.getUid());
 
+//                System.out.println(eMail.getUid());
                 m.setFlag(Flags.Flag.SEEN, true);
                 getEMailDao().setEMailSeen(eMail.getUid(), currentFolderName, true);
 
