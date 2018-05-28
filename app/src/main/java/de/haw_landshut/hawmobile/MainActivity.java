@@ -2,11 +2,6 @@ package de.haw_landshut.hawmobile;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,12 +10,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+
 import de.haw_landshut.hawmobile.base.HAWDatabase;
 import de.haw_landshut.hawmobile.mail.MailOverview;
 import de.haw_landshut.hawmobile.news.NewsOverview;
 import de.haw_landshut.hawmobile.schedule.ScheduleFragment;
 
-import java.util.concurrent.Executors;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity implements MailOverview.OnFragmentInteractionListener, ScheduleFragment.OnFragmentInteractionListener, NewsOverview.OnFragmentInteractionListener {
 
@@ -38,8 +35,8 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
     };
 
     public boolean changeFragment(final Fragment fragment) {
-        if (getSupportFragmentManager().findFragmentById(R.id.content) != fragment) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
+        if (getFragmentManager().findFragmentById(R.id.content) != fragment) {
+            getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
             return true;
         }
         return false;
@@ -47,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
 
     public boolean changeFragment(final int fragmentId) {
         Fragment fragment = null;
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.content);
+        Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content);
         switch (fragmentId) {
             case R.id.action_mail:
                 if (currentFragment.getClass() != MailOverview.class) {
@@ -78,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
                 return false;
         }
         if (fragment != null)
-            getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
+            getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
 
         return true;
     }
@@ -91,9 +88,8 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-
         final FragmentTransaction ft = getFragmentManager().beginTransaction();
-        if (savedInstanceState == null){
+        if (savedInstanceState == null) {
             ft.replace(R.id.content, MailOverview.newInstance());
             ft.commit();
         } else {
@@ -141,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
         }
     }
 
-    public void setOnBackPressedListener(final OnBackPressedListener onBackPressedListener){
+    public void setOnBackPressedListener(final OnBackPressedListener onBackPressedListener) {
         this.onBackPressedListener = onBackPressedListener;
     }
 
@@ -154,20 +150,21 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == LOGINREQUEST){
+        if (requestCode == LOGINREQUEST) {
             Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content);
             if (currentFragment != null && currentFragment.getClass() == MailOverview.class)
                 ((MailOverview) currentFragment).firstStart();
         }
     }
+
     public static final int LOGINREQUEST = 1;
 
-    private void handleLogin(){
+    private void handleLogin() {
 
         //holt sich alle HAWMobile-Accounts auf dem Gerät
         AccountManager accountManager = AccountManager.get(getApplicationContext());
         Account[] accounts = accountManager.getAccountsByType("de.haw_landshut.hawmobile.ACCOUNT");
-        if (accounts.length == 0){
+        if (accounts.length == 0) {
             Intent loginIntent = new Intent(this, LoginActivity.class);
             startActivityForResult(loginIntent, LOGINREQUEST);
 
@@ -183,8 +180,8 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
 
     }
 
-    public static HAWDatabase getHawDatabase(Context context){
-        if(hawDatabase == null || !hawDatabase.isOpen())
+    public static HAWDatabase getHawDatabase(Context context) {
+        if (hawDatabase == null || !hawDatabase.isOpen())
             hawDatabase = HAWDatabase.getInstance(context);
         return hawDatabase;
     }
@@ -193,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
         return hawDatabase;
     }
 
-    public HAWDatabase getDatabase(){
+    public HAWDatabase getDatabase() {
         return getHawDatabase(this);
     }
 
