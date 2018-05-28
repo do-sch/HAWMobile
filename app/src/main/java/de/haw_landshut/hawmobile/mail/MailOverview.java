@@ -1,9 +1,8 @@
 package de.haw_landshut.hawmobile.mail;
 
 import android.annotation.SuppressLint;
-import android.support.v4.app.Fragment;
 
-//import android.app.Fragment;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
