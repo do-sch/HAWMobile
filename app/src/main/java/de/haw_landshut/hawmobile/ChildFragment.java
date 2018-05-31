@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.haw_landshut.hawmobile.base.ScheduleDao;
+import de.haw_landshut.hawmobile.schedule.LocationMarker;
 
 //import android.app.Fragment;
 
@@ -47,7 +48,7 @@ import de.haw_landshut.hawmobile.base.ScheduleDao;
 
 public class ChildFragment extends Fragment implements OnMapReadyCallback, AdapterView.OnItemClickListener,
 
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, LocationMarker {
 
     MapView mMapView;
     LinearLayout linearLayout;
@@ -770,6 +771,7 @@ public class ChildFragment extends Fragment implements OnMapReadyCallback, Adapt
                 lngi = Float.parseFloat(b2);
             }
 
+
         //adding marker
         //             {"BS001", "48.5568648", "12.1982666"},
         buildingMarker = mMap.addMarker(new MarkerOptions()
@@ -1029,5 +1031,11 @@ public class ChildFragment extends Fragment implements OnMapReadyCallback, Adapt
         }
     }
 
+
+   public boolean showLocation(final String roomname)
+    {
+        CreateSuitableMarker(roomname);
+        return true;
+    }
 
 }
