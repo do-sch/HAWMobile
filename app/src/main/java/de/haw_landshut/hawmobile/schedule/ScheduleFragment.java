@@ -1,5 +1,7 @@
 package de.haw_landshut.hawmobile.schedule;
 
+//import android.support.v4.app.Fragment;
+
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;

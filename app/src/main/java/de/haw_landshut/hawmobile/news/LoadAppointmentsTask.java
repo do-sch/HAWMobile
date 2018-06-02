@@ -66,7 +66,7 @@ class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
             Log.d(TAG, "Database is empty.");
             Log.d(TAG, "Get data from internet...");
 
-            if (downloadAppointments())
+            if (extractAppointments(downloadAppointmentPDF(getAppointmentURL())))
                 appointment = dao.getLastAppointment();
         }
 
@@ -219,7 +219,6 @@ class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
             calendar.add(Calendar.DAY_OF_MONTH, 1);
             int tomorrow = LoadAppointmentsTask.dateAsInt(SimpleDateFormat.getDateInstance().format(calendar.getTime()));
             dao.insertAppointment(new Appointment(tomorrow,tomorrow,"Test"));
-            dao.insertAppointment(new Appointment(tomorrow,tomorrow,"Test2"));
             //End Debug
             Log.d(TAG, "parse Appointments... done!");
 
@@ -259,8 +258,4 @@ class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
         return result;
     }
 
-    private boolean downloadAppointments() {
-        Log.d(TAG,"downloadAppointments()");
-        return extractAppointments(downloadAppointmentPDF(getAppointmentURL()));
-    }
 }

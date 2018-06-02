@@ -29,7 +29,6 @@ public class AppointmentActivity extends AppCompatActivity {
     private ListView listView;
 
     private AppointmentDao dao;
-    private HAWDatabase database;
     private ArrayList<Appointment> appointments = new ArrayList<>();
 
     @Override
@@ -39,7 +38,7 @@ public class AppointmentActivity extends AppCompatActivity {
 
         setTitle(R.string.appointments);
 
-        database = MainActivity.getHawDatabase();
+        HAWDatabase database = MainActivity.getHawDatabase();
         if(database != null)
             dao = database.appointmentDao();
 
@@ -96,9 +95,10 @@ public class AppointmentActivity extends AppCompatActivity {
             ImageView alertIcon = rowView.findViewById(R.id.date_alert_icon);
 
             Calendar calendar = Calendar.getInstance();
+            int today = LoadAppointmentsTask.dateAsInt(SimpleDateFormat.getDateInstance().format(calendar.getTime()));
             calendar.add(Calendar.DAY_OF_MONTH, 1);
             int tomorrow = LoadAppointmentsTask.dateAsInt(SimpleDateFormat.getDateInstance().format(calendar.getTime()));
-            if(tomorrow >= values.get(position).start && tomorrow <= values.get(position).end)
+            if(tomorrow >= values.get(position).start && today <= values.get(position).end)
                 alertIcon.setVisibility(View.VISIBLE);
             else
                 alertIcon.setVisibility(View.INVISIBLE);

@@ -168,5 +168,9 @@
     <string name="appointment">Appointment</string>
     <string name="appointments">Appointments</string>
     <string name="till">" till "</string>
+    <string name="news_clock">""</string>
+    <string name="news_daily_at">"Daily at"</string>
+        <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCW4C0lKStSzZ75DN8sN-XkyTUPqYD0j54</string>
+
 
 </resources>
