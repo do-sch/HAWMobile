@@ -29,20 +29,12 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            return changeFragment(item.getItemId());
+            return changeFragment(item.getItemId()) != null;
         }
 
     };
 
-    public boolean changeFragment(final Fragment fragment) {
-        if (getFragmentManager().findFragmentById(R.id.content) != fragment) {
-            getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
-            return true;
-        }
-        return false;
-    }
-
-    public boolean changeFragment(final int fragmentId) {
+    public Fragment changeFragment(final int fragmentId) {
         Fragment fragment = null;
         Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content);
         switch (fragmentId) {
@@ -72,12 +64,12 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
                     fragment = NewsOverview.newInstance();
                 break;
             default:
-                return false;
+                return fragment;
         }
         if (fragment != null)
             getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
 
-        return true;
+        return fragment;
     }
 
     @Override

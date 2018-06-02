@@ -269,6 +269,7 @@ public class ScheduleFragment extends Fragment {
         show.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                locationmarker = ((MainActivity) getActivity()).changeFragment(R.id.action_map);
                 locationmarker.showLocation(getEt_raum_text());
             }
         });
