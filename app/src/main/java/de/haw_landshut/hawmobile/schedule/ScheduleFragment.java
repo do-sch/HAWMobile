@@ -24,10 +24,9 @@ import de.haw_landshut.hawmobile.R;
 import de.haw_landshut.hawmobile.base.*;
 
 import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
+
+import static java.lang.Thread.sleep;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -269,8 +268,8 @@ public class ScheduleFragment extends Fragment {
         show.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                locationmarker = ((MainActivity) getActivity()).changeFragment(R.id.action_map);
-                locationmarker.showLocation(getEt_raum_text());
+                locationmarker= ((LocationMarker) ((MainActivity) getActivity()).changeFragment(R.id.action_map));
+                new MapShower().execute(locationmarker);
             }
         });
 
@@ -600,6 +599,20 @@ public class ScheduleFragment extends Fragment {
     Initializes the current date
     sets class variable isEven depending on the current number of the week
      */
+
+    private class MapShower extends AsyncTask<LocationMarker,Void,Void>{
+        @Override
+        protected Void doInBackground(final LocationMarker... lms) {
+            try {
+                sleep(100);
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            lms[0].showLocation(getEt_raum_text());
+            return null;
+        }
+    }
     private void timeInitializer(View view){
         currentDate = view.findViewById(R.id.schedule_textView_currentDate);
         GregorianCalendar now = new GregorianCalendar();

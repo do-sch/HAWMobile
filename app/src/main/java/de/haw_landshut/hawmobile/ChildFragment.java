@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,8 @@ import java.util.List;
 import de.haw_landshut.hawmobile.base.ScheduleDao;
 import de.haw_landshut.hawmobile.schedule.LocationMarker;
 
+import static java.lang.Thread.sleep;
+
 //import android.app.Fragment;
 
 //import android.support.v4.app.Fragment;
@@ -54,7 +57,7 @@ public class ChildFragment extends Fragment implements OnMapReadyCallback, Adapt
     LinearLayout linearLayout;
     private final Handler handler = new Handler();
     private Runnable runPager;
-
+    private Thread waiterThread;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -672,8 +675,6 @@ public class ChildFragment extends Fragment implements OnMapReadyCallback, Adapt
 
             }
         });
-
-
     }
 
 //
@@ -770,10 +771,14 @@ public class ChildFragment extends Fragment implements OnMapReadyCallback, Adapt
                 lati = Float.parseFloat(b1);
                 lngi = Float.parseFloat(b2);
             }
+        else{
+            return;
+            }
 
 
         //adding marker
         //             {"BS001", "48.5568648", "12.1982666"},
+        Log.i("AAA",(mMap==null)+"");
         buildingMarker = mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(lati, lngi))
                 .title(title));
@@ -798,6 +803,9 @@ public class ChildFragment extends Fragment implements OnMapReadyCallback, Adapt
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        if(waiterThread!=null){
+            waiterThread.start();
+        }
 
         //affeting clicked clasroom
 
@@ -1034,8 +1042,39 @@ public class ChildFragment extends Fragment implements OnMapReadyCallback, Adapt
 
    public boolean showLocation(final String roomname)
     {
-        CreateSuitableMarker(roomname);
+        if(mMap==null){
+            waiterThread=new Thread(new WaiterMapRunnable(roomname));
+        }
+        else{
+            CreateSuitableMarker(roomname);
+        }
+
+
+
         return true;
     }
+    private class WaiterMapRunnable implements Runnable{
+        private String roomname;
+       WaiterMapRunnable(String roomname){
+           this.roomname=roomname;
+       }
+        @Override
+        public void run() {
+           while(mMap==null){
+               try {
+                   wait(100);
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+           }
+           Log.i("roomname",roomname);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    CreateSuitableMarker(roomname);
 
-}
+                }
+            });
+    }}}
+
+

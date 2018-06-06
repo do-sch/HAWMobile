@@ -4,15 +4,17 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import de.haw_landshut.hawmobile.schedule.LocationMarker;
 
 //import android.app.Fragment;
 
 //import android.support.v4.app.Fragment;
 
-public class MapsFragment extends Fragment {
+public class MapsFragment extends Fragment implements LocationMarker {
 
 
     private final Handler handler = new Handler();
@@ -38,6 +40,15 @@ public class MapsFragment extends Fragment {
         return fragment;
     }
 
+
+    @Override
+    public boolean showLocation(String roomname) {
+        ChildFragment cf=((ChildFragment) getFragmentManager().findFragmentById(R.id.linearContainer));
+        if(cf==null){
+            return false;
+        }
+        return cf.showLocation(roomname);
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
