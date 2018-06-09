@@ -971,14 +971,18 @@ public class MailOverview extends Fragment implements View.OnClickListener, Mail
                 if(!folder.isOpen())
                     folder.open(Folder.READ_ONLY);
 
+                Log.d("MailOverview.FMB", "lastMessageNum = " + lastMessageNum);
+
                 if (lastMessageNum == -1) {
                     lastMessageNum = getEMailDao().getFolderMessageCount(foldername) - MESSAGESAVECOUNT;
                 }
 
+                Log.d("MailOverview.FMB", "lastMessageNum = " + lastMessageNum);
                 final int lastMessage = lastMessageNum;
                 lastMessageNum -= MESSAGESAVECOUNT;
                 if(lastMessageNum < 1)
                     lastMessageNum = 1;
+                Log.d("MailOverview.FMB", "lastMessageNum = " + lastMessageNum);
 
 
                 //keine weiteren EMails
