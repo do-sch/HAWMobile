@@ -34,9 +34,13 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
 
     };
 
-    public Fragment changeFragment(final int fragmentId) {
+    public Fragment changeFragment(final int fragmentId){
+        return changeFragment(fragmentId, false);
+    }
+
+    public Fragment changeFragment(final int fragmentId, final boolean changeNavigation) {
         Fragment fragment = null;
-        Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content);
+        final Fragment currentFragment = getFragmentManager().findFragmentById(R.id.content);
         switch (fragmentId) {
             case R.id.action_mail:
                 if (currentFragment.getClass() != MailOverview.class) {
@@ -63,11 +67,12 @@ public class MainActivity extends AppCompatActivity implements MailOverview.OnFr
                 if (currentFragment.getClass() != NewsOverview.class)
                     fragment = NewsOverview.newInstance();
                 break;
-            default:
-                return fragment;
         }
         if (fragment != null)
             getFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
+
+        if (changeNavigation)
+            navigation.setSelectedItemId(fragmentId);
 
         return fragment;
     }

@@ -268,7 +268,7 @@ public class ScheduleFragment extends Fragment {
         show.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                locationmarker= ((LocationMarker) ((MainActivity) getActivity()).changeFragment(R.id.action_map));
+                locationmarker= ((LocationMarker) ((MainActivity) getActivity()).changeFragment(R.id.action_map, true));
                 new MapShower().execute(locationmarker);
             }
         });
