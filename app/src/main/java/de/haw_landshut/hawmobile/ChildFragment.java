@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.haw_landshut.hawmobile.base.ScheduleDao;
-import de.haw_landshut.hawmobile.schedule.LocationMarker;
 
 import static java.lang.Thread.sleep;
 
@@ -771,7 +769,7 @@ public class ChildFragment extends Fragment implements OnMapReadyCallback, Adapt
                 lati = Float.parseFloat(b1);
                 lngi = Float.parseFloat(b2);
             }
-      
+
 
         //adding marker
         //             {"BS001", "48.5568648", "12.1982666"},

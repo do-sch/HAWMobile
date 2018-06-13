@@ -70,7 +70,6 @@ public class ScheduleFragment extends Fragment {
     Button edit;
     Button save;
     Button cancel;
-    Button show;
     Button color;
     Button clear;
     Button copy;
@@ -238,7 +237,6 @@ public class ScheduleFragment extends Fragment {
         color = view.findViewById(R.id.colorPicker);
         clear = view.findViewById(R.id.clear);
         copy = view.findViewById(R.id.copy);
-        show = view.findViewById(R.id.btn_show);
         wöchentl = view.findViewById(R.id.wöchentlCheckbox);
         et_fach = view.findViewById(R.id.et_fach);
         et_prof = view.findViewById(R.id.et_prof);
@@ -265,13 +263,7 @@ public class ScheduleFragment extends Fragment {
             }
         });
 
-        show.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                locationmarker= ((LocationMarker) ((MainActivity) getActivity()).changeFragment(R.id.action_map, true));
-                new MapShower().execute(locationmarker);
-            }
-        });
+
 
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -283,7 +275,6 @@ public class ScheduleFragment extends Fragment {
                     save.setVisibility(View.VISIBLE);
                     color.setVisibility(View.VISIBLE);
                     wöchentl.setVisibility(View.VISIBLE);
-                    show.setVisibility(View.GONE);
                     setEnabledTextViews(true);
                     ArrayAdapter<String> subjectAdapter=new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,subjects);
                     et_fach.setAdapter(subjectAdapter);
@@ -351,7 +342,6 @@ public class ScheduleFragment extends Fragment {
                     wöchentl.setVisibility(View.GONE);
                     clear.setVisibility(View.VISIBLE);
                     copy.setVisibility(View.VISIBLE);
-                    show.setVisibility(View.VISIBLE);
                     setEnabledTextViews(false);
                     et_fach.setAdapter(null);
                     et_prof.setAdapter(null);
@@ -420,7 +410,6 @@ public class ScheduleFragment extends Fragment {
                 wöchentl.setVisibility(View.GONE);
                 clear.setVisibility(View.VISIBLE);
                 copy.setVisibility(View.VISIBLE);
-                show.setVisibility(View.VISIBLE);
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
@@ -600,19 +589,7 @@ public class ScheduleFragment extends Fragment {
     sets class variable isEven depending on the current number of the week
      */
 
-    private class MapShower extends AsyncTask<LocationMarker,Void,Void>{
-        @Override
-        protected Void doInBackground(final LocationMarker... lms) {
-            try {
-                sleep(100);
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            lms[0].showLocation(getEt_raum_text());
-            return null;
-        }
-    }
     private void timeInitializer(View view){
         currentDate = view.findViewById(R.id.schedule_textView_currentDate);
         GregorianCalendar now = new GregorianCalendar();
