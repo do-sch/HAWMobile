@@ -14,7 +14,7 @@ import de.haw_landshut.hawmobile.schedule.LocationMarker;
 
 //import android.support.v4.app.Fragment;
 
-public class MapsFragment extends Fragment implements LocationMarker {
+public class MapsFragment extends Fragment{
 
 
     private final Handler handler = new Handler();
@@ -41,14 +41,7 @@ public class MapsFragment extends Fragment implements LocationMarker {
     }
 
 
-    @Override
-    public boolean showLocation(String roomname) {
-        ChildFragment cf=((ChildFragment) getFragmentManager().findFragmentById(R.id.linearContainer));
-        if(cf==null){
-            return false;
-        }
-        return cf.showLocation(roomname);
-    }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
