@@ -57,7 +57,6 @@ public class ScheduleFragment extends Fragment {
     private View bottomSheet;
     private List<CustomTimetable> timetable;
     protected ScheduleDao scheduleDao = MainActivity.getHawDatabase(getContext()).scheduleDao();
-    private LocationMarker locationmarker;
     private TextView[][] elements;
     private boolean isEven;
     private  String[] subjects;
@@ -183,6 +182,7 @@ public class ScheduleFragment extends Fragment {
         et_fach.setEnabled(b);
         et_prof.setEnabled(b);
         et_raum.setEnabled(b);
+        wöchentl.setEnabled(b);
     }
 
 
@@ -273,8 +273,8 @@ public class ScheduleFragment extends Fragment {
                     copy.setVisibility(View.GONE);
                     clear.setVisibility(View.GONE);
                     save.setVisibility(View.VISIBLE);
+                    save.setEnabled(true);
                     color.setVisibility(View.VISIBLE);
-                    wöchentl.setVisibility(View.VISIBLE);
                     setEnabledTextViews(true);
                     ArrayAdapter<String> subjectAdapter=new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,subjects);
                     et_fach.setAdapter(subjectAdapter);
@@ -336,10 +336,11 @@ public class ScheduleFragment extends Fragment {
             public void onClick(View view) {
 
                     cancel.setVisibility(View.GONE);
-                    save.setVisibility(View.GONE);
+                    save.setVisibility(View.INVISIBLE);
+                    save.setEnabled(false);
                     edit.setVisibility(View.VISIBLE);
                     color.setVisibility(View.GONE);
-                    wöchentl.setVisibility(View.GONE);
+
                     clear.setVisibility(View.VISIBLE);
                     copy.setVisibility(View.VISIBLE);
                     setEnabledTextViews(false);
@@ -403,11 +404,11 @@ public class ScheduleFragment extends Fragment {
                 setEt_prof_text("");
                 setEt_fach_text("");
                 setEnabledTextViews(false);
-                save.setVisibility(View.GONE);
+                save.setVisibility(View.INVISIBLE);
+                save.setEnabled(false);
                 edit.setVisibility(View.VISIBLE);
                 cancel.setVisibility(View.GONE);
                 color.setVisibility(View.GONE);
-                wöchentl.setVisibility(View.GONE);
                 clear.setVisibility(View.VISIBLE);
                 copy.setVisibility(View.VISIBLE);
                 ScheduleFragment.mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
