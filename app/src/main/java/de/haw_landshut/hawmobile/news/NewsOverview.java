@@ -9,12 +9,10 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
 import android.app.Fragment;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,8 +23,6 @@ import android.view.*;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import de.haw_landshut.hawmobile.*;
-import de.haw_landshut.hawmobile.base.AppointmentDao;
-import de.haw_landshut.hawmobile.base.HAWDatabase;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -48,8 +44,6 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class NewsOverview extends Fragment {
-    //Termine Variablen
-    private AppointmentDao dao;
 
     private SharedPreferences sharedPref;
     //Termine Ende
@@ -58,9 +52,7 @@ public class NewsOverview extends Fragment {
     private RecyclerView recyclerView;
     private SpannedAdapter spannedAdapter;
     private List<Spanned> spanned = new ArrayList<>();
-    private LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
     private int page_count = 0;
-    private OnFragmentInteractionListener mListener;
     private LoadAppointmentsTask loadAppointmentsTask;
 
     public NewsOverview() {
@@ -90,8 +82,8 @@ public class NewsOverview extends Fragment {
         StrictMode.setThreadPolicy(policy);
 
 
-        HAWDatabase database = ((MainActivity) getActivity()).getDatabase();
-        dao = database.appointmentDao();
+        //HAWDatabase database = ((MainActivity) getActivity()).getDatabase();
+        //AppointmentDao dao = database.appointmentDao();
 
         //Termine
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -171,7 +163,7 @@ public class NewsOverview extends Fragment {
 
                 AlarmManager am = getActivity().getSystemService(AlarmManager.class);
                 Intent notifIntent = new Intent(getActivity(), AlarmReceiver.class);
-                PendingIntent pendingNotifIntent = PendingIntent.getBroadcast(getActivity(), 0, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingNotifIntent = PendingIntent.getBroadcast(getActivity(), 13371337, notifIntent, 0); //vorher flags -> PendingIntent.FLAG_UPDATE_CURRENT
 
                 if (prefNotificationEnabled) {
                     Calendar calendar = Calendar.getInstance();
@@ -179,9 +171,11 @@ public class NewsOverview extends Fragment {
                     calendar.set(Calendar.MINUTE, prefNotificationTime % 100);
                     calendar.set(Calendar.SECOND, 0);
 
-                    am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingNotifIntent);
+                    if (am != null) {
+                        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingNotifIntent);
+                    }
 
-                    if(loadAppointmentsTask != null && loadAppointmentsTask.isCancelled())
+                    if(loadAppointmentsTask != null && loadAppointmentsTask.getStatus()== AsyncTask.Status.FINISHED)
                         loadAppointmentsTask = null;
 
                     if(loadAppointmentsTask == null) {
@@ -190,7 +184,9 @@ public class NewsOverview extends Fragment {
                     }
                 } else {
                     if (pendingNotifIntent != null)
-                        am.cancel(pendingNotifIntent);
+                        if (am != null) {
+                            am.cancel(pendingNotifIntent);
+                        }
                 }
             }
             else if(key.equals("pref_faculty")){
@@ -240,7 +236,7 @@ public class NewsOverview extends Fragment {
         View view = inflater.inflate(R.layout.fragment_news_overview, container, false);
         recyclerView = view.findViewById(R.id.NewsRecyclerView);
         assert recyclerView != null;
-        layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         return view;
@@ -253,7 +249,6 @@ public class NewsOverview extends Fragment {
         Log.d("","OnAttach");
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -264,7 +259,6 @@ public class NewsOverview extends Fragment {
     public void onDetach() {
         Log.d("","OnDetach");
         super.onDetach();
-        mListener = null;
     }
 
     /**

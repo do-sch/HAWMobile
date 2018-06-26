@@ -152,10 +152,13 @@
     <string name="news_ma">Neuigkeiten MA</string>
     <string name="news_sa">Neuigkeiten SA</string>
     <string name="news_ids">Neuigkeiten IDS</string>
+    <string name="bulletin_board">Schwarzes Brett</string>
+    <string name="reminder">Erinnerung</string>
     <string name="appointment">Termin</string>
     <string name="appointments">Termine</string>
     <string name="till">" bis "</string>
     <string name="news_clock">"Uhr"</string>
     <string name="news_daily_at">"Täglich um"</string>
+    <string name="appointment_connection_error">"Verbindung zum Internet fehlgeschlagen!"</string>
 
 </resources>

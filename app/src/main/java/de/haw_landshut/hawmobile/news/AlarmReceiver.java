@@ -41,7 +41,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         @Override
         protected Void doInBackground(Context... context) {
-            database = MainActivity.getHawDatabase();
+            database = MainActivity.getHawDatabase(context[0]);
             //database = Room.databaseBuilder(context.getApplicationContext(), HAWDatabase.class, "haw").build();
             dao = database.appointmentDao();
 

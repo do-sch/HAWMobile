@@ -1,15 +1,15 @@
 package de.haw_landshut.hawmobile.news;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,7 +17,6 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import de.haw_landshut.hawmobile.MainActivity;
 import de.haw_landshut.hawmobile.R;
@@ -37,6 +36,7 @@ public class AppointmentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_appointment);
 
         setTitle(R.string.appointments);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         HAWDatabase database = MainActivity.getHawDatabase();
         if(database != null)
@@ -44,6 +44,19 @@ public class AppointmentActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.appointment_list_view);
         new loadAppointments().execute();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+
+        return true;
     }
 
     @Override
@@ -55,10 +68,7 @@ public class AppointmentActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            for (Appointment ap: dao.getAllAppointments()
-                 ) {
-                appointments.add(ap);
-            }
+            appointments.addAll(dao.getAllAppointments());
             return null;
         }
 
@@ -67,6 +77,10 @@ public class AppointmentActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
 
             findViewById(R.id.appointment_loading_panel).setVisibility(View.GONE);
+
+            if(appointments.isEmpty())
+                findViewById(R.id.appointment_error_panel).setVisibility(View.VISIBLE);
+
             final AppointmentArrayAdapter adapter = new AppointmentArrayAdapter(listView.getContext(), appointments);
             listView.setAdapter(adapter);
         }
@@ -76,14 +90,15 @@ public class AppointmentActivity extends AppCompatActivity {
         private final Context context;
         private final ArrayList<Appointment> values;
 
-        public AppointmentArrayAdapter(Context context, ArrayList<Appointment> values) {
+        AppointmentArrayAdapter(Context context, ArrayList<Appointment> values) {
             super(context, R.layout.appointment_layout, values);
             this.context = context;
             this.values = values;
         }
 
+        @NonNull
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 

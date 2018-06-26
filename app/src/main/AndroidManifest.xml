@@ -2,10 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.haw_landshut.hawmobile">
 
+    
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
+    
+    
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -16,6 +18,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
+    
 
     <application
         android:name=".App"
@@ -66,16 +70,15 @@
         <activity
             android:name=".mail.MailSettingsActivity"
             android:label="@string/settings" />
-
-        <!--<meta-data-->
-            <!--android:name="com.google.android.maps.v2.API_KEY"-->
-            <!--android:value="AIzaSyCW4C0lKStSzZ75DN8sN-XkyTUPqYD0j54" />-->
-        <activity
+         <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCW4C0lKStSzZ75DN8sN-XkyTUPqYD0j54" />       
+         <activity
             android:name=".MapsActivity"
             android:label="@string/MAP" />
 
         <receiver
-            android:name=".news.AlarmReceiver"
+            android:name="de.haw_landshut.hawmobile.news.AlarmReceiver"
             android:enabled="true"
             android:exported="true" />
 
@@ -90,20 +93,8 @@
         </provider>
 
         <activity
-            android:name=".news.AppointmentActivity"
-            android:parentActivityName=".MainActivity"></activity>
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
-        -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
-
+            android:name=".news.AppointmentActivity">
+        </activity>
     </application>
 
 </manifest>
