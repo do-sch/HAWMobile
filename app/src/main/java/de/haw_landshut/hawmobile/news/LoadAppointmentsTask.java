@@ -62,7 +62,7 @@ class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
             }
         }
 
-        if (appointment == null) {         //load appointments from Internet
+        if (appointment == null) { //load appointments from Internet
             Log.d(TAG, "Database is empty.");
             Log.d(TAG, "Get data from internet...");
 
@@ -215,10 +215,10 @@ class LoadAppointmentsTask extends AsyncTask<Void, Integer, Void> {
                 }
             }
             //Debug
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-            int tomorrow = LoadAppointmentsTask.dateAsInt(SimpleDateFormat.getDateInstance().format(calendar.getTime()));
-            dao.insertAppointment(new Appointment(tomorrow,tomorrow,"Test"));
+            //Calendar calendar = Calendar.getInstance();
+            //calendar.add(Calendar.DAY_OF_MONTH, 1);
+            //int tomorrow = LoadAppointmentsTask.dateAsInt(SimpleDateFormat.getDateInstance().format(calendar.getTime()));
+            //dao.insertAppointment(new Appointment(tomorrow,tomorrow,"Test"));
             //End Debug
             Log.d(TAG, "parse Appointments... done!");
 
